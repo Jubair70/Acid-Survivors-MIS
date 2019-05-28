@@ -1,0 +1,171 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block content %}
+<div class="col-md-12">
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> Sign Up
+            </div>
+        </div>
+        <div class="portlet-body form">
+            <form class="horizontal-form" id="user_form" method="post" action="/usermodule/register/" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ user_form.username.id_for_label }}">Username:</label>
+                                <input type="text" name="{{ user_form.username.name }}" class="form-control">
+                                <span class="help-block">{{ user_form.username.errors.as_text }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ user_form.first_name.id_for_label }}">Firstname:</label>
+                                <input type="text" name="{{ user_form.first_name.name }}" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ user_form.last_name.id_for_label }}">Lastname:</label>
+                                <input type="text" name="{{ user_form.last_name.name }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ user_form.email.id_for_label }}">Email:</label>
+
+                                <input type="email" name="{{ user_form.email.name }}" class="form-control">
+                                <span class="help-block">{{ user_form.email.errors.as_text }}</span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ user_form.password.id_for_label }}">Password:</label>
+                                <input type="password" name="{{ user_form.password.name }}" class="form-control">
+                                <span class="help-block">{{ user_form.password.errors.as_text }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ user_form.password_repeat.id_for_label }}">Confirm Password:</label>
+                                <input type="password" name="{{ user_form.password_repeat.name }}" class="form-control">
+                                <span class="help-block">{{ user_form.password_repeat.errors.as_text }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class=""></label>
+                                <div class="checkbox-list">
+                                    <label>
+                                        <input name="{{ profile_form.admin.name }}" type="checkbox"> Make This User Admin
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ profile_form.employee_id.id_for_label }}">Employee Id:</label>
+                                <input type="text" name="{{ profile_form.employee_id.name }}" class="form-control">
+                                <span class="help-block">{{ profile_form.employee_id.errors.as_text }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Organisation name:</label>
+                                <select id="{{ profile_form.organisation_name.id_for_label }}"
+                                        name="{{ profile_form.organisation_name.name }}" class="form-control">
+                                    {% for m,n in profile_form.fields.organisation_name.choices %}
+                                    <option value="{{ m }}">{{ n }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <span class="help-block">{{ profile_form.organisation_name.errors.as_text }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Country:</label>
+                                <select id="{{ profile_form.country.id_for_label }}"
+                                        name="{{ profile_form.country.name }}" class="form-control">
+                                    {% for x,y in profile_form.fields.country.choices %}
+                                    <option value="{{ x }}">{{ y }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <span class="help-block">{{ profile_form.country.errors.as_text }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" >
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ profile_form.contact_number.id_for_label }}">Contact Number (e.g: 01xxxxxxxxx):</label>
+                                <input type="text" name="{{ profile_form.contact_number.name }}" class="form-control" pattern="^(?:\+88|01)?(?:\d{11}|\d{13})$">
+                                 <span class="help-block" hidden>{{ profile_form.contact_number.errors.as_text }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ profile_form.position.id_for_label }}" hidden>Position:</label>
+                                <input type="hidden" name="{{ profile_form.position.name }}" class="form-control" value="default">
+                                <span class="help-block" hidden>{{ profile_form.position.errors.as_text }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn red pull-right">Submit</button>
+                    <button onclick="history.go(-1);" style="margin-right:10px;" type="button" class="btn default pull-right">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block additional-javascript %}
+
+ <!-- <script type="text/javascript" src="/static/js/jquery.searchable-ie-1.1.0.min.js"></script> -->
+ <!-- <script type="text/javascript" src="/static/js/usermodule_userprofile.js"></script>    -->
+    
+{% endblock %}
+
+{% block additional-headers %}
+<head>
+    <title>
+        {% block title %} Register User {% endblock %}
+    </title>
+</head>
+    <style >
+    .data-table-container table {
+        clear: both;
+        display: table !important;
+        overflow-x: auto;
+        width: 98% !important;
+    }
+
+    .highlight { background-color: #D9EDF7; }
+
+    .table th, .table td {
+        border: 1px solid #dddddd !important;
+    }
+
+    tr:hover {
+        background-color: #ffff99;
+    }
+
+    </style>
+    
+{% endblock %}

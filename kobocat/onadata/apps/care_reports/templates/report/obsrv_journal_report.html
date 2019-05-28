@@ -1,0 +1,569 @@
+{% extends "base_test.html" %}
+{% block additional-headers %}
+<head>
+    <title>
+        {% block title %} Observation Journal report {% endblock %}
+    </title>
+</head>
+<style type="text/css">
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #chart-main-container, #chart-main-container * {
+    visibility: visible;
+  }
+  #sec_chg_wise_case, #sec_chg_wise_case * {
+    visibility: visible;
+  }
+  #chart-main-container {
+    position: absolute;
+    left: 80px;
+    top: 10px;
+  }
+  #sec_chg_wise_case {
+    position: absolute;
+    left: 20px;
+    top: 500px;
+  }
+}
+
+</style>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>{% if rpt_type == 'bd' %} BD {%endif%} {% if rpt_type == 'np' %} NP {%endif%} Observation Journal
+            Report</h2>
+        <div class="col-md-8">
+            <div class="container__wide main chart-main-container" id="chart-main-container"></div>
+        </div>
+        <div class="col-md-4">
+            {% if rpt_type == 'bd' %}
+            <div class="pngo_area form-group">
+                <label>Pngo Name</label>
+                <select id="pngo_name" class="pngolist form-control" onchange="populate_upzilla()">
+                    <option value="%">Select a Pngo</option>
+                </select>
+            </div>
+
+            <div class="upozilla_area form-group">
+                <label>Upazila</label>
+                <select id="upozilla_name" class="upozillalist form-control" onchange="populate_union()">
+                    <option value="%">Select a Upzila</option>
+                </select>
+            </div>
+
+            <div class="union_area form-group">
+                <label>Union</label>
+                <select id="union_name" class="unionlist form-control" onchange="populate_village()">
+                    <option value="%">Select a union</option>
+
+                </select>
+            </div>
+            {%endif%}
+            <div class="date_area form-group">
+                <div id="datetimepicker1" class="input-append date">
+                    <label>Month Range</label>
+                    <div class="input-group">
+                        <input type="text" placeholder="From" class="datepicker form-control" name="start_date"
+                               id="start_date"/>
+                        <span class="input-group-addon">-</span>
+                        <input type="text" placeholder="To" class="datepicker form-control" name="end_date"
+                               id="end_date"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit form-group" id="submit">
+                {% if rpt_type == 'bd' %}
+                <input type="hidden" name="country" id="rpt_type" value="BD">
+                {%endif%}
+                {% if rpt_type == 'np' %}
+                <input type="hidden" name="country" id="rpt_type" value="NP">
+                {%endif%}
+                <button type="button" class="btn red">Show</button>
+                <button type="button" class="btn default print" id="print">Export</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<aside>
+    {% if rpt_type == 'bd' %}
+	<div class="pngo_area" >
+        <label>Pngo Name</label>
+        <select id ="pngo_name" class="pngolist" onchange="populate_upzilla()">
+            <option value="%">Select a Pngo</option>
+        </select>
+    </div>
+    
+    <div class="upozilla_area" >
+                <label>Upazila</label>
+                <select id ="upozilla_name" class="upozillalist" onchange="populate_union()">
+                    <option value="%">Select a Upzila</option>
+                </select>
+            </div>
+    
+    <div class="union_area" >
+        <label>Union</label>
+        <select id ="union_name" class="unionlist" onchange="populate_village()">
+            <option value="%">Select a union</option>
+            
+        </select>
+    </div>
+   &lt;!&ndash; <div class="village_area" >
+        <label>Village</label>
+        <select id ="village_name" class="villagelist">
+            <option value="%">Select a Village</option>
+        </select>
+    </div> &ndash;&gt;
+    {%endif%}
+    <div class="date_area">
+      <div id="datetimepicker1" class="input-append date">
+         <label>Month Range</label>
+         <input type="text" placeholder="From" class="datepicker" name="start_date" id="start_date"/>
+         <input type="text" placeholder="To" class="datepicker" name="end_date" id="end_date"/>
+       </div>
+    </div>
+    
+    <div class="submit" id="submit">
+    {% if rpt_type == 'bd' %}  
+        <input type="hidden" name="country" id="rpt_type" value="BD">
+    {%endif%}
+    {% if rpt_type == 'np' %}  
+        <input type="hidden" name="country" id="rpt_type" value="NP">
+    {%endif%}
+        <button>Show</button>
+	<button class="print" id="print">Export</button>
+    </div>
+</aside>-->
+<!--<section class="sec_chart">
+	<div class="container__wide main chart-main-container" id="chart-main-container"></div>
+</section>-->
+<div class="row top-buffer"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="data_view" class="table-responsive">
+            <h4>Table: Major , Minor and Important Change wise case</h4>
+            <table class="tb_chg_wise_case table table-bordered">
+        <tbody>
+        <tr>
+            <td rowspan="4" id="major">Major Changes</td>
+            <td rowspan="2" id="major_pos">Positive Changes</td>
+            <td>Expected Change</td>
+            <td id="maj_pos_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="maj_pos_unexp"></td>
+        </tr>
+        <tr>
+            <td rowspan="2" id="major_neg">Negative Change</td>
+            <td>Expected Change</td>
+            <td id="maj_neg_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="maj_neg_unexp"></td>
+        </tr>
+
+        <tr>
+            <td rowspan="4" id="important">Important Changes</td>
+            <td rowspan="2" id="imp_pos">Positive Changes</td>
+            <td>Expected Change</td>
+            <td id="imp_pos_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="imp_pos_unexp"></td>
+        </tr>
+        <tr>
+            <td rowspan="2" id="imp_neg">Negative Change</td>
+            <td>Expected Change</td>
+            <td id="imp_neg_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="imp_neg_unexp"></td>
+        </tr>
+
+        <tr>
+            <td rowspan="4" id="minor">Minor Changes</td>
+            <td rowspan="2" id="min_pos">Positive Changes</td>
+            <td>Expected Change</td>
+            <td id="min_pos_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="min_pos_unexp"></td>
+        </tr>
+        <tr>
+            <td rowspan="2" id="min_neg">Negative Change</td>
+            <td>Expected Change</td>
+            <td id="min_neg_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="min_neg_unexp"></td>
+        </tr>
+        <tr>
+            <td colspan="3"><strong>Grand Total</strong></td>
+            <td id="gt">0</td>
+        </tr>
+        </tbody>
+    </table>
+        </div>
+    </div>
+</div>
+<!--<section class="sec_chg_wise_case" id="sec_chg_wise_case">
+    <h4>Table: Major , Minor and Important Change wise case</h4>
+    <table class="tb_chg_wise_case">
+        <tbody>
+        <tr>
+            <td rowspan="4" id="major">Major Changes</td>
+            <td rowspan="2" id="major_pos">Positive Changes</td>
+            <td>Expected Change</td>
+            <td id="maj_pos_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="maj_pos_unexp"></td>
+        </tr>
+        <tr>
+            <td rowspan="2" id="major_neg">Negative Change</td>
+            <td>Expected Change</td>
+            <td id="maj_neg_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="maj_neg_unexp"></td>
+        </tr>
+
+        <tr>
+            <td rowspan="4" id="important">Important Changes</td>
+            <td rowspan="2" id="imp_pos">Positive Changes</td>
+            <td>Expected Change</td>
+            <td id="imp_pos_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="imp_pos_unexp"></td>
+        </tr>
+        <tr>
+            <td rowspan="2" id="imp_neg">Negative Change</td>
+            <td>Expected Change</td>
+            <td id="imp_neg_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="imp_neg_unexp"></td>
+        </tr>
+
+        <tr>
+            <td rowspan="4" id="minor">Minor Changes</td>
+            <td rowspan="2" id="min_pos">Positive Changes</td>
+            <td>Expected Change</td>
+            <td id="min_pos_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="min_pos_unexp"></td>
+        </tr>
+        <tr>
+            <td rowspan="2" id="min_neg">Negative Change</td>
+            <td>Expected Change</td>
+            <td id="min_neg_exp"></td>
+        </tr>
+        <tr>
+            <td>Unexpected Change</td>
+            <td id="min_neg_unexp"></td>
+        </tr>
+        <tr>
+            <td colspan="3"><strong>Grand Total</strong></td>
+            <td id="gt">0</td>
+        </tr>
+        </tbody>
+    </table>
+</section>-->
+
+{% endblock %}
+{% block javascript %}
+{{ block.super }}
+<script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" charset="utf-8" src="{{STATIC_URL}}js/highchartcreate.js"></script>
+
+<script type="text/javascript" src="{{STATIC_URL}}js/highcharts/highcharts.js"></script>
+<script src="{{STATIC_URL}}js/highcharts/modules/data.js"></script>
+<script type="text/javascript">
+    $(function () {
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+        });
+
+    {% if filter_json  %}
+    var json = {{ filter_json | safe }} ;
+    {% endif %}
+    {% if data_dict  %}
+    var data_json = {{ data_dict | safe }} ;
+    {% endif %}
+    
+
+    $(document).ready(function() {
+        populate_option('pngo_name',json);
+
+        $("#submit").on('click', function(){
+            console.log('Clicked');
+            send_filter();
+        });
+
+        var pngo_name = '';
+        var upzilla_name = '';
+        var union_name = '';
+
+        if ( data_json ){
+            populate_chart_data(data_json);
+            populate_table_data(data_json);
+            //console.log(chart_data);
+        }
+	$("#print").on('click', function(){
+            window.print();
+        });
+    });
+
+    function populate_chart_data(data_json){ 
+      x_axis_catag = '';
+      var data = {
+        columns:[
+          [null,'Fun center Girls-BP1','Fun center  Boys-BP2','Mothers (FC adolescent) -BP3','Fathers (FC Adolescent) -BP4','Role Model -BP5','EVAW Forum -BP6','CV-BP7','CF-BP8','Others-FF-BP9'],
+          ['Girls',data_json.girls,0,0,0,0,0,0,0,0],
+          ['Boys',0,data_json.boys,0,0,0,0,0,0,0],
+                ['Mothers',0,0,data_json.mothers,0,0,0,0,0,0],
+                ['Fathers',0,0,0,data_json.fathers,0,0,0,0,0],
+                ['Role Models',0,0,0,0,data_json.role_m,0,0,0,0],
+                ['EVAW Forums',0,0,0,0,0,data_json.evw_forum,0,0,0],
+                ['CV',0,0,0,0,0,0,data_json.cv,0,0],
+                ['CF',0,0,0,0,0,0,0,data_json.cf,0],
+                ['Others',0,0,0,0,0,0,0,0,data_json.other]
+        ]
+        };
+      createNewChart('column','chart-main-container',data,'Boundary Partnerwise','',x_axis_catag);
+    }
+
+    function populate_vdc(){
+        
+        pngo_name = document.getElementById("pngo_name").value;
+        //console.log(pngo_name);
+        populate_option('vdc_name',json[pngo_name]);
+        //console.log(json[pngo_name]);
+    }
+    
+    function populate_upzilla(){
+        
+        pngo_name = document.getElementById("pngo_name").value;
+        //console.log(pngo_name);
+        populate_option('upozilla_name',json[pngo_name]);
+        //console.log(json[pngo_name]);
+    }
+    function populate_union(){
+        //removeOptions('union_name');
+        upzilla_name = document.getElementById("upozilla_name").value;
+        //console.log(upzilla_name);
+        populate_option('union_name',json[pngo_name][upzilla_name]);
+    }
+    function populate_village(){
+        //removeOptions('village_name');
+        union_name = document.getElementById("union_name").value;
+       // console.log(json[pngo_name][upzilla_name][union_name]);
+        populate_option('village_name',json[pngo_name][upzilla_name][union_name]);
+    }
+
+    function populate_option(id,json_data){
+        removeOptions(id);
+        $.each(json_data, function(i, value) {
+            if(isArray(json_data)){
+                $('#'+id).append($('<option>').text(value).attr('value', value));    
+            }else{
+                $('#'+id).append($('<option>').text(i).attr('value', i));    
+            }
+            
+        });
+    }
+
+    function isArray(what) {
+        return Object.prototype.toString.call(what) === '[object Array]';
+    }
+
+    function removeOptions(elementID)
+    {
+        var selectbox = document.getElementById(elementID);
+        var i;
+        for(i=selectbox.options.length-1;i>0;i--)
+        {
+            selectbox.remove(i);
+        }
+    }
+
+    function getCurrentDate(){
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        if(dd<10) {
+            dd='0'+dd
+        } 
+
+        if(mm<10) {
+            mm='0'+mm
+        } 
+
+        today = yyyy+'-'+mm+'-'+dd;
+        return today;
+    }
+
+    function send_filter(){
+      var pngo = '%';
+      var upzilla ='%';
+      var union = '%';
+      var village = '%';
+      var vdc = '%';
+      var start_date = '2016-01-01';
+      var end_date = getCurrentDate();
+      var status = '%';
+      var url = '/care-reports/bd_obsrv_jrnal/';
+      if (document.getElementById('pngo_name') != null){
+          pngo = document.getElementById("pngo_name").value;
+      }
+      if (document.getElementById('upozilla_name') != null){
+          upzilla = document.getElementById("upozilla_name").value;
+      }
+      if (document.getElementById('union_name') != null){
+          union = document.getElementById("union_name").value;
+          union = replaceAll(union,' ','_');
+          // console.log(union);
+      }
+      if (document.getElementById('village_name') != null){
+          village = document.getElementById("village_name").value;
+          village = replaceAll(village,' ','_');
+          // console.log(village);
+      }
+      if (document.getElementById('vdc_name') != null){
+          vdc = document.getElementById("vdc_name").value;
+      }
+      if (document.getElementById('start_date') != null){
+          start_date = document.getElementById("start_date").value;
+          if (start_date === "")
+           start_date = '2016-01-01';
+      }
+      if (document.getElementById('end_date') != null){
+          end_date = document.getElementById("end_date").value;
+          if (end_date === "")
+           end_date = getCurrentDate();
+      }
+      if (document.getElementById('status_list') != null){
+          status = document.getElementById("status_list").value;
+      }
+      
+      var rpt_type = document.getElementById("rpt_type").value;
+       if (rpt_type == 'NP'){
+           url = '/care-reports/bd_obsrv_jrnal/'
+       }
+      var param_data = {
+              'pngo': pngo,
+              'upzilla': upzilla,
+              'union': union,
+              'village': village,
+              'vdc': vdc,
+              'status':status,
+              'start_date': start_date,
+              'end_date': end_date
+          }
+          console.log(param_data);
+          $.ajaxSetup({
+                 beforeSend: function(xhr, settings) {
+                     function getCookie(name) {
+                         var cookieValue = null;
+                         if (document.cookie && document.cookie != '') {
+                             var cookies = document.cookie.split(';');
+                             for (var i = 0; i < cookies.length; i++) {
+                                 var cookie = jQuery.trim(cookies[i]);
+                                 // Does this cookie string begin with the name we want?
+                                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                     break;
+                                 }
+                             }
+                         }
+                         return cookieValue;
+                     }
+                     if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                         // Only send the token to relative URLs i.e. locally.
+                         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                     }
+                 }
+            });
+              $.ajax({
+                    url: url, // form action url
+                    type: 'POST', // form submit method get/post
+                    dataType: 'json', // request type html/json/xml 
+                    data: param_data,
+                    
+                  success: function(result) {
+                     console.log(result);
+                     //document.getElementById("sec_staff_trans_table").innerHTML = result.staff_trans_table;
+                     if(result.hasOwnProperty("data_dict")){
+                          populate_chart_data(result.data_dict);
+                          populate_table_data(result.data_dict);
+                     }
+                     
+
+                     //console.log('result:'+ result);
+                      }
+                  });
+   }
+
+   function populate_table_data(data_json){
+      setTableCellData('major','Major Changes<br>('+data_json.major_chng_total+')');
+      setTableCellData('major_pos','Positive Changes<br>('+data_json.major_pos_neg[1]+')');
+      setTableCellData('major_neg','Negetive Changes<br>('+data_json.major_pos_neg[2]+')');
+      setTableCellData('maj_pos_exp',data_json.major_pos_exp_unexp[0]);
+      setTableCellData('maj_pos_unexp',data_json.major_pos_exp_unexp[1]);
+      setTableCellData('maj_neg_exp',data_json.major_neg_exp_unexp[0]);
+      setTableCellData('maj_neg_unexp',data_json.major_neg_exp_unexp[1]);
+
+      setTableCellData('important','Important Changes<br>('+data_json.imp_chng_total+')');
+      setTableCellData('imp_pos','Positive Changes<br>('+data_json.imp_pos_neg[1]+')');
+      setTableCellData('imp_neg','Negetive Changes<br>('+data_json.imp_pos_neg[2]+')');
+      setTableCellData('imp_pos_exp',data_json.imp_pos_exp_unexp[0]);
+      setTableCellData('imp_pos_unexp',data_json.imp_pos_exp_unexp[1]);
+      setTableCellData('imp_neg_exp',data_json.imp_neg_exp_unexp[0]);
+      setTableCellData('imp_neg_unexp',data_json.imp_neg_exp_unexp[1]);
+
+      setTableCellData('minor','Minor Changes<br>('+data_json.minor_chng_total+')');
+      setTableCellData('min_pos','Positive Changes<br>('+data_json.minor_pos_neg[1]+')');
+      setTableCellData('min_neg','Negetive Changes<br>('+data_json.minor_pos_neg[2]+')');
+      setTableCellData('min_pos_exp',data_json.minor_pos_exp_unexp[0]);
+      setTableCellData('min_pos_unexp',data_json.minor_pos_exp_unexp[1]);
+      setTableCellData('min_neg_exp',data_json.minor_neg_exp_unexp[0]);
+      setTableCellData('min_neg_unexp',data_json.minor_neg_exp_unexp[1]);
+
+      var total = data_json.major_chng_total + data_json.imp_chng_total + data_json.minor_chng_total;
+      setTableCellData('gt','<b>'+total);
+
+   }
+   function setTableCellData(id,innhtml){
+      var y = document.getElementById(id);
+      y.innerHTML = innhtml;
+   }
+
+   function escapeRegExp(str) {
+      return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    }
+   function replaceAll(str, find, replace) {
+     return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+   }
+
+
+</script>
+{% endblock %}

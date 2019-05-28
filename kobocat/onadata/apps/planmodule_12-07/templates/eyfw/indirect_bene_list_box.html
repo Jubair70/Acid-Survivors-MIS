@@ -1,0 +1,145 @@
+<!--<div class="row">
+    <div class="col-sm-2 col-md-2">
+      <div class="thumbnail">
+        <div class="caption" style=" background-color: #F16E22; color: #fff; text-align:right;min-height: 120px;">
+          <h3  style="color: #fff;">{{ dict_box.total }}</h3>
+          <p style="color: #fff;">Total Beneficiary</p>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2 col-md-2">
+      <div class="thumbnail">
+        <div class="caption" style=" background-color:#61A534; text-align:right; color:#FFF;min-height: 120px;">
+          <p style="font-size:16px; color: #fff;padding-top:10px;">Male: {{ dict_box.male }}%</p>
+          <p style="font-size:16px; color: #fff;">Female: {{ dict_box.female }}%</p>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2 col-md-2">
+      <div class="thumbnail">
+        <div class="caption" style=" background-color:#53297D;color: #fff; text-align:right;min-height: 120px;">
+          <h3  style="color: #fff;">{{ dict_box.soft }}</h3>
+          <p style="color: #fff;">Soft-Skills</p>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2 col-md-2">
+      <div class="thumbnail">
+        <div class="caption" style=" background-color:#FBC43A;color: #5b7066; text-align:right;min-height: 120px;">
+          <h3 style="color: #fff;">{{ dict_box.tech }}</h3>
+          <p style="color: #fff">Vocational Training</p>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3 col-md-3">
+      <div class="thumbnail">
+        <div class="caption" style=" background-color:#E43989;color: #314970; text-align:right;min-height: 120px;">
+          <h3 style="color: #fff;">{{ dict_box.entrepre }}</h3>
+          <p style="color: #fff;">Entrepreneurship Training</p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>-->
+  <!--new style-->
+     <div class="row">
+        <!--<h3 class="page-title">
+            Dashboard
+            <small>reports &amp; statistics</small>
+        </h3>-->
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat light-green-madison">
+                <div class="visual">
+                    <i class="fa fa-comments"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        {{ indirect_bene_total }}
+                    </div>
+                    <div class="desc">
+                        Total indirect
+                        beneficiary
+                    </div>
+                    <div class="desc">
+                        {{ indirect_bene_total_p }}%
+                    </div>
+                </div>
+                <a class="more" href="javascript:;"> 
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat purple-madison">
+                <div class="visual">
+                    <i class="fa fa-comments"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        {{ indirect_bene_male }}
+                    </div>
+                    <div class="desc">
+                        Male
+                    </div>
+                    <div class="desc">
+                        {{ indirect_bene_male_p }}%
+                    </div>
+                    <!--<div class="desc">
+                        Male: {{ dict_box.train_male }} | Female: {{ dict_box.train_female }}
+                    </div>-->
+                </div>
+                <a class="more" href="javascript:;">
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat green-madison">
+                <div class="visual">
+                    <i class="fa fa-comments"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        {{ indirect_bene_female }}
+                    </div>
+                    <div class="desc">
+                       Female
+                    </div>
+                    <div class="desc">
+                        {{ indirect_bene_female_p }}%
+                    </div>
+                    <!--<div class="desc">
+                        Youth Growth
+                    </div>-->
+                </div>
+                <a class="more" href="javascript:;">
+                    {#                    View more <i class="m-icon-swapright m-icon-white"></i>#}
+                </a>
+            </div>
+        </div>
+         <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat pink-madison">
+                <div class="visual">
+                    <i class="fa fa-comments"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        {{ num_activity }}
+                    </div>
+                    <div class="desc">
+                        No. of activity
+                    </div>
+                    <!--<div class="desc">
+                        Male: {{ dict_box.train_male }} | Female: {{ dict_box.train_female }}
+                    </div>-->
+                </div>
+                <a class="more" href="javascript:;">
+                </a>
+            </div>
+        </div>
+    </div>
+    <!--new styleended-->

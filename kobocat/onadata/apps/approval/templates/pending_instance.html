@@ -1,0 +1,305 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+
+{% block additional-headers %}
+<head>
+    <title>
+        {% block title %} Pending Instances {% endblock %}
+    </title>
+</head>
+{% load i18n %}
+<style>
+    .pager .previous>a, .pager .previous>span{ float:none; }
+    .pager .next>a, .pager .next>span{ float:none; }
+    .pager{ float:right; }
+</style>
+<!-- <div class="sub-header-bar">
+  <div class="container__wide">
+    <a class="sub-header__back" href="{% url "onadata.apps.main.views.show" xform.user.username xform.id_string %}"><i class="fa fa-chevron-left"></i> {{ xform.title }}</a> 
+    <a href="{% url "onadata.apps.viewer.views.data_view" username id_string %}"><i class="fa fa-chevron-left"></i> {% trans "Data View" %}</a>
+  </div>
+</div> -->
+
+<!-- <header class="data-page__header">
+    <hgroup class="container">
+      <h1>{% trans "Browse Form Data" %}</h1>
+    </hgroup>
+</header> -->
+
+{% endblock %}
+
+{% block content %}
+{% load i18n %}
+<div id="loading">
+  <p> {% trans "Loading..." %} </p>
+  <img id="loading-image" src="{{STATIC_URL}}images/ajax-loader.gif" alt="Loading..." />
+</div>
+{% if messages %}
+<div>{{messages}}</div>
+{% endif %}
+<div id="data"></div>
+
+ <div id="delete-modal" class="modal hide fade">
+            <div class="modal-header">
+              <a data-dismiss="modal" class="close">&times;</a>
+              <h3>{% trans "Delete Confirmation" %}</h3>
+            </div>
+            <div class="modal-body">
+              <p>{% trans "Are you sure you want to delete this record. If you are unsure about deleting this record press 'Cancel'." %}</p>
+            </div>
+            <div class="modal-footer">
+              <a href="#" onclick="$('#delete-modal').modal('hide');" class="btn btn-danger">{% trans "Delete" %}</a>
+              <a href="#" onclick="$('#delete-modal').modal('hide');" class="btn">{% trans "Cancel" %}</a>
+            </div>
+          </div>
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.dataTables.pagination.js"></script>
+<script type="text/javascript" charset="utf-8" src="{{STATIC_URL}}js/sammy-0.7.1.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="{{STATIC_URL}}js/sammy-plugins/sammy.meld-0.7.1.min.js"></script>
+
+<script type="text/javascript">
+var formJSONUrl = "{% url "onadata.apps.logger.views.download_jsonform" username id_string %}";
+var mongoAPIUrl = "{% url "onadata.apps.main.views.api" username id_string %}";
+var deleteAPIUrl = "{% url "onadata.apps.main.views.delete_data" username id_string %}";
+var app; // sammy app
+var questions = {};
+var languages = [];
+// TODO: this re should only accept valid js variable names so numbers/letter/underscore
+var cleanRe = /[\[\]\/]/g; // regular expression used to clean names with slashes
+var cleanReplacement = '_';
+var positionTpl = "{% trans 'Record {pos} of {total}' %}";
+var numRecords = null;
+var browsePos = null;
+
+var canEdit = {% if can_edit %}true;{% else %}false;{% endif %}
+
+(function($) {
+
+  var _isFirstLoad = true
+
+  app = $.sammy('#data', function() {
+      this.use('Meld');
+
+      // index route
+      this.get('#/', function(context) {
+          /// get the first response object
+          // only re-direct if this is the first time
+          if(_isFirstLoad)
+              redirectToFirstId(context)
+          else
+              history.go(-2)// we first load instance, then redirect to instance#/ then to instance#/:id s we need to go back 2
+          _isFirstLoad = false
+      });
+
+      // #/id <route></route>
+      this.get('#/:id', function(context) {
+          var id = this.params['id'];
+          var query = '{"_id": ' + id + '}';
+          _isFirstLoad = false
+          loadData(context, query, canEdit);
+      });
+
+      // #uuid/uuid route
+      this.get('#uuid/:uuid', function(context) {
+          var uuid = this.params['uuid'];
+          var query = '{"_uuid": "' + uuid + '"}';
+          _isFirstLoad = false
+          loadData(context, query, canEdit);
+      });
+
+
+      // Delete modal
+      this.get('#del/:id', function(context) { with(this) {
+            //38#del/38
+            $("#delete-modal").modal("show");
+
+      }
+      });
+
+
+      // Delete route
+      this.get('#delete/:id', function(context) {
+            //38#/38
+          var id = this.params['id']; // 38
+          var next = $('li.next').children('a').attr('href');
+          next = next.replace("#/", "");
+          console.log("next:" + next);
+          var prev = $('li.prev').children('a').attr('href');
+          console.log("prev:" + prev);
+          prev = prev.replace("#/", "");
+          var redirect_route = '#/';
+
+          if(next > 0 && next != id ){
+              redirect_route = '#/'  + next;
+          }
+          else if(prev > 0 && prev != id ){
+              redirect_route = '#/'  + prev;
+          }
+          else {
+              // Deleting the last instance
+              redirect_route ='#data-view/';
+          }
+          console.log("redirect_route:" + redirect_route);
+          console.log("context:" + context);
+          deleteData(context, id, redirect_route);
+      });
+
+      this.bind('error', {}, function(){
+          //alert('Invalid route requested')
+          //app.setLocation('#/');
+      })
+
+      // Redirect to Data View route
+      this.get('#data-view/', function(context) {
+          window.location.href = '{% url "onadata.apps.viewer.views.data_view" username id_string %}';
+      });
+
+  });
+
+  /// load form structure
+  $.getJSON(formJSONUrl)
+      .success(function(data){
+              parseQuestions(data.children);
+              parseLanguages(data.children);
+              // load count
+              $.getJSON(mongoAPIUrl, {'count': 1})
+                  .success(function(data){
+                          //todo: count num records before and num records after so we know our starting point
+                          numRecords = data[0]["count"];
+                          // load id of first record
+                          app.run('#/');
+                      })
+          });
+
+})(jQuery);
+
+function _attachment_url(name, size)
+{
+    return '{% url "onadata.apps.viewer.views.attachment_url" %}' + size + '?media_file=' + '{{ username }}/attachments/' + name;
+}
+
+</script>
+
+<script type="text/javascript" charset="utf-8" src="{{STATIC_URL}}js/pending_instance.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#loading')
+        .ajaxStart(function() {
+            $(this).show();
+        })
+        .ajaxStop(function() {
+            $(this).hide();
+        });
+});
+
+$(document.body).on("click",'#approve', function (event) {
+
+	var instance_id = $("#instance_id").val()	
+	var notes_url = '/data/approve'
+	var user = "{{username}}"
+	var formid = "{{id_string}}"
+	note = $("#note").val().trim();
+    console.log("Note: " + note);
+	$(this).remove()
+	$("#reject").remove()
+
+	post_data = {'submissionid': instance_id,'userid':user,'formid':formid, 'note':note};
+	$.ajax({
+           url: notes_url,
+           type: "POST",
+           data: post_data,
+           statusCode: {
+                    404: function(){
+                       
+                    }
+                }
+         }).done(function(data){
+               addOrEditNote();
+               $('#note').remove()
+        });
+	return false;  
+    
+ });
+
+
+function addOrEditNote(){
+        console.log('testing addorEditNote')
+        var user = "{{username}}"
+        var instance_id = $("#instance_id").val(),
+            note = $("#note").val().trim();
+        if (note == ""){
+            return false;
+        }
+        var notes_url = '/api/v1/notes',
+            post_data = {'note': note, 'user_id':user, 'instance': instance_id};
+        if($("#notesform #note-id").val() != undefined){
+            // Edit Note
+            post_data.pk = $("#notesform #note-id").val();
+            notes_url += "/" + post_data.pk;
+            $.ajax({
+                url: notes_url,
+                type: "PUT",
+                data: post_data,
+                statusCode: {
+                    404: function(){
+                        alert("Note \"" + note + "\" not found or already deleted.");
+                        app.refresh();
+                    }
+                }
+            }).done(function(data){
+                $("#notesform")[0].reset();
+                $("#notesform #note-id").remove();
+                app.refresh();
+            });
+        } else {
+            // Add New Note
+            $.post(notes_url, post_data).done(function(data){
+                $("#notesform")[0].reset();
+                app.refresh();
+            }).fail(function(data){console.log(data);})
+        }
+        return false;
+    }
+
+
+ $(document.body).on("click",'#reject', function (event) {
+    console.log("Clicked on Reject button");
+	var instance_id = $("#instance_id").val()
+	var reject_url = '/data/reject'
+	var user = "{{username}}"
+	var formid = "{{id_string}}"
+	$(this).remove()
+	$("#approve").remove()
+	post_data = {'submissionid': instance_id,'userid':user,'formid':formid};
+	$.ajax({
+           url: reject_url,
+           type: "POST",
+           data: post_data,
+           statusCode: {
+                    404: function(){
+                    }
+                }
+         }).done(function(data){
+            addOrEditNote();
+            $('#note').remove()
+        });
+	return false;
+ });
+
+ $(document).ready(function() {
+    console.log("ready : {{is_approved_or_reject}}");
+    window.is_approved_or_reject = {{is_approved_or_reject}}
+    if({{is_approved_or_reject}}){
+        console.log( "Yes working..!");
+        $("#reject").remove()
+        $("#approve").remove()
+    }
+ });
+
+</script>
+{% endblock %}

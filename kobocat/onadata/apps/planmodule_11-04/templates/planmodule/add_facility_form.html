@@ -1,0 +1,261 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+   <link href="/static/css/bootstrap-datepicker.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> Facility Registration Form
+            </div>
+        </div>
+
+        <div class="portlet-body">
+            <form class="horizontal-form" id="" method="post" action="/planmodule/insert_facility_form/" id="form"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label >Date: </label>
+                                <input type="text" class="datepicker form-control" name="registration_date" id="registration_date" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label >District: </label>
+                                <select class="form-control" name="district" id="district" onclick="load_upazila(this)" required>
+                                        <option value="">Select One</option>
+                                        {% for dist_id,dist_name in district %}
+                                            <option value="{{ dist_id }}">{{ dist_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label >Upazila: </label>
+                                <select class="form-control" name="upazila" id="upazila" onclick="load_union(this)" required>
+                                    <option value="">Select One</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+{#                    <div class="row">#}
+{#                        <div class="col-md-5">#}
+{#                            <div class="form-group">#}
+{#                                <label >Union: </label>#}
+{#                                <select class = "form-control" name="union" id="union" required>#}
+{#                                <option value="">Select One</option>#}
+{#                                </select>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label >Facility type:  </label>
+                                <select class="form-control" name="facility_type" id="facility_type" required>
+                                    <option value="">Select One</option>
+                                    <option value="1">FWC</option>
+                                    <option value="2">CC</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="Facility Name">Facility Name:</label>
+                                <input type="text" class="form-control" name="facility_name" id="facility_name"
+                                        required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="facilty_id">ID Number:</label>
+                                <input type="text" class="form-control" name="facility_id" id="facility_id"
+                                        required>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="">PNGO:</label>
+                                <textarea class="form-control" readonly>{{  org_name }}</textarea>
+                                <input type="hidden" class="form-control" name="org_id" id="org_id"
+                                     value="{{ org_id }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-danger pull-left" id="submit" name="submit" type="submit"
+                                    data-original-title=""
+                                    title="">Submit
+                            </button>
+                            <button onclick="history.go(-1);" style="margin-left:10px;" type="button"
+                                    class="btn btn-info pull-left" data-original-title="" title="">Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block additional-javascript %}
+
+    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+    <script>
+
+
+        function ajaxcall() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                }
+            });
+        }
+
+
+        function load_upazila(dist_object) {
+            ajaxcall();
+            dist = parseInt(dist_object.value)
+            console.log(dist);
+            if (isNaN(parseFloat(dist))) {
+                $('#upazila').html("<option value=\"\">Select One</option>");
+            }
+            else {
+
+                $.ajax({
+                    url: '/planmodule/getUpazilas/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'dist': dist},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#upazila').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+        function load_union(upz_object) {
+            ajaxcall();
+            upz = parseInt(upz_object.value)
+            console.log(upz);
+            if (isNaN(parseFloat(upz))) {
+                $('#union').html("<option value=\"\">Select One</option>");
+            }
+            else {
+
+                $.ajax({
+                    url: '/planmodule/getUnions/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'upz': upz},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#union').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+        $(function () {
+            $('#registration_date').datepicker({
+                endDate: '0d',
+                format: 'yyyy-mm-dd',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+
+        });
+
+        function getDesiredDate(n) {
+            var today = new Date();
+            var n_month_before_today = new Date(today);
+            n_month_before_today.setMonth((today.getMonth() + 1) - n);
+            var dd = n_month_before_today.getDate();
+            var mm = n_month_before_today.getMonth() + 1;
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            var yyyy = n_month_before_today.getFullYear();
+            formatted_date = yyyy + '-' + mm + '-' + dd;
+            return formatted_date;
+        }
+{#        $('#registration_date').val(getDesiredDate(2));#}
+
+    </script>
+
+{% endblock %}

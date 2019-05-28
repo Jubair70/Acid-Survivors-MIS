@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+
+
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>KoBoToolbox </title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/x-icon" href="/static/img/favicon.ico" />
+<!-- iPhone + iPad icons -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/img/apple-touch-icon-114x114.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/img/apple-touch-icon-72x72-precomposed.png">
+<link rel="apple-touch-icon-precomposed" href="/static/img/apple-touch-icon-precomposed.png">
+<link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
+
+
+
+    <script src="/static/js/jquery-1.10.2.js"></script>
+    <script src="/static/js/validator.js"></script>
+    <link rel="stylesheet" href="/static/kobo.compiled/kobo.css" />
+
+</head>
+<body style="background-image:url('{{STATIC_URL}}/images/signup_photo.jpg'); background-size: cover;">
+
+<div class="registration__bg">
+        <form id="login_form" method="post" action="/usermodule/login/">
+            <div class="registration&#45;&#45;logo"><a href="/usermodule/login/"><img  width="300" src="{{STATIC_URL}}/images/kobologo.svg"/></a></div>
+            {% csrf_token %}
+            Username: <input type="text" name="username" value="" size="20" />
+            <br />
+            Password: <input type="password" name="password" value="" size="20" />
+            <br />
+
+            <input type="submit" value="submit" />
+        </form>
+  <div class="registration__credit"><a href="https://flic.kr/p/9v4mC5" title="Muhkjar refugee camp" target="_blank">Photo</a> by UNAMID / <a src="{{STATIC_URL}}/images/signup_photo.jpg" target="_blank">by-nc-nd</a></div>
+</div>
+</body>
+</html>

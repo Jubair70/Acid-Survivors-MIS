@@ -1,0 +1,76 @@
+{% load crispy_forms_tags %}
+<style>
+    label {
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .fa-plus-square, .fa-times{
+        cursor: pointer;
+    }
+
+    .link-formset {
+        display: -webkit-inline-box;
+        background-color: #eee;
+        margin-top: 15px;
+        padding-top: 15px;
+        padding-right: 15px;
+    }
+
+    input.error, select.error {
+        background-color: #f2dede;
+    }
+
+    label.error {
+        color: #FF0000;
+        font-size: 10px;
+        position: absolute;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+</style>
+<div class="col-md-offset-0 col-md-12">
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> Household
+            </div>
+            <div class="tools">
+                <a href="javascript:;" class="collapse"></a>
+                <a href="javascript:;" class="reload" onclick="reload_form();"></a>
+                <a href="javascript:;" class="remove"></a>
+            </div>
+        </div>
+        <div class="portlet-body form">
+            <form id="add_household_form" class="horizontal-form" method="post" {% if HOUSEHOLD_EDIT_ID %}
+                  action="/hhmodule/edit_household/{{ HOUSEHOLD_EDIT_ID }}/"  {% else %}
+                  action="/hhmodule/add_household/"  {% endif %}  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-body">
+                    <!-- ******************ADD Household**************************-->
+                    {% crispy household_form household_form.helper %}
+
+
+                    {{ hhMember_formSet.management_form }}
+                    {% for member_form in hhMember_formSet %}
+                        <div class="link-formset">
+                            {% crispy member_form member_form.helper %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="form-actions">
+                    <input type="submit" value="Save" class="btn red pull-right"/>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% block additional-javascript %}
+
+
+    <script>
+    </script>
+{% endblock %}

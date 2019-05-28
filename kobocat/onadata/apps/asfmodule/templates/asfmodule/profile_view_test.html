@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html ng-app="myApp" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/css/bootstrap-select.min.css"/>
+    <link href="{{ STATIC_URL }}assets/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ STATIC_URL }}assets/css/style-metronic.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ STATIC_URL }}assets/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ STATIC_URL }}assets/css/style-responsive.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ STATIC_URL }}assets/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ STATIC_URL }}css/vex.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/vex-theme-kobo.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}assets/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
+    <link href="{{ STATIC_URL }}assets/css/custom.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .fa-plus-circle, .fa-minus-circle {
+            cursor: pointer;
+        }
+
+        .field_error {
+            color: #ff0000;
+            position: absolute;
+            font-size: 12px;
+        }
+
+        .iterator_fields {
+            display: inline-block;
+            background-color: #eee;
+            margin-top: 15px;
+            padding-top: 15px;
+            padding-right: 15px;
+        }
+
+        .form-control-feedback {
+            right: 10px;
+        }
+
+        .form-label {
+            font-weight: 600 !important;
+            font-size: 24px;
+            text-align: center;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #222;
+        }
+
+        label {
+            font-weight: 600;
+        }
+
+        #loading {
+            width: 12%;
+            margin: 0 AUTO;
+        }
+
+        .modal-backdrop {
+            z-index: 0 !important;
+        }
+        .modal-backdrop, .modal-backdrop.fade.in {
+    background-color: transparent !important;
+}
+    </style>
+</head>
+<body class="page-header-fixed page-footer-fixed" ng-controller="myCtrl as vms">
+<!-- BEGIN HEADER -->
+<div class="header navbar navbar-inverse navbar-fixed-top">
+    <!-- BEGIN TOP NAVIGATION BAR -->
+    <div class="header-inner">
+        <!-- BEGIN LOGO -->
+        <a class="navbar-brand" href="/">
+            <img alt="" src="{{ STATIC_URL }}images/login_box_logo.png" width="auto" height="29"/>
+        </a>
+        <!-- END LOGO -->
+        <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+        <a href="javascript:;" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <img src="{{ STATIC_URL }}assets/img/menu-toggler.png" alt=""/>
+        </a>
+        <!-- END RESPONSIVE MENU TOGGLER -->
+        <!-- BEGIN TOP NAVIGATION MENU -->
+        <ul class="nav navbar-nav pull-right">
+            <!-- BEGIN USER LOGIN DROPDOWN -->
+            <li class="dropdown user">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
+                   data-close-others="true">
+                    <img alt="" src="{{ STATIC_URL }}assets/img/avatar1_small.jpg"/>
+                    <span class="username">{{ request.user|capfirst }}</span>
+                    <i class="fa fa-angle-down"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="http://support.kobotoolbox.org/"><i class="fa fa-headphones"></i> Support</a></li>
+                    <!--<li class="divider"></li>-->
+                    <li><a href="{% url "auth_logout" %}"><i class="fa fa-sign-out"></i> Sign Out</a></li>
+                </ul>
+            </li>
+            <!-- END USER LOGIN DROPDOWN -->
+        </ul>
+        <!-- END TOP NAVIGATION MENU -->
+    </div>
+    <!-- END TOP NAVIGATION BAR -->
+</div>
+<!-- END HEADER -->
+<div class="clearfix"></div>
+<!-- BEGIN CONTAINER -->
+<div class="page-container" >
+    <!-- BEGIN SIDEBAR -->
+    {% include "topbar_test.html" %}
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Form</h4>
+                    </div>
+                    <div class="modal-body"  >
+{#                        <div style="display: flex;" class="input_fields_wrap" ><form id="dynamic_form" novalidate="" method="post" name="dynamic_form" ><div id="mainDiv" ><div class="col-lg-6" ><div class="form-group" ><label >পিএনজিও</label><input ng-model="vms.model.pngo" name="pngo" validation-error-to="pngo_error" validation="required" type="text" class="form-control" /><span class="field_error" id="pngo_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >জেলা</label><select ng-model="vms.model.district" name="district" ng-change="getExternalOptions('/planmodule/get_upazilas/',vms.model.district, 'opt_upazila')" validation-error-to="district_error" validation="required" class="form-control" ><option value="" >-- Select --</option><option value="85" >Rangpur</option></select><span class="field_error" id="district_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >উপজেলা</label><select ng-model="vms.model.upazila" name="upazila" ng-options="option.value as option.name for option in opt_upazila" ng-change="getExternalOptions('/planmodule/get_unions/',vms.model.upazila, 'opt_union_name')" validation-error-to="upazila_error" validation="required" class="form-control" ><option value="" >-- Select --</option></select><span class="field_error" id="upazila_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >ইউনিয়ন</label><select ng-model="vms.model.union_name" name="union_name" ng-options="option.value as option.name for option in opt_union_name" ng-change="getExternalOptions('/planmodule/get_villages/',vms.model.union_name, 'opt_village')" validation-error-to="union_name_error" validation="required" class="form-control" ><option value="" >-- Select --</option></select><span class="field_error" id="union_name_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >গ্রাম</label><select ng-model="vms.model.village" name="village" ng-options="option.value as option.name for option in opt_village" ng-change="getExternalOptions('/planmodule/get_paras/',vms.model.village, 'opt_para')" validation-error-to="village_error" validation="required" class="form-control" ><option value="" >-- Select --</option></select><span class="field_error" id="village_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >পাড়া</label><select ng-model="vms.model.para" name="para" ng-options="option.value as option.name for option in opt_para" validation-error-to="para_error" validation="required" class="form-control" ><option value="" >-- Select --</option></select><span class="field_error" id="para_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >বাবার নাম</label><input ng-model="vms.model.father_name" name="father_name" validation-error-to="father_name_error" validation="" type="text" class="form-control" /><span class="field_error" id="father_name_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >মায়ের নাম</label><input ng-model="vms.model.mother_name" name="mother_name" validation-error-to="mother_name_error" validation="" type="text" class="form-control" /><span class="field_error" id="mother_name_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >সার্ভাইভারের (কিশোর-কিশোরী) নাম</label><input ng-model="vms.model.adolescent_name" name="adolescent_name" validation-error-to="adolescent_name_error" validation="required" type="text" class="form-control" /><span class="field_error" id="adolescent_name_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >সার্ভাইভারের (কিশোর-কিশোরী) আইডি</label><input ng-model="vms.model.id_adolescent" name="id_adolescent" validation-error-to="id_adolescent_error" validation="required" type="text" class="form-control" /><span class="field_error" id="id_adolescent_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >লিঙ্গ</label><select validation-error-to="sex_error" class="form-control" validation="required" name="sex" ng-model="vms.model.sex" ><option value="" >-- Select --</option><option value="1" >ছেলে</option><option value="2" >মেয়ে</option><option value="3" >অন্যান্য</option></select><span class="field_error" id="sex_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >জন্ম তারিখ</label><input ng-model="vms.model.date_birth" name="date_birth" validation-error-to="date_birth_error" validation="required" type="text" class="form-control" /><span class="field_error" id="date_birth_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >জন্মস্থান</label><input ng-model="vms.model.birth_place" name="birth_place" validation-error-to="birth_place_error" validation="required" type="text" class="form-control" /><span class="field_error" id="birth_place_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >জন্ম নিবন্ধন আছে কি না?</label><select validation-error-to="birth_reg_error" class="form-control" validation="required" name="birth_reg" ng-model="vms.model.birth_reg" ><option value="" >-- Select --</option><option value="0" >না</option><option value="1" >হ্যা</option></select><span class="field_error" id="birth_reg_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >বাল্যবিবাহ প্রতিরোধের তারিখ</label><div class="input-group" ><input ng-model="vms.model.date_child_marriage_prevented" validation="" name="date_child_marriage_prevented" is-open="vms.isDatePickerOpen_date_child_marriage_prevented" class="datepicker form-control" max-date="vms.maxDate" readonly="" datepicker-popup="yyyy/MM/dd" min-date="vms.minDate" ng-change="parseCustomConstraints(vms.model.date_child_marriage_prevented,'.<=today()', 'root', -1, 'date_child_marriage_prevented','Future date not allowed')" datepicker-options="vms.dateOptions" validation-error-to="date_child_marriage_prevented_error" type="text" datepicker-mode="day" /><span class="input-group-btn" > <button data-ng-click="vms.openDatePicker($event,'isDatePickerOpen_date_child_marriage_prevented')" type="button" class="btn btn-default" > <i class="glyphicon glyphicon-calendar" ></i></button></span></div><span class="field_error" id="date_child_marriage_prevented_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >বিবাহের প্রস্তাবিত তারিখ</label><div class="input-group" ><input ng-model="vms.model.date_proposed_marriage" validation="" name="date_proposed_marriage" is-open="vms.isDatePickerOpen_date_proposed_marriage" class="datepicker form-control" max-date="vms.maxDate" readonly="" datepicker-popup="yyyy/MM/dd" min-date="vms.minDate" ng-change="parseCustomConstraints(vms.model.date_proposed_marriage,'.>=${date_child_marriage_prevented}', 'root', -1, 'date_proposed_marriage','বাল্যবিবাহ প্রতিরোধের তারিখ বা পরের তারিখ হবে')" datepicker-options="vms.dateOptions" validation-error-to="date_proposed_marriage_error" type="text" datepicker-mode="day" /><span class="input-group-btn" > <button data-ng-click="vms.openDatePicker($event,'isDatePickerOpen_date_proposed_marriage')" type="button" class="btn btn-default" > <i class="glyphicon glyphicon-calendar" ></i></button></span></div><span class="field_error" id="date_proposed_marriage_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >বাল্যবিবাহ প্রতিরোধে জড়িত ব্যক্তি বা গ্রুপের নাম</label><input ng-model="vms.model.person_involved_prevent" name="person_involved_prevent" validation-error-to="person_involved_prevent_error" validation="required" type="text" class="form-control" /><span class="field_error" id="person_involved_prevent_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >মন্তব্য</label><input ng-model="vms.model.remarks" class="form-control" type="text" name="remarks" validation-error-to="remarks_error" /><span class="field_error" id="remarks_error" ></span></div></div><div class="col-md-12" > <input ng-disabled="dynamic_form.$invalid" ng-click="uploadPic(vms.model);" type="submit" class="btn btn-primary" value="Submit" /> </div></div></form></div>#}
+
+
+                    </div>
+
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <h3 class="form-label" ng-click="test()"><strong>Victim Profile</strong></h3>
+        </div>
+        <div id="container"  ></div>
+        <div id="containers"   ></div>
+        <!-- END PAGE CONTENT-->
+    </div>
+    <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+{% include "footer_test.html" %}
+<!-- END FOOTER -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-route.js"></script>
+<script src="{{ STATIC_URL }}vendor/angular-translate/angular-translate.min.js"></script>
+<script src="{{ STATIC_URL }}vendor/angular-translate/angular-translate-loader-static-files.min.js"></script>
+<script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.2.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="{{ STATIC_URL }}assets/plugins/jquery.cookie.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}vendor/ghiscoding/angular-validation.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/XMLWriter.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/xml2json.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+<script src="https://angular-file-upload.appspot.com/js/ng-file-upload-shim.js"></script>
+<script src="https://angular-file-upload.appspot.com/js/ng-file-upload.js"></script>
+
+
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.slimscroll.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.tablesorter.min.js"></script>
+
+
+<script type="text/javascript">
+    var id_string = '{{ id_string }}';
+
+    function generateXML(inputObj, instance_id) {
+        console.log()
+        var xw = new XMLWriter('UTF-8');
+        xw.writeStartDocument();
+        xw.writeStartElement(id_string);
+        xw.writeAttributeString('id', id_string);
+        xw.writeStartElement('formhub');
+        xw.writeStartElement('uuid');
+        xw.writeString('{{ form_uuid }}');
+        xw.writeEndElement();
+        xw.writeEndElement();
+        for (var ppx in inputObj) {
+            xmlrecursive(xw, ppx, inputObj[ppx]);
+        }
+        xw.writeStartElement('meta');
+        xw.writeStartElement('instanceID');
+        xw.writeString('uuid:' + guid());
+        xw.writeEndElement();
+        console.log(type(instance_id))
+        if (instance_id != '' && type(instance_id) != 'undefined') {
+            var uuid = jsonObj[id_string].meta.instanceID.split(':')[1];
+            xw.writeStartElement('deprecatedID');
+            xw.writeString('uuid:' + uuid);
+            xw.writeEndElement();
+        }
+        xw.writeEndElement();
+        xw.writeEndElement();
+        xw.writeEndDocument();
+        var xml = xw.flush();
+        xw = undefined;
+        return xml;
+    }
+
+    function xmlrecursive(xml, key, value) {
+        if (typeof value !== "undefined") {
+            if (typeof value === "object" && Array.isArray(value) != true) {
+                //get rid of root elements
+                if (key.indexOf("_q_") >= 0) {
+                    key = key.split('_q_')[0];
+                }
+                //get rid of parent elements
+                if (key.indexOf("__") >= 0) {
+                    key = key.split("__")[key.split("__").length - 1]
+                }
+                //start writing element
+                xml.writeStartElement(key);
+                for (var idx in value) {
+                    //if element has children then recursively call again
+                    xmlrecursive(xml, idx, value[idx]);
+                }
+                xml.writeEndElement();
+            } else {
+                //get rid of parent elements
+                if (key.indexOf("__") >= 0) {
+                    key = key.split("__")[key.split("__").length - 1]
+                }
+                //start writing element
+                xml.writeStartElement(key);
+                //check for array type of multiple select
+                if (Array.isArray(value) == true) {
+                    value = value.join(" ");
+                }
+                xml.writeString(value);
+                xml.writeEndElement();
+            }
+        }
+    }
+
+    var app = angular.module('myApp', ['ghiscoding.validation', 'ui.bootstrap', 'ngFileUpload']);
+
+
+    app.config(['$compileProvider', function ($compileProvider) {
+        $compileProvider.debugInfoEnabled(false);
+    }]).config(['$translateProvider', function ($translateProvider) {
+        $translateProvider.useStaticFilesLoader({
+            prefix: '{{ STATIC_URL }}locales/validation/',
+            suffix: '.json'
+        });
+        // load English ('en') table on startup
+        $translateProvider.preferredLanguage('en').fallbackLanguage('en');
+        $translateProvider.useSanitizeValueStrategy('escapeParameters');
+    }]).config(function ($interpolateProvider) {
+        $interpolateProvider.startSymbol('{$');
+        $interpolateProvider.endSymbol('$}');
+    });
+
+
+
+    app.controller('myCtrl', ['$scope', 'ValidationService', '$http', 'Upload', '$timeout','$compile','$sce', function ($scope, ValidationService, $http, Upload, $timeout, $compile, $sce) {
+
+        var vms = this;
+        vms.model = {};
+        var vs = new ValidationService({controllerAs: vms});
+
+        vms.isChangeDatePickerOpen1 = false;
+        vms.isChangeDatePickerOpen2 = false;
+        vms.datePickerFormat = 'dd/MM/yyyy';
+        vms.dateOptions = {formatYear: 'yy'};
+
+        vms.minDate = new Date(); // 10 years ago
+        vms.minDate.setHours(0, 0, 0, 0);
+        vms.minDate.setMonth(vms.minDate.getMonth() - 12 * 10);
+        vms.maxDate = new Date(); // now
+        vms.maxDate.setHours(0, 0, 0, 0);
+
+        this.openDatePicker = function ($event, identifier) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            vms[identifier] = true;
+        };
+
+        vms.model.country = 'Bangladesh';
+        vms.model.language = 'bangla';
+
+        $scope.data = {
+            names: [{name: ""}]
+        };
+
+
+        $scope.test = function () {
+{#            str = $('<h1 ng-click="test1()">HA HA</h1>').appendTo('#containers');#}
+{#            $scope.trustedHtml = $sce.trustAsHtml(str);#}
+
+{#            $compile(str)($scope);#}
+        };
+
+        $scope.test1 = function () {
+            console.log("ojd")
+        }
+
+
+
+        $scope.load_forms_list = function (category_id) {
+            victim_id = {{ victim_id | safe }};
+
+            console.log(category_id,victim_id)
+{#            jQuery('#form' + category_id).popover();#}
+
+            $http({
+                method: 'POST',
+                url: '/asf/get_forms_list/',
+                params: {'category_id': category_id, 'victim_id': victim_id}
+
+            }).then(function (response) {
+                var str = JSON.parse(response.data);
+                $('.modal-body').html("");
+                $compile($(str).appendTo('.modal-body'))($scope);
+{#                console.log($ ('#form' + category_id).data('content'));#}
+{#                $compile(jQuery('#form' + category_id).attr('data-content',str))($scope);#}
+                console.log(jQuery('#form' + category_id));
+{#                jQuery('#form' + category_id).popover('show');#}
+
+            }, function (error) {
+
+            });
+
+        }
+
+        $scope.load_forms_html =  function (form_id) {
+            console.log(form_id);
+            $http({
+                method: 'POST',
+                url: '/asf/get_forms_html/',
+                params: {'form_id': form_id}
+
+            }).then(function (response) {
+
+               console.log(response.data.form_html)
+                $('.modal-body').html("");
+                var str =  response.data.form_html;
+                $compile($(str).appendTo('.modal-body'))($scope);
+                $('#myModal').modal('show');
+
+            }, function (error) {
+
+            });
+
+
+
+                {#                  console.log(angular.element('div[ng-controller="myCtrl"]'));#}
+{#                console.log(htmlElement);#}
+{#                                  $compile(divElement)($scope);#}
+{#                                  console.log(angular.element(document.querySelector('myCtrl')).scope().reload());#}
+                {#                  dom_tree = JSON.parse(result.dom_tree);#}
+        {#console.log(dom_tree)#}
+    }
+
+
+
+        $scope.username = '{{ request.user.username }}';
+
+        $scope.addRow = function (index) {
+            var name = {name: ""};
+            if ($scope.data.names.length <= index + 1) {
+                $scope.data.names.splice(index + 1, 0, name)
+                ;
+            }
+
+        };
+
+        $scope.deleteRow = function ($event, name) {
+            var index = $scope.data.names.indexOf(name);
+            if ($event.which == 1)
+                $scope.data.names.splice(index, 1);
+        };
+
+        function replaceAll(str, mapObj) {
+            var re = new RegExp(Object.keys(mapObj).join("|"), "gi");
+            return str.replace(re, function (matched) {
+                return mapObj[matched.toLowerCase()];
+            });
+        }
+
+        $scope.parseCustomConstraints = function (selectedValue, rule, root, nIndex) {
+            replacedRule = replaceAll(rule.replace(/\./g, selectedValue), {'and': '&&', 'or': '||'});
+            console.log(selectedValue, replacedRule, root, nIndex);
+            if (rule.match(/\(([^)]+)\)/)) {
+                if (root == 'root') {
+                    replacedRule = replacedRule.replace(/\$\{/g, 'vms.model.')
+                    replacedRule = replacedRule.replace(/\}/g, '')
+                } else {
+                    replacedRule = replacedRule.replace(/\$\{/g, 'vms.model.' + root + '__')
+                    replacedRule = replacedRule.replace(/\}/g, '[' + nIndex + ']')
+                }
+            }
+        };
+
+
+        var domTree = {};
+
+        $scope.opt_upazila = [];
+        $scope.opt_union_name = [];
+        $scope.opt_village = [];
+        $scope.opt_para = [];
+        var inputStore = {};
+        $scope.ct = Math.floor(Date.now() / 1000);
+
+        $scope.save = function () {
+            var edit_instance_id = angular.element(document.querySelector('#edit_instance_id')).val();
+            angular.forEach($scope.dynamic_form, function (element, name) {
+                if (!name.startsWith('$')) {
+                    if (name.indexOf('__') > 0) {
+                        var child_name = name.substring(0, name.lastIndexOf("__"));
+                    } else {
+                        var child_name = name;
+                    }
+                    var parent = domTree[child_name];
+
+                    if (typeof element.$viewValue == 'object') {
+                        var element_to_save = $scope.ct.toString() + '_' + $scope.username + '_' + element.$viewValue.name.toString();
+                    } else if (typeof element.$viewValue == 'undefined') {
+                        var element_to_save = element.$viewValue;
+                    } else {
+                        var element_to_save = element.$viewValue.toString();
+                    }
+
+
+                    if (parent == 'root') {
+                        inputStore[child_name] = element_to_save;
+                    } else {
+                        if (inputStore.hasOwnProperty(parent + '_q_' + name.split('__')[name.split('__').length - 1])) {
+                            inputStore[parent + '_q_' + name.split('__')[name.split('__').length - 1]][child_name] = element_to_save;
+                        } else {
+                            inputStore[parent + '_q_' + name.split('__')[name.split('__').length - 1]] = {}
+                            inputStore[parent + '_q_' + name.split('__')[name.split('__').length - 1]][child_name] = element_to_save;
+                        }
+                    }
+                }
+            });
+
+            var generatedXML = generateXML(inputStore, edit_instance_id);
+            return generatedXML
+        };
+
+
+        $scope.uploadPic = function (req) {
+            $("#loading").show();
+            $("#dynamic_form").css('opacity', '0.4');
+            xmltext = $scope.save();
+
+            if (req.upload_product) {
+                file = req.upload_product;
+
+                file.upload = Upload.upload({
+                    url: '/formbuilder/upload-formmedia/',
+                    data: {ct: $scope.ct, username: $scope.username, file: file, xmltext: xmltext},
+                });
+
+
+                file.upload.then(function (response) {
+                    $timeout(function () {
+                        file.result = response.data;
+                        if (response.data == 'success!') {
+                            window.location.href = '/planmodule/commnity_orientation_add_data/'
+                        }
+                    });
+                }, function (response) {
+                    if (response.status > 0)
+                        $scope.errorMsg = response.status + ': ' + response.data;
+                }, function (evt) {
+                    // Math.min is to fix IE which reports 200% sometimes
+                    file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                });
+            } else {
+                $http({
+                    method: 'POST',
+                    url: '/planmodule/submit-xml-data/',
+                    data: {'xml_submission_file': xmltext},
+                    dataType: 'json',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;'
+                    }
+                }).then(function (data) {
+                    window.location.href = '/asf'
+                });
+            }
+        }
+
+        $scope.opt_district = [];
+        $scope.opt_upazila = [];
+        $scope.opt_union = [];
+        $scope.opt_perils = [];
+        $scope.opt_zone_name = [];
+        $scope.opt_aws_list = [];
+        $scope.opt_zone_branch_name = [];
+
+        $scope.getExternalOptions = function (url, value, container) {
+            if (typeof value != 'undefined' && value != '' && value != null) {
+                $http({
+                    method: 'POST',
+                    url: url,
+                    data: {'serach_key': value},
+                    dataType: 'json',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(function (data) {
+                    console.log(data)
+                    $scope[container] = data['data'];
+
+
+                });
+            } else {
+                $scope[container] = [];
+            }
+        }
+
+
+        function lookup_v2(key, loop_element_name, index) {
+
+            value = jsonObj[id_string][key];
+            if (typeof value == 'undefined') {
+                if (typeof jsonObj[id_string][loop_element_name][index] != 'undefined' && key in jsonObj[id_string][loop_element_name][index]) {
+                    return jsonObj[id_string][loop_element_name][index][key]
+                }
+                else if (key in jsonObj[id_string][loop_element_name]) {
+                    return jsonObj[id_string][loop_element_name][key]
+                }
+            }
+            return value
+
+        }
+
+
+        $scope.fillForm = function () {
+
+            console.log(jsonObj)
+            for (i = 0; i < jsonObj[id_string]['participant_info'].length - 1; i++)
+                $scope.addRow(i);
+
+            $scope.$apply();
+
+            angular.element(document.querySelector('#edit_instance_id')).val({{ instance_id }});
+
+            angular.forEach($scope.dynamic_form, function (element, name) {
+
+                if (!name.startsWith('$')) {
+                    var loop_element_name = ""
+                    var index = 0;
+
+                    if (name.indexOf('__') > 0) {
+                        var array_of_element = name.split('__')
+                        loop_element_name = array_of_element[0];
+                        var element_name = array_of_element[1];
+                        index = array_of_element[2];
+                    }
+                    else {
+                        var element_name = name;
+                    }
+                    element_arr = lookup_v2(element_name, loop_element_name, index);
+                    if (element_arr != null) {
+                        element.$setViewValue(element_arr);
+                        element.$render();
+                    }
+                }
+            });
+
+
+        };
+
+
+
+        angular.element(document).ready(function () {
+
+            $('.page-sidebar, .header').on('click', '.sidebar-toggler', function (e) {
+                var body = $('body');
+                var sidebar = $('.page-sidebar');
+
+                if ((body.hasClass("page-sidebar-hover-on") && body.hasClass('page-sidebar-fixed')) || sidebar.hasClass('page-sidebar-hovering')) {
+                    body.removeClass('page-sidebar-hover-on');
+                    sidebar.css('width', '').hide().show();
+                    $.cookie('sidebar_closed', '0');
+                    e.stopPropagation();
+                    runResponsiveHandlers();
+                    return;
+                }
+
+                $(".sidebar-search", sidebar).removeClass("open");
+
+                if (body.hasClass("page-sidebar-closed")) {
+                    body.removeClass("page-sidebar-closed");
+                    if (body.hasClass('page-sidebar-fixed')) {
+                        sidebar.css('width', '');
+                    }
+                    $.cookie('sidebar_closed', '0');
+                } else {
+                    body.addClass("page-sidebar-closed");
+                    $.cookie('sidebar_closed', '1');
+                }
+
+            });
+
+            if (typeof jsonObj !== "undefined" && jsonObj !== null) {
+
+                $scope.fillForm();
+
+            }
+
+
+
+        });
+
+
+
+
+{#        var divElement = angular.element(document.querySelector('.modal-body'));#}
+{#        var htmlElement = angular.element("<div style=\"display: flex;\" class=\"input_fields_wrap\" ><form id=\"dynamic_form\" novalidate=\"\" method=\"post\" name=\"dynamic_form\" ><div id=\"mainDiv\" ng-controller=\"myCtrl as vms\" ><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >পিএনজিও</label><input ng-model=\"vms.model.pngo\" name=\"pngo\" validation-error-to=\"pngo_error\" validation=\"required\" type=\"text\" class=\"form-control\" /><span class=\"field_error\" id=\"pngo_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >জেলা</label><select ng-model=\"vms.model.district\" name=\"district\" ng-change=\"getExternalOptions('/planmodule/get_upazilas/',vms.model.district, 'opt_upazila')\" validation-error-to=\"district_error\" validation=\"required\" class=\"form-control\" ><option value=\"\" >-- Select --</option><option value=\"85\" >Rangpur</option></select><span class=\"field_error\" id=\"district_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >উপজেলা</label><select ng-model=\"vms.model.upazila\" name=\"upazila\" ng-options=\"option.value as option.name for option in opt_upazila\" ng-change=\"getExternalOptions('/planmodule/get_unions/',vms.model.upazila, 'opt_union_name')\" validation-error-to=\"upazila_error\" validation=\"required\" class=\"form-control\" ><option value=\"\" >-- Select --</option></select><span class=\"field_error\" id=\"upazila_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >ইউনিয়ন</label><select ng-model=\"vms.model.union_name\" name=\"union_name\" ng-options=\"option.value as option.name for option in opt_union_name\" ng-change=\"getExternalOptions('/planmodule/get_villages/',vms.model.union_name, 'opt_village')\" validation-error-to=\"union_name_error\" validation=\"required\" class=\"form-control\" ><option value=\"\" >-- Select --</option></select><span class=\"field_error\" id=\"union_name_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >গ্রাম</label><select ng-model=\"vms.model.village\" name=\"village\" ng-options=\"option.value as option.name for option in opt_village\" ng-change=\"getExternalOptions('/planmodule/get_paras/',vms.model.village, 'opt_para')\" validation-error-to=\"village_error\" validation=\"required\" class=\"form-control\" ><option value=\"\" >-- Select --</option></select><span class=\"field_error\" id=\"village_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >পাড়া</label><select ng-model=\"vms.model.para\" name=\"para\" ng-options=\"option.value as option.name for option in opt_para\" validation-error-to=\"para_error\" validation=\"required\" class=\"form-control\" ><option value=\"\" >-- Select --</option></select><span class=\"field_error\" id=\"para_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >বাবার নাম</label><input ng-model=\"vms.model.father_name\" name=\"father_name\" validation-error-to=\"father_name_error\" validation=\"\" type=\"text\" class=\"form-control\" /><span class=\"field_error\" id=\"father_name_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >মায়ের নাম</label><input ng-model=\"vms.model.mother_name\" name=\"mother_name\" validation-error-to=\"mother_name_error\" validation=\"\" type=\"text\" class=\"form-control\" /><span class=\"field_error\" id=\"mother_name_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >সার্ভাইভারের (কিশোর-কিশোরী) নাম</label><input ng-model=\"vms.model.adolescent_name\" name=\"adolescent_name\" validation-error-to=\"adolescent_name_error\" validation=\"required\" type=\"text\" class=\"form-control\" /><span class=\"field_error\" id=\"adolescent_name_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >সার্ভাইভারের (কিশোর-কিশোরী) আইডি</label><input ng-model=\"vms.model.id_adolescent\" name=\"id_adolescent\" validation-error-to=\"id_adolescent_error\" validation=\"required\" type=\"text\" class=\"form-control\" /><span class=\"field_error\" id=\"id_adolescent_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >লিঙ্গ</label><select validation-error-to=\"sex_error\" class=\"form-control\" validation=\"required\" name=\"sex\" ng-model=\"vms.model.sex\" ><option value=\"\" >-- Select --</option><option value=\"1\" >ছেলে</option><option value=\"2\" >মেয়ে</option><option value=\"3\" >অন্যান্য</option></select><span class=\"field_error\" id=\"sex_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >জন্ম তারিখ</label><input ng-model=\"vms.model.date_birth\" name=\"date_birth\" validation-error-to=\"date_birth_error\" validation=\"required\" type=\"text\" class=\"form-control\" /><span class=\"field_error\" id=\"date_birth_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >জন্মস্থান</label><input ng-model=\"vms.model.birth_place\" name=\"birth_place\" validation-error-to=\"birth_place_error\" validation=\"required\" type=\"text\" class=\"form-control\" /><span class=\"field_error\" id=\"birth_place_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >জন্ম নিবন্ধন আছে কি না?</label><select validation-error-to=\"birth_reg_error\" class=\"form-control\" validation=\"required\" name=\"birth_reg\" ng-model=\"vms.model.birth_reg\" ><option value=\"\" >-- Select --</option><option value=\"0\" >না</option><option value=\"1\" >হ্যা</option></select><span class=\"field_error\" id=\"birth_reg_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >বাল্যবিবাহ প্রতিরোধের তারিখ</label><div class=\"input-group\" ><input ng-model=\"vms.model.date_child_marriage_prevented\" validation=\"\" name=\"date_child_marriage_prevented\" is-open=\"vms.isDatePickerOpen_date_child_marriage_prevented\" class=\"datepicker form-control\" max-date=\"vms.maxDate\" readonly=\"\" datepicker-popup=\"yyyy/MM/dd\" min-date=\"vms.minDate\" ng-change=\"parseCustomConstraints(vms.model.date_child_marriage_prevented,'.<=today()', 'root', -1, 'date_child_marriage_prevented','Future date not allowed')\" datepicker-options=\"vms.dateOptions\" validation-error-to=\"date_child_marriage_prevented_error\" type=\"text\" datepicker-mode=\"day\" /><span class=\"input-group-btn\" > <button data-ng-click=\"vms.openDatePicker($event,'isDatePickerOpen_date_child_marriage_prevented')\" type=\"button\" class=\"btn btn-default\" > <i class=\"glyphicon glyphicon-calendar\" ></i></button></span></div><span class=\"field_error\" id=\"date_child_marriage_prevented_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >বিবাহের প্রস্তাবিত তারিখ</label><div class=\"input-group\" ><input ng-model=\"vms.model.date_proposed_marriage\" validation=\"\" name=\"date_proposed_marriage\" is-open=\"vms.isDatePickerOpen_date_proposed_marriage\" class=\"datepicker form-control\" max-date=\"vms.maxDate\" readonly=\"\" datepicker-popup=\"yyyy/MM/dd\" min-date=\"vms.minDate\" ng-change=\"parseCustomConstraints(vms.model.date_proposed_marriage,'.>=${date_child_marriage_prevented}', 'root', -1, 'date_proposed_marriage','বাল্যবিবাহ প্রতিরোধের তারিখ বা পরের তারিখ হবে')\" datepicker-options=\"vms.dateOptions\" validation-error-to=\"date_proposed_marriage_error\" type=\"text\" datepicker-mode=\"day\" /><span class=\"input-group-btn\" > <button data-ng-click=\"vms.openDatePicker($event,'isDatePickerOpen_date_proposed_marriage')\" type=\"button\" class=\"btn btn-default\" > <i class=\"glyphicon glyphicon-calendar\" ></i></button></span></div><span class=\"field_error\" id=\"date_proposed_marriage_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >বাল্যবিবাহ প্রতিরোধে জড়িত ব্যক্তি বা গ্রুপের নাম</label><input ng-model=\"vms.model.person_involved_prevent\" name=\"person_involved_prevent\" validation-error-to=\"person_involved_prevent_error\" validation=\"required\" type=\"text\" class=\"form-control\" /><span class=\"field_error\" id=\"person_involved_prevent_error\" ></span></div></div><div class=\"col-lg-6\" ><div class=\"form-group\" ><label >মন্তব্য</label><input ng-model=\"vms.model.remarks\" class=\"form-control\" type=\"text\" name=\"remarks\" validation-error-to=\"remarks_error\" /><span class=\"field_error\" id=\"remarks_error\" ></span></div></div><div class=\"col-md-12\" > <input ng-disabled=\"dynamic_form.$invalid\" ng-click=\"uploadPic(vms.model);\" type=\"submit\" class=\"btn btn-primary\" value=\"Submit\" /> </div></div></form></div>");#}
+{#        divElement.append(htmlElement);#}
+
+
+{#        $compile(divElement)($scope);#}
+
+
+
+    }]);
+
+
+    /**
+ * AngularHelper : Contains methods that help using angular without being in the scope of an angular controller or directive
+ */
+var AngularHelper = (function () {
+    var AngularHelper = function () { };
+
+    /**
+     * ApplicationName : Default application name for the helper
+     */
+    var defaultApplicationName = "myApp";
+
+    /**
+         * Compile : Compile html with the rootScope of an application
+         *  and replace the content of a target element with the compiled html
+         * @$targetDom : The dom in which the compiled html should be placed
+         * @htmlToCompile : The html to compile using angular
+         * @applicationName : (Optionnal) The name of the application (use the default one if empty)
+         */
+    AngularHelper.Compile = function ($targetDom, htmlToCompile, applicationName) {
+        var $injector = angular.injector(["ng", applicationName || defaultApplicationName]);
+
+        $injector.invoke(["$compile", "$rootScope", function ($compile, $rootScope) {
+                        //Get the scope of the target, use the rootScope if it does not exists
+            console.log(angular.element($targetDom.html(htmlToCompile)));
+
+            var $scope = $targetDom.html(htmlToCompile).scope();
+            $compile($targetDom)($scope || $rootScope);
+            $rootScope.$digest();
+        }]);
+   }
+
+    return AngularHelper;
+})();
+
+
+    var opened = [];
+
+    jQuery('#container').html({{ main_str | safe }});
+
+    function load_forms(category_id, div_id) {
+
+        victim_id = {{ victim_id | safe }};
+        if (opened.indexOf(category_id) > -1)
+            return
+        else
+            opened.push(category_id);
+
+        jQuery.ajax({
+            url: '/asf/get_forms_data/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'category_id': category_id, 'victim_id': victim_id},
+            beforeSend: function () {
+
+                jQuery('#' + div_id).html('<div class="alert alert-success">Please Wait...loading....</div>');
+            },
+            success: function (result) {
+                setTimeout(function () {
+                    jQuery('#' + div_id).html(result);
+                }, 1000);
+
+            }
+        });
+    }
+
+    function load_forms_data(logger_id, div_id) {
+        console.log(logger_id);
+
+        if (opened.indexOf(logger_id) > -1)
+            return
+        else
+            opened.push(logger_id);
+
+        victim_id = {{ victim_id | safe }};
+
+        jQuery.ajax({
+            url: '/asf/get_data_view/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'logger_id': logger_id},
+            beforeSend: function () {
+
+                jQuery('#' + div_id).html('<div class="alert alert-success">Please Wait...loading....</div>');
+            },
+            success: function (result) {
+                {#                console.log(result);#}
+                setTimeout(function () {
+                    jQuery('#' + div_id).html(result);
+                }, 500);
+
+            }
+        });
+    }
+
+
+    function load_forms_list(category_id) {
+        victim_id = {{ victim_id | safe }};
+        jQuery('#form' + category_id).popover();
+
+        if (opened.indexOf('#form' + category_id) > -1)
+            return
+        else opened.push('#form' + category_id);
+
+        jQuery.ajax({
+            url: '/asf/get_forms_list/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'category_id': category_id, 'victim_id': victim_id},
+            beforeSend: function () {
+            },
+            success: function (result) {
+                console.log(result);
+
+                jQuery('#form' + category_id).attr('data-content', result);
+                jQuery('#form' + category_id).popover('show');
+
+            }
+        });
+    }
+
+
+    function load_forms_html(form_id) {
+
+
+        jQuery.ajax({
+            url: '/asf/get_forms_html/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'form_id': form_id},
+            beforeSend: function () {
+            },
+            success: function (result) {
+
+{#            $('.modal-body').html(result.form_html);#}
+             var $targetDom = $('.modal-body');
+             //Compile it to bind it with angular
+             AngularHelper.Compile($targetDom, result.form_html);
+             angular.element(document).injector().invoke(function($compile){
+				var obj = $('.modal-body');
+				//angular.element(document.querySelector('modal-body')); // get wrapper
+
+                {#                console.log(obj);#}
+
+{#				var scope=obj.scope(); // get scope#}
+{#                console.log(scope);#}
+				// generate dynamic content
+{#				obj.html($(result.form_html));#}
+{#				var app1 = angular.module('myApp', ['ghiscoding.validation', 'ui.bootstrap', 'ngFileUpload']);#}
+				// compile!!!
+{#                console.log(obj.contents());#}
+{#var sel = angular.element(document.querySelector('div[ng-controller="myCtrl"]'));#}
+{#console.log(angular.element(sel).scope());#}
+
+
+{#                var sel = 'div[ng-controller="myCtrl"]'#}
+
+{#				$compile(obj.contents());#}
+			});
+
+{#        $('#mainDiv').attr("ng-repeat", "post in posts");#}
+
+            }
+        });
+
+                {#                  console.log(angular.element('div[ng-controller="myCtrl"]'));#}
+{#                console.log(htmlElement);#}
+{#                                  $compile(divElement)($scope);#}
+{#                                  console.log(angular.element(document.querySelector('myCtrl')).scope().reload());#}
+                {#                  dom_tree = JSON.parse(result.dom_tree);#}
+        {#console.log(dom_tree)#}
+    }
+
+    function guid() {
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+    }
+
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
+
+
+    function lookup(obj, k) {
+        console.log(obj, k)
+
+        for (key in obj) {
+
+            value = obj[key];
+            if (k == key) return [k, value];
+
+            if (type(value) == "Object") {
+
+                var y = lookup(value, k);
+                if (y && y[0] == k) return y;
+            }
+            if (type(value) == "Array") {
+                console.log(value, key)
+
+                for (var i = 0; i < value.length; ++i) {
+
+                    var x = lookup(value[i], k);
+                    if (x && x[0] == k) return x;
+
+                }
+
+            }
+        }
+
+        return null;
+    }
+
+    function type(object) {
+        var stringConstructor = "test".constructor;
+        var arrayConstructor = [].constructor;
+        var objectConstructor = {}.constructor;
+
+        if (object === null) {
+            return "null";
+        } else if (object === undefined) {
+            return "undefined";
+        } else if (object.constructor === stringConstructor) {
+            return "String";
+        } else if (object.constructor === arrayConstructor) {
+            return "Array";
+        } else if (object.constructor === objectConstructor) {
+            return "Object";
+        } else {
+            return "null";
+        }
+    }
+
+    //edit portion
+    xml_string = '{{ xml_data|safe }}';
+    var x2js = new X2JS();
+    var jsonObj = x2js.xml_str2json(xml_string);
+
+
+</script>
+<script src="{{ STATIC_URL }}assets/scripts/app.js"></script>
+<script>
+    jQuery(document).ready(function () {
+        $("ul").each(
+            function () {
+                var elem = $(this);
+                if (elem.children().length == 0) {
+                    elem.remove();
+                }
+            }
+        );
+
+        $(".sub-menu").each(
+            function () {
+                var elem = $(this);
+                if (elem.children().length >= 1) {
+                    elem.prev('a').append('<span class="arrow open"></span>')
+                }
+            }
+        );
+
+        if ($('.sub-menu-li').hasClass('active')) {
+            $('.active').parent().parent().addClass('active');
+        }
+
+        App.init();
+
+
+    });
+
+
+
+</script>
+</body>
+</html>

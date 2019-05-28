@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+<section id="data-view">
+    <h1>Add a RMO</h1>
+    {% if is_added %}
+    <div class="alert alert-success" role="alert">
+        Added successfully
+    </div>
+
+    <form action="/unicef/geo-rmo-list">
+        <input type="submit" class="btn btn-success" value="Return to RMO List">
+    </form>
+    {% else %}
+    
+    <span class="span12">
+        <div class="data-table-container table table-striped table-hover">
+            <form id="user_form" method="post" action="/unicef/add-geo-rmo/">
+                {% csrf_token %}
+                {{ geo_rmo_form.as_p }}
+                <input type="submit"  class="btn btn-primary btn-lg" name="submit" value="Save" />
+            </form>
+            
+            <div style="clear: both;"></div>
+        </div>
+    </span>
+    {% endif %}
+</section>
+{% endblock %}

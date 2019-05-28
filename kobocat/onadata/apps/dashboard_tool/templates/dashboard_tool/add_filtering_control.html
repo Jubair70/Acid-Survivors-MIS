@@ -1,0 +1,139 @@
+{% extends "base_test.html" %}
+{% load crispy_forms_tags %}
+
+{% block additional-headers %}
+
+<link href="/static/css/datepicker.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+<link rel="stylesheet" type="text/css" href="/static/js/spectrum.css">
+
+    <style>
+        .mpower-section {
+           margin: 10px;
+        }
+        .flex div.middle {
+          /*text-align: center;
+          margin: 0; */
+          flex-grow: 1;
+        }
+        .flex div.middle-top {
+          display: flex;
+          flex-flow: row;
+          flex-wrap: wrap;
+        }
+        .flex div.right {
+          flex-flow: row;
+          flex-wrap: wrap;
+        }
+        .middle-top div.controls {
+          padding: 1%;
+        }
+
+        .flex {
+          border: 1px solid lightgrey;
+          display: flex;
+        }
+
+        /****** TAB COLORS ********/
+        .nav-pills > li.active > a, .nav-pills > li.active > a:focus {
+            color: black;
+            /*background-color: #fcd900;*/
+        }
+
+        .nav-pills > li.active > a:hover {
+            /*background-color: #efcb00;*/
+            color:black;
+        }
+        .tab-content{
+            background-color: #E4E4E4;
+            color:#000;
+            padding:5px
+        }
+        .nav-tabs > li > a{
+          border: medium none;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="portlet-body" >
+     <div class="row">
+    <div class="col-md-12">
+    <a class="btn red pull-right" href="/dashboard_tool/show_filtering_control/"   role="button" >  <i class="fa fa-2x fa-plus-square-o"></i> Filtering Controls List</a>
+    </div></div>
+    <br>
+     <!--Load Program Form-->
+    <div id="add_filtering_control_div">
+        {% include "dashboard_tool/add_filtering_control_form.html" %}
+    </div>
+
+
+</div>
+
+
+
+{% endblock %}
+
+{% block additional-javascript %}
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript"  src="{{ STATIC_URL }}js/mpower.build.highcharts.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/cupdashboard.js"></script>
+    <script type="text/javascript" src="/static/js/spectrum.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $( ".colors" ).each(function( index ) {
+              console.log( index + ": " + $(this).attr("data-colors"));
+              var color= '"'+$(this).attr("data-colors") +'"';
+                  $(this).spectrum({
+                    color: $(this).attr("data-colors")
+                  });
+            });
+        });
+
+
+     /**
+     * This Function will show message in top For Asynchronous Request
+     * @param: Json (messages, type field)
+     * @persia
+     * */
+    function showAjaxConfirmationMessages(data){
+        $("#div_messages").html("");
+        $("#div_messages").append("<div class='alert alert-"+data.type+" fade in'><a class='close' href='#' data-dismiss='alert'>×</a> <p>"+data.messages+"</p></div>");
+    } //end of showAjaxConfirmationMessages
+
+
+
+    //***********Submit Form (post) on submit btn click**********
+    $(document).on("submit", "#add_filtering_control_form", function(event) {
+        event.preventDefault();
+
+        form_url = $(this).attr('action');
+        $.ajax({
+            type : 'POST',
+            url : form_url,
+            data : $(this).serialize(),
+            success : function(data){
+                showAjaxConfirmationMessages({"type":"success", "messages": "Saved Successfully." });
+                console.log("success");
+                $("#add_filtering_control_div").val(data);
+                window.scrollTo(0,0);
+            },
+            error : function(xhr, status, error) {
+                showAjaxConfirmationMessages({"type":"danger", "messages": "Failed. Please check required field again." });
+                $("#add_program_form_div").html(xhr.responseText);
+            }
+	    }); //ajax end
+    }); // ENd of add_program_form form submit
+
+  </script>
+{% endblock %}
+
+

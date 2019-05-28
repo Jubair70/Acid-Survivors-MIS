@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html ng-app="myApp" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/css/bootstrap-select.min.css"/>
+    <link href="{{ STATIC_URL }}assets/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ STATIC_URL }}assets/css/style-metronic.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ STATIC_URL }}assets/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ STATIC_URL }}assets/css/style-responsive.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ STATIC_URL }}assets/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ STATIC_URL }}css/vex.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/vex-theme-kobo.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}assets/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
+    <link href="{{ STATIC_URL }}assets/css/custom.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/oxfam/assets/css/layout.min.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .fa-plus-circle, .fa-minus-circle {
+            cursor: pointer;
+        }
+
+        .field_error {
+            color: #ff0000;
+            position: absolute;
+            font-size: 12px;
+        }
+
+        .iterator_fields {
+            display: inline-block;
+            background-color: #eee;
+            margin-top: 15px;
+            padding-top: 15px;
+            padding-right: 15px;
+        }
+
+        .form-control-feedback {
+            right: 10px;
+        }
+
+        .form-label {
+            font-weight: 600 !important;
+            font-size: 24px;
+            text-align: center;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #222;
+        }
+
+        .margin_link {
+            margin-left: 25px;
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-weight: 600;
+            height: 34px;
+        }
+
+        .page-content {
+            min-height: 1060px;
+        }
+
+        .blue {
+            background: blue;
+        }
+    </style>
+</head>
+<body class="page-header-fixed page-sidebar-fixed page-footer-fixed">
+<!-- BEGIN HEADER -->
+<header class="header navbar-fixed-top">
+    <div class="top-bg"></div>
+    <!-- Navbar -->
+    <nav class="navbar" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="menu-container">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse"><span
+                        class="sr-only">Toggle navigation</span> <span class="toggle-icon"></span></button>
+
+                <!-- Logo -->
+                <div class="logo"><a class="logo-wrap" href="/"> <img class="logo-img logo-img-main"
+                                                                      src="{{ STATIC_URL }}oxfam/assets/images/logo.png"
+                                                                      alt="Asentus Logo"> </a></div>
+                <!-- End Logo -->
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse nav-collapse">
+                <div class="menu-container">
+                    <ul class="navbar-nav navbar-nav-right">
+                        <li class="nav-item"><a class="nav-item-child nav-item-hover" href="/oxfam/knowledge/">Knowledge
+                            Management Portal</a></li>
+                        <li class="nav-item"><a class="nav-item-child nav-item-hover"
+                                                href="/hhmodule/eyfw/generate_dashboard/">Results Monitoring Portal </a>
+                        </li>
+                        {% if request.user.is_anonymous %}
+                            <li class="nav-item"><a class="nav-item-child nav-item-hover" href="/">login</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <!-- End Navbar Collapse -->
+        </div>
+    </nav>
+    <!-- Navbar -->
+</header>
+<!-- END HEADER -->
+<div class="clearfix"></div>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <!-- BEGIN SIDEBAR -->
+    {% include "topbar_test.html" %}
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+
+        <h3 class="form-label">Feedback Form </h3>
+
+        <div class="margin_link"><a class="btn btn-success red-custom" href="/hhmodule/eyfw/Feedback_Form/">Feedback
+            List</a></div>
+
+
+        <div class="input_fields_wrap" style="min-height: 970px;">
+            <form name="dynamic_form" id="dynamic_form" method="post" class="" novalidate>
+                <input type="hidden" id="edit_instance_id" value=""/>
+                <div id="mainDiv" ng-controller="myCtrl as vms">
+
+                    <div class="form-group ">
+                        <div class="col-md-3"><label>Date of complain/Feedback received</label></div>
+                        <div class="input-group col-md-3"><input ng-model="vms.model.date_complain" name="date_complain"
+                                                                 is-open="vms.isChangeDatePickerOpen1"
+                                                                 class="datepicker form-control" max-date="vms.maxDate"
+                                                                 readonly
+                                                                 datepicker-popup="{{ vms.datePickerFormat }}"
+                                                                 min-date="vms.minDate"
+                                                                 validation-error-to="date_complain_error"
+                                                                 datepicker-options="vms.dateOptions"
+                                                                 validation="required"
+                                                                 type="text" datepicker-mode="day"/><span
+                                class="input-group-btn"> <button
+                                data-ng-click="vms.openDatePicker($event,'isChangeDatePickerOpen1')"
+                                type="button" class="btn btn-default"> <i
+                                class="glyphicon glyphicon-calendar"></i></button></span>  <span class="field_error" id="date_complain_error"></span></div>
+                       </div>
+
+
+                    <div class="form-group">
+                        <div class="col-md-3"><label>Partner</label></div>
+                        <div class="input-group col-md-3"><select
+                                ng-model="vms.model.partner" name="partner"
+                                ng-options="option.id as option.name for option in opt_partner"
+                                validation-error-to="partner_error" validation="required" class="form-control">
+                            <option value>-- Select Partner--</option>
+                        </select> </div><span class="field_error" id="partner_error"></span>
+
+                    </div>
+
+                    <div class="form-group ">
+                        <div class="col-md-3"><label>Name</label></div>
+                        <div class="input-group col-md-3"><input ng-model="vms.model.name" name="name"
+                                                                 validation-error-to="name_error"
+                                                                 validation="required" type="text"
+                                                                 class="form-control"/> <span class="field_error" id="name_error"></span></div>
+                      </div>
+
+                    <div class="form-group ">
+                        <div class="col-md-3"><label>Sex</label></div>
+                        <div class="input-group col-md-3"><select validation-error-to="sex_error"
+                                                                  class="form-control"
+                                                                  validation="required" name="sex"
+                                                                  ng-model="vms.model.sex">
+                            <option value>-- Select Sex --</option>
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+                            <option value="3">Other</option>
+                        </select> <span class="field_error" id="sex_error"></span></div>
+                       </div>
+
+                    <div class="form-group col-md-12"><label>Address</label></div>
+
+                    <div class="form-group col-md-3"><label>District</label>
+                        <select validation-error-to="district_error"
+                                class="form-control"
+                                validation="required"
+                                name="district"
+                                ng-change="getExternalOptions('/hhmodule/eyfw/add_new/getUpazilas/',vms.model.district, 'opt_upazila')"
+                                ng-model="vms.model.district">
+                            <option value>-- Select District --</option>
+                            <option value="81">Rajshahi</option>
+                            <option value="85">Rangpur</option>
+                            <option value="47">Khulna</option>
+                            <option value="06">Barisal</option>
+                        </select>
+                        <span class="field_error" id="district_error"></span></div>
+                    <div class="form-group col-md-3"><label>Upazila</label>
+                        <select ng-model="vms.model.upazila"
+                                name="upazila"
+                                ng-change="getExternalOptions('/hhmodule/eyfw/add_new/getUnions/',vms.model.upazila, 'opt_union')"
+                                ng-options="option.value as option.name for option in opt_upazila"
+                                validation-error-to="upazila_error"
+                                validation="required"
+                                class="form-control">
+                            <option value>-- Select Upazila --</option>
+                        </select>
+                        <span class="field_error" id="upazila_error"></span></div>
+                    <div class="form-group col-md-3"><label>Union</label>
+                        <select ng-model="vms.model.union" name="union"
+                                ng-options="option.value as option.name for option in opt_union"
+                                validation-error-to="union_error"
+                                validation="required"
+                                class="form-control">
+                            <option value>-- Select Union --</option>
+                        </select>
+                        <span class="field_error" id="union_error"></span></div>
+
+                    <div class="form-group col-md-3" style="visibility: hidden"><label>Ward</label><select
+                            validation-error-to="ward_error"
+                            class="form-control"
+                            validation="" name="ward"
+                            ng-model="vms.model.ward">
+                        <option value>-- Select Ward --</option>
+                        <option value="ward">ward</option>
+                    </select><span class="field_error" id="ward_error"></span></div>
+
+
+                    <div class="form-group ">
+                        <div class="col-md-3"><label>Contact</label></div>
+                        <div class="input-group col-md-3"><input ng-model="vms.model.mobile"
+                                                                 name="mobile"
+                                                                 validation-error-to="mobile_error"
+                                                                 validation="pattern=/^[0-9]{11}$/:alt=দয়া করে এগার ডিজিট প্রবেশ করুন"
+                                                                 type="text"
+                                                                 class="form-control"/><span class="field_error" id="mobile_error"></span></div>
+                        </div>
+
+                    {#                    <div class="form-group ">#}
+                    {#                        <div class="col-md-3"><label>Feedback From</label></div>#}
+                    {#                        <div class="input-group col-md-3"><input#}
+                    {#                                ng-model="vms.model.feedback_from_name" name="feedback_from_name"#}
+                    {#                                validation-error-to="feedback_from_name_error" validation="required" type="text"#}
+                    {#                                class="form-control"/></div>#}
+                    {#                        <span class="field_error" id="feedback_from_name_error"></span></div>#}
+                    {##}
+                    {#                    <div class="form-group ">#}
+                    {#                        <div class="col-md-3"><label>Feedback For</label></div>#}
+                    {#                        <div class="input-group col-md-3"><input#}
+                    {#                                ng-model="vms.model.feedback_for_name" name="feedback_for_name"#}
+                    {#                                validation-error-to="feedback_for_name_error" validation="required" type="text"#}
+                    {#                                class="form-control"/></div>#}
+                    {#                        <span class="field_error" id="feedback_for_name_error"></span></div>#}
+
+
+                    <div class="form-group ">
+                        <div class="col-md-3"><label>Feedback From</label></div>
+                        <div class="input-group col-md-3">
+
+                            <select
+                                    validation-error-to="feedback_from_name_error" class="form-control"
+                                    validation="required"
+                                    name="feedback_from_name" ng-model="vms.model.feedback_from_name">
+                                <option value>-- Select Feedback Type --</option>
+                                <option value="1">Beneficiary</option>
+                                <option value="2">Non-beneficiary</option>
+                                <option value="3">Partner/partner staff</option>
+                                <option value="4">Gov't staff</option>
+                                <option value="5">Oxfam staff</option>
+                                <option value="6">Anonymous</option>
+                            </select>
+
+                            {#                            <input#}
+                            {#                                ng-model="vms.model.feedback_from_name" name="feedback_from_name"#}
+                            {#                                validation-error-to="feedback_from_name_error" validation="required" type="text"#}
+                            {#                                class="form-control"/>#}
+
+                       <span class="field_error" id="feedback_from_name_error"></span> </div>
+                        </div>
+
+                    <div class="form-group ">
+                        <div class="col-md-3"><label>Feedback For</label></div>
+                        <div class="input-group col-md-3">
+
+                            <select
+                                    validation-error-to="feedback_for_name_error" class="form-control"
+                                    validation="required"
+                                    name="feedback_for_name" ng-model="vms.model.feedback_for_name">
+                                <option value>-- Select Feedback Type --</option>
+                                <option value="1">Local Partner</option>
+                                <option value="2"> Oxfam Bangladesh</option>
+
+                            </select>
+
+                            {#                            <input#}
+                            {#                                ng-model="vms.model.feedback_for_name" name="feedback_for_name"#}
+                            {#                                validation-error-to="feedback_for_name_error" validation="required" type="text"#}
+                            {#                                class="form-control"/>#}
+
+                        <span class="field_error" id="feedback_for_name_error"></span></div>
+                        </div>
+
+
+                    <div class="form-group">
+                        <div class=" col-md-3"><label>Feedback Summary</label></div>
+                        <div class="input-group col-md-9"><textarea rows="4"
+                                                                    ng-model="vms.model.feedback_summary"
+                                                                    name="feedback_summary"
+                                                                    validation-error-to="feedback_summary_error"
+                                                                    validation="required" type="text"
+                                                                    class="form-control"></textarea><span class="field_error" id="feedback_summary_error"></span></div>
+                        </div>
+
+
+                    <div class="form-group ">
+                        <div class="col-md-3"><label>Feedback Type</label></div>
+                        <div class="input-group col-md-3"><select
+                                validation-error-to="feedback_type_error" class="form-control" validation="required"
+                                name="feedback_type" ng-model="vms.model.feedback_type">
+                            <option value>-- Select Feedback Type --</option>
+                            <option value="1">Sensitive</option>
+                            <option value="2">Urgent</option>
+                            <option value="3">Normal</option>
+                        </select><span class="field_error" id="feedback_type_error"></span></div>
+                        </div>
+
+                    <div class="form-group ">
+                        <div class="col-md-3"><label>Mode of Feedback</label></div>
+                        <div class="input-group col-md-3"><select
+                                validation-error-to="feedback_mode_error" class="form-control" validation="required"
+                                name="feedback_mode" ng-model="vms.model.feedback_mode">
+                            <option value>-- Select Mode of Feedback --</option>
+                            <option value="1">Oral/Face to face</option>
+                            <option value="2">Written</option>
+                            <option value="3">Email</option>
+                            <option value="4">Phone call/SMS</option>
+                            <option value="5">Postal</option>
+                            <option value="6">Other</option>
+                        </select><span class="field_error" id="feedback_mode_error"></span></div>
+                        </div>
+
+                    <div class="form-group ">
+                        <div class="col-md-3"><label>Feedback Resolve Deadline</label></div>
+                        <div class="input-group col-md-3"><input ng-model="vms.model.feedback_resolve_deadline"
+                                                                 name="feedback_resolve_deadline"
+                                                                 is-open="vms.isChangeDatePickerOpen2"
+                                                                 class="datepicker form-control" max-date="" readonly
+                                                                 datepicker-popup="{{ vms.datePickerFormat }}"
+                                                                 min-date=""
+                                                                 validation-error-to="feedback_resolve_deadline_error"
+                                                                 datepicker-options="vms.dateOptions"
+                                                                 validation="required"
+                                                                 type="text" datepicker-mode="day"/><span
+                                class="input-group-btn"> <button
+                                data-ng-click="vms.openDatePicker($event,'isChangeDatePickerOpen2')"
+                                type="button" class="btn btn-default"> <i
+                                class="glyphicon glyphicon-calendar"></i></button></span>
+                        <span class="field_error" id="feedback_resolve_deadline_error"></span></div>
+                        </div>
+
+
+                    <div class="form-group">
+                        <div class="col-md-3"><label>Feedback Status</label></div>
+                        <div class="input-group col-md-3"><select
+                                validation-error-to="feedback_status_error" class="form-control" validation="required"
+                                name="feedback_status" ng-model="vms.model.feedback_status">
+                            <option value>-- Select Feedback Status --</option>
+                            <option value="1">Managed</option>
+                            <option value="2">Referred</option>
+                            <option value="3">Under Process</option>
+                            <option value="4">Not responded</option>
+
+                        </select> <span class="field_error" id="feedback_status_error"></span></div>
+                       </div>
+
+                    <div class="form-group">
+                        <div class="col-md-3"><label>Additional Remarks</label></div>
+                        <div class="input-group col-md-3"><input
+                                ng-model="vms.model.remarks" name="remarks" validation-error-to="remarks_error"
+                                validation="" type="text" class="form-control"/>                        <span class="field_error"
+                              id="remarks_error"></span></div>
+
+                    </div>
+
+                    <div class="col-md-12">
+
+
+                        <input ng-disabled="dynamic_form.$invalid" type="submit" style="margin-left: 240px"
+                               class="btn btn-primary pull-left"
+                               ng-click="uploadPic(vms.model);"
+                               value="Submit"/>
+
+                        &nbsp;<a class="btn red-custom" href="/hhmodule/eyfw/Feedback_Form/">Cancel</a>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- END PAGE CONTENT-->
+    </div>
+    <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+{% include "footer_test.html" %}
+<!-- END FOOTER -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-route.js"></script>
+<script src="{{ STATIC_URL }}vendor/angular-translate/angular-translate.min.js"></script>
+<script src="{{ STATIC_URL }}vendor/angular-translate/angular-translate-loader-static-files.min.js"></script>
+<script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.2.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery.min.js"></script>
+<script src="/static/assets/plugins/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="{{ STATIC_URL }}assets/plugins/jquery.cookie.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}vendor/ghiscoding/angular-validation.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/XMLWriter.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/xml2json.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+<script src="https://angular-file-upload.appspot.com/js/ng-file-upload-shim.js"></script>
+<script src="https://angular-file-upload.appspot.com/js/ng-file-upload.js"></script>
+<script src="/static/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="/static/assets/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"
+        type="text/javascript"></script>
+<script src="/static/assets/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<script src="/static/assets/plugins/respond.min.js"></script>
+<script src="/static/assets/plugins/excanvas.min.js"></script>
+<script src="/static/js/application.js"></script>
+<script src="/static/assets/scripts/app.js"></script>
+<script type="text/javascript">
+
+    jQuery(document).ready(function () {
+        $("ul").each(
+            function () {
+                var elem = $(this);
+                if (elem.children().length == 0) {
+                    elem.remove();
+                }
+            }
+        );
+
+        $(".sub-menu").each(
+            function () {
+                var elem = $(this);
+                if (elem.children().length >= 1) {
+                    elem.prev('a').append('<span class="arrow open"></span>')
+                }
+            }
+        );
+
+        if ($('.sub-menu-li').hasClass('active')) {
+            $('.active').parent().parent().addClass('active');
+
+        }
+
+        App.init();
+    });
+
+    var id_string = '{{ id_string }}';
+
+    function generateXML(inputObj, instance_id) {
+        var xw = new XMLWriter('UTF-8');
+        xw.writeStartDocument();
+        xw.writeStartElement(id_string);
+        xw.writeAttributeString('id', id_string);
+        xw.writeStartElement('formhub');
+        xw.writeStartElement('uuid');
+        xw.writeString('{{ form_uuid }}');
+        xw.writeEndElement();
+        xw.writeEndElement();
+        for (var ppx in inputObj) {
+            xmlrecursive(xw, ppx, inputObj[ppx]);
+        }
+        xw.writeStartElement('meta');
+        xw.writeStartElement('instanceID');
+        xw.writeString('uuid:' + guid());
+        xw.writeEndElement();
+        if (instance_id != '') {
+            var uuid = jsonObj[id_string].meta.instanceID.split(':')[1];
+            xw.writeStartElement('deprecatedID');
+            xw.writeString('uuid:' + uuid);
+            xw.writeEndElement();
+        }
+        xw.writeEndElement();
+        xw.writeEndElement();
+        xw.writeEndDocument();
+        var xml = xw.flush();
+        xw = undefined;
+        return xml;
+
+    }
+
+    function xmlrecursive(xml, key, value) {
+        if (typeof value !== "undefined") {
+            if (typeof value === "object" && Array.isArray(value) != true) {
+                //get rid of root elements
+                if (key.indexOf("_q_") >= 0) {
+                    key = key.split('_q_')[0];
+                }
+                //get rid of parent elements
+                if (key.indexOf("__") >= 0) {
+                    key = key.split("__")[key.split("__").length - 1]
+                }
+                //start writing element
+                xml.writeStartElement(key);
+                for (var idx in value) {
+                    //if element has children then recursively call again
+                    xmlrecursive(xml, idx, value[idx]);
+                }
+                xml.writeEndElement();
+            } else {
+                //get rid of parent elements
+                if (key.indexOf("__") >= 0) {
+                    key = key.split("__")[key.split("__").length - 1]
+                }
+                //start writing element
+                xml.writeStartElement(key);
+                //check for array type of multiple select
+                if (Array.isArray(value) == true) {
+                    value = value.join(" ");
+                }
+                xml.writeString(value);
+                xml.writeEndElement();
+            }
+        }
+    }
+
+    var app = angular.module('myApp', ['ghiscoding.validation', 'ui.bootstrap', 'ngFileUpload']);
+
+    app.config(['$compileProvider', function ($compileProvider) {
+        $compileProvider.debugInfoEnabled(false);
+    }]).config(['$translateProvider', function ($translateProvider) {
+        $translateProvider.useStaticFilesLoader({
+            prefix: '{{ STATIC_URL }}locales/validation/',
+            suffix: '.json'
+        });
+        // load English ('en') table on startup
+        $translateProvider.preferredLanguage('en').fallbackLanguage('en');
+        $translateProvider.useSanitizeValueStrategy('escapeParameters');
+    }]).config(function ($interpolateProvider) {
+        $interpolateProvider.startSymbol('{$');
+        $interpolateProvider.endSymbol('$}');
+    });
+
+    app.controller('myCtrl', ['$scope', 'ValidationService', '$http', 'Upload', '$timeout', function ($scope, ValidationService, $http, Upload, $timeout) {
+        var vms = this;
+        vms.model = {};
+        // use the ValidationService only to declare the controllerAs syntax
+        var vs = new ValidationService({controllerAs: vms});
+
+        vms.isChangeDatePickerOpen1 = false;
+        vms.isChangeDatePickerOpen2 = false;
+        vms.datePickerFormat = 'dd/MM/yyyy';
+        vms.dateOptions = {formatYear: 'yy'};
+
+        vms.minDate = new Date(); // 10 years ago
+        vms.minDate.setHours(0, 0, 0, 0);
+        vms.minDate.setMonth(vms.minDate.getMonth() - 12 * 10);
+        vms.maxDate = new Date(); // now
+        vms.maxDate.setHours(0, 0, 0, 0);
+
+        this.openDatePicker = function ($event, identifier) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            vms[identifier] = true;
+        };
+
+
+        $scope.data = {
+            names: [{name: ""}]
+        };
+
+        $scope.username = '{{ username }}';
+
+        $scope.addRow = function (index) {
+            var name = {name: ""};
+            if ($scope.data.names.length <= index + 1) {
+                $scope.data.names.splice(index + 1, 0, name);
+            }
+        };
+
+        $scope.deleteRow = function ($event, name) {
+            var index = $scope.data.names.indexOf(name);
+            if ($event.which == 1)
+                $scope.data.names.splice(index, 1);
+        }
+
+
+        function replaceAll(str, mapObj) {
+            var re = new RegExp(Object.keys(mapObj).join("|"), "gi");
+            return str.replace(re, function (matched) {
+                return mapObj[matched.toLowerCase()];
+            });
+        }
+
+        $scope.parseCustomConstraints = function (selectedValue, rule, root, nIndex) {
+            replacedRule = replaceAll(rule.replace(/\./g, selectedValue), {'and': '&&', 'or': '||'});
+            if (rule.match(/\(([^)]+)\)/)) {
+                if (root == 'root') {
+                    replacedRule = replacedRule.replace(/\$\{/g, 'vms.model.')
+                    replacedRule = replacedRule.replace(/\}/g, '')
+                } else {
+                    replacedRule = replacedRule.replace(/\$\{/g, 'vms.model.' + root + '__')
+                    replacedRule = replacedRule.replace(/\}/g, '[' + nIndex + ']')
+                }
+            }
+
+            if (!eval(replacedRule)) {
+
+            }
+
+        };
+
+        var domTree = {
+            "feedback_summary": "root",
+            "feedback_resolve_deadline": "root",
+            "end": "root",
+            "name": "root",
+            "district": "root",
+            "start": "root",
+            "mobile": "root",
+            "feedback_type": "root",
+            "date_complain": "root",
+            "feedback_from_name": "root",
+            "remarks": "root",
+            "address": "root",
+            "feedback_for_name": "root",
+            "upazila": "root",
+            "ward": "root",
+            "sex": "root",
+            "feedback_status": "root",
+            "feedback_mode": "root",
+            "union": "root",
+            "partner": "root"
+        };
+
+        var inputStore = {};
+        $scope.ct = Math.floor(Date.now() / 1000);
+
+        $scope.save = function () {
+            var edit_instance_id = angular.element(document.querySelector('#edit_instance_id')).val();
+            angular.forEach($scope.dynamic_form, function (element, name) {
+                if (!name.startsWith('$')) {
+                    if (name.indexOf('__') > 0) {
+                        var child_name = name.substring(0, name.lastIndexOf("__"));
+                    } else {
+                        var child_name = name;
+                    }
+                    var parent = domTree[child_name];
+
+                    if (typeof element.$viewValue == 'object') {
+                        var element_to_save = $scope.ct.toString() + '_' + $scope.username + '_' + element.$viewValue.name.toString();
+                    } else if (typeof element.$viewValue == 'undefined') {
+                        var element_to_save = element.$viewValue;
+                    } else {
+                        var element_to_save = element.$viewValue.toString();
+                    }
+                    if (parent == 'root') {
+                        inputStore[child_name] = element_to_save;
+                    } else {
+                        if (inputStore.hasOwnProperty(parent + '_q_' + name.split('__')[name.split('__').length - 1])) {
+                            inputStore[parent + '_q_' + name.split('__')[name.split('__').length - 1]][child_name] = element_to_save;
+                        } else {
+                            inputStore[parent + '_q_' + name.split('__')[name.split('__').length - 1]] = {}
+                            inputStore[parent + '_q_' + name.split('__')[name.split('__').length - 1]][child_name] = element_to_save;
+                        }
+                    }
+                }
+            });
+            var generatedXML = generateXML(inputStore, edit_instance_id);
+            return generatedXML;
+        };
+
+
+        $scope.uploadPic = function (req) {
+            xmltext = $scope.save();
+            if (req.upload_input) {
+                file = req.upload_input;
+
+                file.upload = Upload.upload({
+                    url: '/hhmodule/upload-formmedia/',
+                    data: {ct: $scope.ct, username: $scope.username, file: file, xmltext: xmltext},
+                });
+
+
+                file.upload.then(function (response) {
+                    $timeout(function () {
+                        file.result = response.data;
+                        if (response.data == 'success!') {
+                            window.location.href = '/usermodule/' + $scope.username + '/projects-views/' + id_string + '/';
+                        }
+                    });
+                }, function (response) {
+                    if (response.status > 0) {
+                        $scope.errorMsg = response.status + ': ' + response.data;
+                    }
+                }, function (evt) {
+                    // Math.min is to fix IE which reports 200% sometimes
+                    file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                });
+            } else {
+                $http({
+                    method: 'POST',
+                    url: '/submit-xml-data/',
+                    data: {'xml_submission_file': xmltext},
+                    dataType: 'json',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8;'
+                    }
+                }).success(function (data) {
+                    if (data == 'success!') {
+                        //  window.location.href = '/usermodule/' + $scope.username + '/projects-views/' + id_string + '/';
+                        window.location.href = '/hhmodule/eyfw/Feedback_Form/'
+                    }
+                });
+            }
+        }
+
+
+        $scope.opt_district = [];
+        $scope.opt_upazila = [];
+        $scope.opt_union = [];
+        $scope.opt_partner = [];
+
+
+        $scope.getExternalOptions = function (url, value, container) {
+            if (typeof value != 'undefined' && value != '' && value != null) {
+                $http({
+                    method: 'POST',
+                    url: url,
+                    data: {'serach_key': value},
+                    dataType: 'json',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).success(function (data) {
+                    $scope[container] = data;
+                });
+            } else {
+                $scope[container] = [];
+            }
+        }
+
+
+        $scope.fillForm = function () {
+            angular.element(document.querySelector('#edit_instance_id')).val({{instance_id}});
+
+            angular.forEach($scope.dynamic_form, function (element, name) {
+                if (!name.startsWith('$')) {
+                    if (name.indexOf('__') > 0) {
+                        var element_name = name.split('__')[name.split('__').length - 2];
+                    } else {
+                        var element_name = name;
+                    }
+                    element_arr = lookup(jsonObj, element_name);
+                    //console.log(element_arr);
+                    if (element_arr != null) {
+                        element.$setViewValue(element_arr[1]);
+                        element.$render();
+                    }
+                }
+            });
+        }
+
+        angular.element(document).ready(function () {
+            $('.page-sidebar, .header').on('click', '.sidebar-toggler', function (e) {
+                var body = $('body');
+                var sidebar = $('.page-sidebar');
+
+                if ((body.hasClass("page-sidebar-hover-on") && body.hasClass('page-sidebar-fixed')) || sidebar.hasClass('page-sidebar-hovering')) {
+                    body.removeClass('page-sidebar-hover-on');
+                    sidebar.css('width', '').hide().show();
+                    $.cookie('sidebar_closed', '0');
+                    e.stopPropagation();
+                    runResponsiveHandlers();
+                    return;
+                }
+
+                $(".sidebar-search", sidebar).removeClass("open");
+
+                if (body.hasClass("page-sidebar-closed")) {
+                    body.removeClass("page-sidebar-closed");
+                    if (body.hasClass('page-sidebar-fixed')) {
+                        sidebar.css('width', '');
+                    }
+                    $.cookie('sidebar_closed', '0');
+                } else {
+                    body.addClass("page-sidebar-closed");
+                    $.cookie('sidebar_closed', '1');
+                }
+                //runResponsiveHandlers();
+            });
+
+
+            //get customer list
+            $scope.getExternalOptions('/hhmodule/eyfw/get_partner/', 'N/A', 'opt_partner');
+            if (typeof jsonObj !== "undefined" && jsonObj !== null) {
+                $scope.fillForm();
+            }
+        });
+
+
+        /*************************** Rubbbish Code ***********************************/
+
+        $scope.$watch('opt_upazila', function (newValue, oldValue) {
+            if (!newValue || newValue === oldValue) return;
+            angular.forEach($scope.dynamic_form, function (element, name) {
+                if (name.startsWith('upazila')) {
+                    element.$setViewValue(vms.model.upazila);
+                    element.$render();
+                }
+            });
+        });
+
+        $scope.$watch('opt_union', function (newValue, oldValue) {
+            if (!newValue || newValue === oldValue) return;
+            angular.forEach($scope.dynamic_form, function (element, name) {
+                if (name.startsWith('union')) {
+                    element.$setViewValue(vms.model.union);
+                    element.$render();
+                }
+            });
+        });
+
+        $scope.$watch('opt_partner', function (newValue, oldValue) {
+            if (!newValue || newValue === oldValue) return;
+            angular.forEach($scope.dynamic_form, function (element, name) {
+                if (name.startsWith('partner')) {
+                    console.log(vms.model.partner)
+                    element.$setViewValue(parseInt(vms.model.partner));
+                    element.$render();
+                }
+            });
+        });
+
+
+        /*************************** Rubbbish Code ***********************************/
+    }]);
+
+
+    function guid() {
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+    }
+
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
+
+    function lookup(obj, k) {
+        for (key in obj) {
+
+            value = obj[key];
+            if (k == key) return [k, value];
+
+            if (type(value) == "Object") {
+                var y = lookup(value, k);
+                if (y && y[0] == k) return y;
+            }
+            if (type(value) == "Array") {
+                // for..in doesn't work the way you want on arrays in some browsers
+                //
+                for (var i = 0; i < value.length; ++i) {
+                    var x = lookup(value[i], k);
+                    if (x && x[0] == k) return x;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    function type(object) {
+        var stringConstructor = "test".constructor;
+        var arrayConstructor = [].constructor;
+        var objectConstructor = {}.constructor;
+
+        if (object === null) {
+            return "null";
+        } else if (object === undefined) {
+            return "undefined";
+        } else if (object.constructor === stringConstructor) {
+            return "String";
+        } else if (object.constructor === arrayConstructor) {
+            return "Array";
+        } else if (object.constructor === objectConstructor) {
+            return "Object";
+        } else {
+            return "null";
+        }
+    }
+
+    //edit portion
+    xml_string = '{{ xml_data|safe }}';
+
+    var x2js = new X2JS();
+    var jsonObj = x2js.xml_str2json(xml_string);
+
+</script>
+</body>
+</html>

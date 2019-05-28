@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}{{ head_title }}{% endblock %}
+   
+     {% block additional-javascript %}
+
+    <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
+    
+    <!-- 2. You can add print and export feature by adding this line -->
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/query_report.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+    {% if surveyObj  %}
+                var counter = 0;
+                {% for data in surveyObj %}
+                      createTableRow('{{data.id_string}}','{{data.num_of_submissions}}','{{ surveydata|safe }}','{{data_type}}');
+                {% endfor %}
+            {% endif %}
+          });
+    </script>
+     {% endblock %}
+
+  {% block additional-headers %}
+      <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
+  {% endblock %}  
+
+  {% block content %}
+
+  <table id="tg-xY4Sf" class="tg" name="summary_table" style="width:100%">
+  <tr>
+    <th class="tg-yw4l">Dynamic Survey</th>
+  </tr>
+  <tr><td class = "tg-yw4l" id="test"></td></tr>
+  </table>
+  
+  {% endblock %}  
+

@@ -1,0 +1,321 @@
+{% extends "base_test.html" %}
+{% block additional-headers %}
+    <link href="/static/css/datepicker.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.29.0/mapbox-gl.css' rel='stylesheet'/>
+    <style type="text/css">
+
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header align">
+
+        <h3>Beneficiary Details</h3>
+    </div>
+    <div class="row box">
+        <div class="col-md-2">
+           <!-- <img src="{{ STATIC_URL }}assets/img/profile/defaultavatar.jpg" class="img-responsive" alt=""  style="border: 3px solid #f9f9f9;width: 97%;margin: 0 auto;">-->
+            <!--<img src="/media/img/{{ image }}" class="img-responsive" alt=""  style="border: 3px solid #f9f9f9;width: 97%;margin: 0 auto;"><br>-->
+            <img src="{{ STATIC_URL }}assets/img/profile/defaultavatar.jpg" class="img-responsive" alt=""  style="border: 3px solid #f9f9f9;width: 97%;margin: 0 auto;"><br>
+            <h3>ID : {{ id }}</h3>
+        </div>
+        <div class="col-md-10">
+
+            <table class="table table-striped table-hover">
+
+                            <tr>
+                                <th>Contact no </th>
+                                <td id="profile_hh_id"> {{ mobile }}</td>
+                                <th>District name</th>
+                                <td id="profile_hh_head">{{ district }}</td>
+
+                            </tr>
+                            <tr>
+                                <th>Enrollment date</th>
+                                <td id="profile_holding_no">{{ enroll_date }}</td>
+                                <th>Upazila name</th>
+                                <td id="profile_mobile_no">{{ upazila }}</td>
+                            </tr>
+                            <tr>
+                                <th>Name</th>
+                                <td id="profile_asset_grant">{{ name }}</td>
+                                <th>Union name</th>
+                                <td id="profile_ward">{{ union }}</td>
+                            </tr>
+                            <tr>
+                                <th>Gender</th>
+                                <td id="profile_hh_status">{{ gender }}</td>
+                                <th>Ward no </th>
+                                <td>{{ ward }}</td>
+                            </tr>
+                            <tr>
+                                <th>DOB</th>
+                                <td id="profile_hh_status">{{ dob }}</td>
+                                <th>NID/Birth certificate</th>
+                                <td>{{ have_nid_bris }}</td>
+                            </tr>
+                            <tr>
+                                <th>Age</th>
+                                <td id="profile_hh_status">{{ age }}</td>
+                                <th>NID/Birth certificate no</th>
+                                <td>{{ nid_or_birth }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>Marital status</th>
+                                <td id="profile_hh_status">{{  maritial_status }}</td>
+                                <th>Religion</th>
+                                <td>{{ religion }}</td>
+                            </tr>
+                            <tr>
+                                <th>Disability</th>
+                                <td id="profile_hh_status">{{ disability }}</td>
+                                <th>Ethnicity</th>
+                                <td>{{ ethnicity_type }}</td>
+                            </tr>
+                            <tr>
+                                <th>Type of Disability</th>
+                                <td id="profile_hh_status">{{ type_disability }}</td>
+                                <th>Type of ethnic race</th>
+                                <td>{{ ethnicity_non_bengali_type }}</td>
+                            </tr>
+                            <tr>
+                                <th>Father's name</th>
+                                <td id="profile_hh_status">{{ father }}</td>
+                                <th>Any SSN</th>
+                                <td>{{ ssn }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>Mother's name</th>
+                                <td id="profile_hh_status">{{ mother }}</td>
+                                <th>Education level</th>
+                                <td>{{ education }}</td>
+                            </tr>
+                            <tr>
+                                <th>Husband's name</th>
+                                <td id="profile_hh_status">{{ husband_name  }}</td>
+                                <th>Youth group affiliation</th>
+                                <td>{{ youth_group_affliation }}</td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td id="profile_hh_status"></td>
+                                <th>Non-EYFW Youth group name</th>
+                                <td>{{ non_eyfw_name }}</td>
+                            </tr>
+
+                        </table>
+
+        </div>
+
+    </div>
+    <div class ="row"><div class = "col-md-12" style = "margin-bottom: 20px;"></div></div>
+    <ul class="nav nav-tabs" >
+        <li class="active"><a style="font-size: 13px;" href="#tab_1_1" data-toggle="tab"><b>Occupation and income status</b> </a></li>
+        <li class=""><a style="font-size: 13px;" href="#tab_1_2" data-toggle="tab"><b>Case story</b></a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade active in" id="tab_1_1">
+            <div class ="row">
+            <div class = "col-md-12">
+            <table class="table table-striped table-hover">
+                <tr>
+                    <th></th>
+                    <td id="profile_hh_status"><strong>At Enrollment</strong></td>
+                    <td id="profile_hh_status"><strong>After Intervention</strong></td>
+                </tr>
+                 <tr>
+                    <th>Occupation 1</th>
+                    <td id="profile_hh_status">{{ enroll_occu_primary }}</td>
+                     <td id="profile_hh_status">{{ occupation_pri }}</td>
+                </tr>
+                <tr>
+                    <th>Occupation 2</th>
+                    <td id="profile_hh_status">{{ enroll_occu_secondary }}</td>
+                    <td id="profile_hh_status">{{ occupation_secon }}</td>
+                </tr>
+                <tr>
+                    <th>Income 1 at enrollment</th>
+                    <td id="profile_hh_status">{{ enroll_income_primary }}</td>
+                    <td id="profile_hh_status">{{ income_pri }}</td>
+                </tr>
+                <tr>
+                    <th>Income 2 at enrollment</th>
+                    <td id="profile_hh_status">{{ enroll_income_secondary }}</td>
+                    <td id="profile_hh_status">{{ income_secon }}</td>
+                </tr>
+                <tr>
+                    <th>Loan Amount</th>
+                    <td id="profile_hh_status">{{ loan_enrollment_time }}</td>
+                    <td id="profile_hh_status">{{ loan_after_intervention }}</td>
+                </tr>
+                <tr>
+                    <th>Savings Amount</th>
+                    <td id="profile_hh_status">{{ savings_enrollment_time }}</td>
+                    <td id="profile_hh_status">{{ savings_after_intervention }}</td>
+                </tr>
+                <tr>
+                    <th>Asset Amount</th>
+                    <td id="profile_hh_status">{{ asset_enrollment_time }}</td>
+                    <td id="profile_hh_status">{{ assest_after_intervention }}</td>
+                </tr>
+                <tr>
+                    <th>Skills at enrollment</th>
+                    <td id="profile_hh_status">{{ skills_enrollment_time }}</td>
+                    <td id="profile_hh_status">{{ training_text }}</td>
+                </tr>
+                <tr>
+                    <th>Preference for skills</th>
+                    <td id="profile_hh_status">{{ preference_for_skill }}</td>
+                    <td id="profile_hh_status"></td>
+                </tr>
+                <!--<tr>
+                    <th>Name of preferred skills</th>
+                    <td id="profile_hh_status">
+                    <td id="profile_hh_status"></td>
+                </tr>-->
+
+
+            </table>
+                </div>
+        </div>
+
+        </div>
+        <div class="tab-pane fade" id="tab_1_2">
+            <!--Case history-->
+            <div class="row">
+
+                <div class="col-md-12 ">
+
+                    <table id="kmp_content_table"
+                           class="table table-bordered table-hover exportMargin">
+                        <caption class="textAlign">
+
+
+                        </caption>
+                        <thead>
+
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block additional-javascript %}
+    <!-- Dashboard Related Script (Start) -->
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript" src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+
+
+
+
+    <!-- Dashboard Related Script (End) -->
+    <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard-report.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.29.0/mapbox-gl.js'></script>
+    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+    <!--<script type="text/javascript" charset="utf8" src="/static/js/DataTables/datatables.js"></script>-->
+    <!--datatable -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+    <!--datatable ended-->
+    <script type="text/javascript" src="{{ STATIC_URL }}js/cupdashboard.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/cupdashboard-training.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/cup_hh_profile_hh_analyst_dashboard.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var json_data = {{ json_data | safe}}
+            var id_string = '{{ id_string | safe }}'
+            var username = '{{ username | safe }}'
+
+            tableData = json_data.jsonKMPContentListList
+            console.log(tableData);
+            generateCaseHistoryTable(tableData, id_string, username);
+            /*Header resizing Problem in datatable when tab switching solved*/
+            $('a[data-toggle="tab"]').on( 'shown.bs.tab', function (e) {
+                $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
+            })
+
+        });
+
+        $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+            var tab_id = $(e.target).attr('href');
+            /*if (tab_id == '#tab_1_2') {
+                 generateFeedbackTable(tableData, id_string, username);
+            } else if (tab_id == '#tab_1_3') {
+                generateSLAListTable({{ sla_list_data|safe }});
+            }
+            else if (tab_id == '#tab_1_4') {
+                getTrainingTable();
+            }*/
+        })
+
+         // Function for Generating Table
+
+
+        function generateCaseHistoryTable(tableData, id_string, username) {
+
+
+            var thead = ''
+            thead += '<tr> <th>SL No.</th> <th>Title</th> <th>File Type </th> <th>Status</th><th></th> </tr>'
+
+            var tbody = ''
+            var count = 1
+            for (var i = 0; i < tableData.length; i++) {
+
+                viewLink = '/' + username + '/' + 'forms' + '/' + id_string + '/' + 'instance' + '/' + '?s_id=' + tableData[i].id + '#/' + tableData[i].id
+                editlink = '/hhmodule/eyfw/add_new_' + id_string + '/' + id_string + '/' + tableData[i].id
+
+                tbody += '<tr>'
+                //tbody += '<td>' + count + '</td><td>' + tableData[i].title_english + '</td> <td>' + tableData[i].file_type + '</td>  <td>'+ tableData[i].status_value+' </td><td><a href="' + viewLink + '" class="btn btn-info" role="button">View</a></td> <td><a href="' + editlink + '" class="btn btn-info" role="button">Edit</a></td>'
+                tbody += '<td>' + count + '</td><td>' + tableData[i].title_english + '</td> <td>' + tableData[i].file_type + '</td>  <td>'+ tableData[i].status_value+' </td><td><a target = "blank" href="' + viewLink + '" class="btn btn-info" role="button">View</a></td> '
+
+                // Previously used select way :
+                // <select id = "status" class="selectpicker" name = "'+tableData[i].id+'"><option>Select Status</option><option value="1"  >Approved</option><option value="2" >Reject</option><option value="3" >Un-publish</option></select>
+                tbody += '</tr>'
+                count++
+
+            }
+
+            $('#kmp_content_table').find('thead').html(thead)
+            $('#kmp_content_table').find('tbody').html(tbody)
+            $('#kmp_content_table').dataTable({
+                "retrieve": true,
+                "bFilter": true,
+                "paging": true,
+                "scrollCollapse": true,
+                select: true,
+                ordering: true,
+                "scrollX": true,
+                "bLengthChange": true,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+
+
+            });
+
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,200 @@
+{% extends 'base_test.html' %}
+
+{% block additional-headers %}
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-multiselect.css" type="text/css"/>
+    <link href="/static/css/datepicker.css" rel="stylesheet">
+    <!--Data Table -->
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/plugins/select2/select2_metro.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+
+
+    <style type="text/css">
+
+
+    </style>
+
+{% endblock %}
+
+
+{% block content %}
+    <div class="page-header align">
+        <h3>Baseline data list</h3>
+    </div>
+
+    <!--<div class="row">
+        {% include "eyfw/bene_list_box.html" %}
+    </div>-->
+    <div class="row">
+        <div class="col-md-4"><label class="control-label">Data Type </label><br>
+            <select class="form-control" id = "baseline_data_id">
+                <option value="1">Community Survey</option>
+                 <option value="2">Youth Survey</option>
+            </select>
+        </div>
+
+
+    </div>
+
+    <br>
+    <div class="row ">
+        <div class="col-md-12 search-table-outter">
+
+            <div id = "baseline_table_block"></div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block additional-javascript %}
+
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap-multiselect.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+
+    <!--datatable -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+    <!--datatable ended-->
+
+
+
+    <script>
+        var district = '%';
+        var upazila = '%';
+        var union = '%';
+        var ward = '%';
+        var gender = '%';
+        var start_date = '';
+        var end_date = '';
+        var youth_group_affliation = '%';
+        var train_id = '%';
+        getBaselineTable();
+        $( ".datepicker" ).each(function() {
+            $(this).datepicker({autoclose:true  });
+        });
+
+
+        //  Page Loading First Time
+
+        $(document).ready(function () {
+
+
+
+        });
+
+
+
+        /*geo hierarchy loading*/
+         $(document).on("change", "#district", function () {
+            district = $(this).val()
+
+            $.ajax({
+                type: 'POST',
+                url: '/hhmodule/reports/feedback_form/getUpazilas_jq/',
+                data: {
+
+                    'district': district,
+                },
+                success: function (data) {
+                   list = JSON.parse(data)
+
+                    $('#upazila').find('option').remove()
+                    $('#upazila').append('<option>Select Any </option><option value = "%">All</option>')
+                    for (var i = 0 ; i < list.upazila_List.length ; i++){
+                         $('#upazila').append('<option value = '+list.upazila_List[i][0]+'>'+list.upazila_List[i][1]+'</option>')
+                    }
+                }
+
+            });
+
+            //reDataTable()
+        });
+        $(document).on("change", "#upazila", function () {
+            upazila = $(this).val()
+                        $.ajax({
+                type: 'POST',
+                url: '/hhmodule/reports/feedback_form/getUnions_jq/',
+                data: {
+
+                    'upazila': upazila,
+                },
+                success: function (data) {
+                   list = JSON.parse(data)
+
+                    $('#union').find('option').remove()
+                    $('#union').append('<option>Select Any </option> <option value = "%">All </option>')
+
+                    for (var i = 0 ; i < list.union_List.length ; i++){
+                         $('#union').append('<option value = '+list.union_List[i][0]+'>'+list.union_List[i][1]+'</option>')
+                    }
+                }
+
+            });
+            //reDataTable()
+        });
+    function getfilterCriteria(){
+        district = $('#district').val();
+        upazila = $('#upazila').val();
+        union = $('#union').val();
+        ward = $('#ward').val();
+        gender = $('#gender').val();
+        start_date = $('#start_date').val();
+        end_date = $('#end_date').val();
+        youth_group_affliation = $('#youth_group_affliation').val();
+        train_id = $('#train_id').val();
+    }
+
+    function getBaselineTable(){
+        console.log("Baseline  table trigger");
+        var baseline_data_type = $('#baseline_data_id').val();
+        $.ajax({
+            url: '/hhmodule/eyfw/getBaselineData/',
+            type: 'POST',
+            data:{
+                    'baseline_data_type' : baseline_data_type
+                },
+
+            success: function (data) {
+                $("#baseline_table_block").html("");
+                $("#baseline_table_block").html(data);
+                $('#baseline_table_id').dataTable({
+                            "retrieve": true,
+                            "bFilter": true,
+                            "paging": true,
+                            "scrollCollapse": true,
+                            select: true,
+                            // dom: 'Bfrtip',
+                            //dom: 'Blfrtip',
+                            //buttons: [{extend: 'excel', text: "Export to excel", title: 'Conducted training and coverage'}],
+                            ordering: true,
+                            //"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                            "scrollX": true
+
+                        });
+
+            }
+        });
+    //}
+    }
+
+     $(document).on("change", "#baseline_data_id", function () {
+         console.log("trigger filter");
+         //$('#baseline_table_id').dataTable().destroy()
+         getBaselineTable();
+     });
+
+</script>
+
+{% endblock %}

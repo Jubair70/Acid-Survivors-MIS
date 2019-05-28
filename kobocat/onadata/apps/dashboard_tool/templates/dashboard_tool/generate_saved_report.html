@@ -1,0 +1,83 @@
+{% extends "base_test.html" %}
+{% load crispy_forms_tags %}
+{% block additional-headers %}
+     <link rel="stylesheet" type="text/css" href="/static/css/datepicker.css" rel="stylesheet">
+     <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/plugins/bootstrap-multiselect/bootstrap-multiselect.css">
+    <style>
+        .mpower-section {
+           margin: 10px;
+        }
+        .flex div.middle {
+          /*text-align: center;
+          margin: 0; */
+          flex-grow: 1;
+        }
+        .flex div.middle-top {
+          display: flex;
+          flex-flow: row;
+          flex-wrap: wrap;
+        }
+
+        .middle-top div.controls {
+          padding: 1%;
+        }
+
+        .flex {
+          border: 1px solid lightgrey;
+          display: flex;
+        }
+
+        /****** TAB COLORS ********/
+        .nav-pills > li.active > a, .nav-pills > li.active > a:focus {
+            color: black;
+            /*background-color: #fcd900;*/
+        }
+
+        .nav-pills > li.active > a:hover {
+            /*background-color: #efcb00;*/
+            color:black;
+        }
+        .tab-content{
+            background-color: #E4E4E4;
+            color:#000;
+            padding:5px
+        }
+        .nav-tabs > li > a{
+          border: medium none;
+        }
+
+    </style>
+
+{% endblock %}
+{% block content %}
+
+
+
+
+{{ navigation_bars |safe}}
+{{ html_code |safe}}
+
+
+{% endblock %}
+{% block additional-javascript %}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/bootstrap-multiselect/bootstrap-multiselect.js"></script>
+    <script type="text/javascript"  src="{{ STATIC_URL }}js/mpower.build.highcharts.js"></script>
+    <script type="text/javascript">
+     {{ js_code |safe}}
+
+
+
+
+
+
+     $(document).ready(function () {
+
+     });
+
+    </script>
+
+{% endblock %}

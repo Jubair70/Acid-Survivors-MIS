@@ -1,0 +1,145 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% load app_filters %}
+
+
+
+{% block additional-headers %}
+    <head>
+        <title>
+            {% block title %} Control Panel {% endblock %}
+        </title>
+    </head>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/plugins/select2/select2_metro.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/css/datepicker.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="col-md-offset-0 col-md-12">
+
+        <div class="portlet box red">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-reorder"></i> Dashboard Tool
+                </div>
+            </div>
+
+            <div class="portlet-body">
+                <div class="col-md-12">
+                <a class="btn red" href="/dashboard_tool/show_filtering_control/"   role="button" >  <i class="fa fa-2x fa-plus-square-o"></i> Add Filtering Controls</a>
+                <a class="btn red" href="/dashboard_tool/show_graph_list/"   role="button" >  <i class="fa fa-2x fa-plus-square-o"></i> Add Chart</a>
+                <a class="btn red" href="/dashboard_tool/add_navigation_bar/"   role="button" >  <i class="fa fa-2x fa-plus-square-o"></i> Add Navigation Bar </a>
+                <a class="btn red" href="/dashboard/generate_saved_report/0/"   role="button" >  <i class="fa fa-2x fa-arrow"></i> Current Dashboard</a>
+            </div>
+
+            </div>
+        </div>
+
+
+        <div class="portlet box red">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-reorder"></i> Loaded Dashboard List
+                </div>
+            </div>
+
+            <div class="portlet-body">
+                <table id="table_id" class="table table-bordered table-striped table-condensed flip-content"></table>
+
+                 </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block additional-javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript"
+            src="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/static/js/DataTables/datatables.js"></script>
+    <script type="text/javascript" src="/static/js/custom_data_view.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/scripts/jquery.formset.js"></script>
+    <script>
+
+
+        /**
+         * Load All dashboard
+         * @author: persia
+         * */
+        function show_dashboard_template() {
+            $.ajax({
+                url: "/dashboard/show_template_get_json/",
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    console.log("Data "+ response);
+                    initDataTable("table_id", response.data, response.col_name);
+                    $('#table_id').show();
+                }
+            }); //ajax end
+        } //End of show_dashboard_template function
+
+
+        /**
+         * This Function will show message in top For Asynchronous Request
+         * @param: Json (messages, type field)
+         * @author: persia
+         * */
+        function showAjaxConfirmationMessages(data) {
+            $("#div_messages").html("");
+            $("#div_messages").append("<div class='alert alert-" + data.type + " fade in'><a class='close' href='#' data-dismiss='alert'>×</a> <p>" + data.messages + "</p></div>");
+        } //end of showAjaxConfirmationMessages
+
+
+         /**
+         * Load Selected loaded_dashboard in Edit Mode
+         * @param: loaded_dashboard id
+         * @author: persia
+         * */
+        function edit_entity(loaded_dashboard_id){
+            window.location.href ="/dashboard/update_loaded_dashboard/"+loaded_dashboard_id+"/";
+        } //End of edit_loaded_dashboard function
+
+
+
+        /**
+         * Delete Selected loaded_dashboard
+         * @param: loaded_dashboard id
+         * @persia
+         * */
+        function delete_entity(loaded_dashboard_id) {
+             var result = confirm("Are you sure, you want to delete?");
+             if (result) {
+                 $.ajax({
+                     type: 'GET',
+                     url: "/dashboard/delete_loaded_dashboard/" + loaded_dashboard_id + "/",
+                     success: function (data) {
+                         showAjaxConfirmationMessages(data);
+                         show_dashboard_template();
+                     },
+                     error: function (data) {
+                         showAjaxConfirmationMessages(data);
+                     }
+                 }); //ajax end
+             }
+         }
+
+
+        /* After Page Loading */
+        $(document).on('ready', function () {
+            /********Datepicker Enable*******/
+            //load_datepicker();
+            /********Datatable Show*******/
+            show_dashboard_template();
+        }); // end of document ready
+
+    </script>
+{% endblock %}

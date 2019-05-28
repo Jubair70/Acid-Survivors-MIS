@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+    {% block additional-headers %}
+        <style >
+        .data-table-container table {
+            clear: both;
+            display: table !important;
+            overflow-x: auto;
+            width: 98% !important;
+        }
+
+        .table th, .table td {
+            border: 1px solid #dddddd !important;
+        }
+    </style>
+    {% endblock %}
+
+{% block content %}
+    <section id="data-view">
+        {% if message %}
+            <div id="message" class="alert alert-danger" role="alert">
+                <span id="message" class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                {{ message }}
+            </div>
+        {% endif %}
+        <h1>Geo Data</h1>
+        <form action="/unicef/add-geo-psu/">
+            <input type="submit" class="btn btn-success" value="Add PSU">
+        </form>
+
+        <form action="/unicef/geo-rmo-list/">
+            <input type="submit" class="btn btn-success" value="RMO List">
+        </form>
+
+        <form action="/unicef/geodata/">
+            <input type="submit" class="btn btn-success" value="Geo Data">
+        </form>
+
+        <!-- <a href="/usermodule/organization-mapping">Add a mapping</a><br /> -->
+        <div id='tables' style="display:table !important;" class="data-table-container table table-striped table-hover">
+            <table id="geo-table" border="1" id="geo-list">
+              <tr>
+                
+                <th style="text-align:center">PSU ID</th>
+                <th style="text-align:center">PSU Name</th>
+                <th style="text-align:center">Division</th>
+                <th style="text-align:center">District</th>
+                <th style="text-align:center">Upazilla</th>
+                <th style="text-align:center">RMO</th>
+                <th style="text-align:center">Edit</th>
+                <th style="text-align:center">Delete</th>
+              </tr>
+
+            {% for geo in all_geo %}
+
+              <tr>
+                <td style="text-align:center">{{ geo.psu_id }}</td>
+                <td style="text-align:center">{{ geo.name }}</td>
+                <td style="text-align:center">{{ geo.geo_division }}</td>
+                <td style="text-align:center">{{ geo.geo_district }}</td>
+                <td style="text-align:center">{{ geo.geo_upazilla }}</td>
+                <td style="text-align:center">{{ geo.geo_rmo }}</td>
+                <td style="text-align:center"><a href="/unicef/geo-edit-psu/{{geo.id}}"><i class="fa fa-pencil-square-o"></i></a></td>
+                <td style="text-align:center"><a href="#" data-href="/unicef/geo-delete-psu/{{geo.id}}" data-toggle="modal" data-target="#confirm-delete" class="delete-geo-item" ><i class="fa fa-trash-o"></i></a></td>
+              </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </section>
+
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                    </div>
+                
+                    <div class="modal-body">
+                        <p>You are about to delete a geo item, this procedure is irreversible.</p>
+                        <p>Do you want to proceed?</p>
+                        <p class="debug-url"></p>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <a href="#" class="btn btn-danger btn-ok">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        
+        
+{% endblock %}
+
+{% block additional-javascript %}
+    <script>
+        $('.delete-geo-item').on('click', function(e) {
+            var criteria_url = $(this).attr("data-href");
+            $('.btn-ok').attr("href",criteria_url);
+        });
+    </script>
+{% endblock %}

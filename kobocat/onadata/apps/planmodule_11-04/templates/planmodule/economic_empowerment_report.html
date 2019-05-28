@@ -1,0 +1,408 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <link href="/static/css/calendar.min.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption"><i class="fa fa-adn"></i>Economic Empowerment Report</div>
+        </div>
+        <div class="portlet-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>From Date: </label>
+                        <div class="ui calendar" id="from_date">
+                            <input type="text" class="form-control" name="from_date" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>To Date: </label>
+                        <div class="ui calendar" id="to_date">
+                            <input type="text" class="form-control" name="to_date" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>PNGO:</label>
+                        <select class="form-control" name="pngo" id="pngo">
+                            <option value="">Select One</option>
+                            <option value="395">LAMB</option>
+                            <option value="396">EDSO</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Upazila: </label>
+                        <select class="form-control" name="upazila" id="upazila" >
+                            <option value="">Select One</option>
+                            {% for upz_id,upz_name in upazila %}
+                                <option value="{{ upz_id }}">{{ upz_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <button class="btn btn-info pull-left" id="generate_report" name="generate_report"
+                                data-original-title=""
+                                title="">Generate Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="highchart"></div>
+                </div>
+            </div>
+
+            <br>
+            <div id="container"></div>
+            <table id="all_info_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
+                <thead class="flip-content">
+
+                <tr>
+                    <th>Categories</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+{% block additional-javascript %}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+    <script type="text/javascript" src="/static/js/calendar.min.js"></script>
+
+    <script>
+        var tbody = '';
+        var economic_empowerment_list = {{ economic_empowerment_list|safe }};
+
+        for (var idx in economic_empowerment_list) {
+            tbody += '<tr><td>' + economic_empowerment_list[idx].cat_name + '</td><td>' + economic_empowerment_list[idx].summation + '</td></tr>';
+        }
+
+        $("#all_info_table").find('tbody').html(tbody);
+
+
+        var table = $('#all_info_table').DataTable({
+            "scrollX": true, "ordering": false,
+            "searching": false,
+            deferRender: true,
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    filename: "Economic Empowerment Report",
+                    title: "",
+                    text: "<strong>Export</strong>",
+                    extend: 'excel'
+                }
+            ]
+
+        });
+
+
+        $('#from_date').calendar({
+            type: 'date', endCalendar: $('#to_date'),
+            popupOptions: {
+                position: 'bottom right'
+            },
+
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+
+                    if (day < 10) {
+                        day = '0' + day
+                    }
+                    if (month < 10) {
+                        month = '0' + month
+                    }
+                    return year + '-' + month + '-' + day;
+                }
+            }
+        });
+
+
+        $('#to_date').calendar({
+            type: 'date',
+            popupOptions: {
+                position: 'bottom right'
+            },
+
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+
+                    if (day < 10) {
+                        day = '0' + day
+                    }
+                    if (month < 10) {
+                        month = '0' + month
+                    }
+                    return year + '-' + month + '-' + day;
+                }
+            }
+        });
+
+
+
+        $('#from_date').calendar('set date', getDesiredDate(2));
+        $('#to_date').calendar('set date', getDesiredDate(1));
+
+
+        $('#generate_report').on('click', function () {
+            ajaxcall();
+            table.destroy();
+
+            var from_date = $('#from_date').calendar('get date');
+            var to_date = $('#to_date').calendar('get date');
+            var upazila = $('#upazila option:selected').val();
+            var pngo = $('#pngo option:selected').val();
+
+
+
+
+
+            if (from_date != null)
+                from_date = getFormattedDate(from_date)
+            else from_date = ""
+            if (to_date != null)
+                to_date = getFormattedDate(to_date) ;
+            else to_date = ""
+            if (upazila == null)
+                upazila = ""
+            if (pngo == null)
+                pngo = ""
+
+
+            $.ajax({
+                url: '/planmodule/getEconomicData/',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    'from_date': from_date
+                    , 'to_date': to_date
+                    , 'upazila': upazila
+                    , 'pngo': pngo
+                },
+                beforeSend: function () {
+                    $('#container').show();
+                    $("#container").html('<div class="ui active inverted dimmer">\n' +
+                        '    <div class="ui text loader">Loading</div>\n' +
+                        '  </div>');
+                },
+                success: function (result) {
+                    economic_empowerment_list = JSON.parse( result.economic_empowerment_list);
+
+                    $('#container').hide();
+                    var tbody = '';
+                    for (var idx in economic_empowerment_list) {
+                        tbody += '<tr><td>' + economic_empowerment_list[idx].cat_name + '</td><td>' + economic_empowerment_list[idx].summation + '</td></tr>';
+                    }
+                    $("#all_info_table").find('tbody').html(tbody);
+                    table = datatable_reinitialize();
+                    load_highchart(result.chartvalue);
+                }
+            });
+
+
+        });
+
+
+        function datatable_reinitialize() {
+            return $('#all_info_table').DataTable({
+                "scrollX": true, "ordering": false,
+                deferRender: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        filename: "Economic Empowerment Report",
+                        title: "",
+                        text: "<strong>Export</strong>",
+                        extend: 'excel'
+                    }
+                ]
+
+            });
+        }
+
+        function ajaxcall() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                }
+            });
+        }
+
+        function getFormattedDate(date) {
+                var yy = date.getFullYear();
+                var mm = date.getMonth() + 1;
+                var dd = date.getDate();
+                if (dd < 10) {
+                    dd = '0' + dd
+                }
+                if (mm < 10) {
+                    mm = '0' + mm
+                }
+                {#                formatted_date = yyyy + '-' + mm + '-' + dd;#}
+                formatted_date = yy + '-' + mm + '-' + dd;
+                return formatted_date;
+        }
+
+        function getDesiredDate(n) {
+
+            var today = new Date();
+            var n_month_before_today = new Date(today);
+            n_month_before_today.setMonth((today.getMonth() + 1) - n);
+            var dd = n_month_before_today.getDate();
+            var mm = n_month_before_today.getMonth() + 1;
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            var yyyy = n_month_before_today.getFullYear();
+            {#                formatted_date = yyyy + '-' + mm + '-' + dd;#}
+            formatted_date = yyyy + '-' + mm + '-' + dd;
+            return formatted_date;
+
+        }
+
+        function load_union(upz_object) {
+            ajaxcall();
+            upz = parseInt(upz_object.value);
+            console.log(upz);
+            if (isNaN(parseFloat(upz))) {
+                $('#union').html("<option value=\"\">Select One</option>");
+            }
+            else {
+
+                $.ajax({
+                    url: '/planmodule/getUnions/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'upz': upz},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#union').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+        var chartvalue = {{ chartvalue|safe }};
+        console.log(chartvalue);
+        load_highchart(chartvalue);
+        function load_highchart(chartvalue) {
+
+            Highcharts.chart('highchart', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Economic Empowerment Statistics'
+                },
+                subtitle: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ['Number of adolescents girls trained','Number of adolescents supported to find employment',
+                    'Number of adolescents supported for <br> enterprise development','Number of adolescents supported for IT and telemedicine work'],
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Total'
+                    }
+                },
+
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    showInLegend: false,
+                    data: chartvalue
+                }]
+                ,tooltip: {
+  formatter: function() {
+    return  this.x+': '+ this.y ;
+  }
+},
+
+
+            });
+        }
+    </script>
+{% endblock %}

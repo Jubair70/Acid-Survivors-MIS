@@ -1,0 +1,30 @@
+
+ <form class="horizontal-form" id="add_navigation_bar" method="post" {% if NAVIGATION_EDIT_ID %} action="/dashboard_tool/edit_navigation_bar/{{ NAVIGATION_EDIT_ID }}/" {% else %} action="/dashboard_tool/add_navigation_bar/"  {% endif %}
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-body">
+                    <div class="form-group">
+                        <label > Tab Name</label>
+                        <input {% if navigation_form.link_name.value %}  value="{{ navigation_form.link_name.value}}" {% endif %} type="text" name="link_name" class="form-control">
+
+                    </div>
+                    <div class="form-group">
+                        <label>Parent Tab:</label>
+                        <select id="parent_tab" name="{{ navigation_form.parent_link.name }}" class="form-control">
+                             {% for m,n in navigation_form.fields.parent_link.choices %}
+                            <option {% if navigation_form.parent_link.value == m %} selected {% endif %} value="{{ m }}">{{ n }}
+                            </option>
+                       {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label > Order</label>
+                        <input {% if navigation_form.order.value %}  value="{{ navigation_form.order.value}}" {% endif %} type="number" name="order" class="form-control" value="0">
+                    </div>
+
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn red pull-right">Submit</button>
+                </div>
+  </form>
+

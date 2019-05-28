@@ -1,0 +1,59 @@
+{% extends "base_test.html" %}
+
+{% block additional-headers %}
+<link rel="stylesheet" href="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.css"/>
+     <link rel="stylesheet" type="text/css" href="/static/css/datepicker.css" rel="stylesheet">
+     <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/jquery.dataTables.min.css">
+     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/plugins/bootstrap-multiselect/bootstrap-multiselect.css">
+     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.dataTables.min.css">
+     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/mpower_dashboard.css">
+{% endblock %}
+
+{% block content %}
+
+
+{{ html_code |safe}}
+
+<!-- For Blue Gold: Template Saving Option Hide -->
+<!--
+ <form class="horizontal-form" method="post" action="/dashboard/save_loaded_dashboard/"
+                  enctype="multipart/form-data">
+    {% csrf_token %}
+    <input name="dashboard_name" type="text" value="" placeholder="Template Name"/>
+     <button type="submit">Save</button>
+</form>
+-->
+{% endblock %}
+{% block additional-javascript %}
+    <script type="text/javascript" src="{{STATIC_URL}}js/DataTables/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript" src="{{STATIC_URL}}js/mpower.dashboard.table.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/DataTables/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/DataTables/jszip.min.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/DataTables/pdfmake.min.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/DataTables/vfs_fonts.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/DataTables/buttons.html5.min.js"></script>
+
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/bootstrap-multiselect/bootstrap-multiselect.js"></script>
+    <script type="text/javascript"  src="{{ STATIC_URL }}js/mpower.build.highcharts.js"></script>
+
+    <!--MapBOX Scripts-->
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
+
+    <script type="text/javascript">
+
+     {{ js_code |safe}}
+     function testCaller(filtering){
+         console.log("Filtering     "+ filtering);
+     }
+    </script>
+
+{% endblock %}

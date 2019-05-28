@@ -1,0 +1,160 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% load app_filters %}
+
+
+{% block additional-headers %}
+    <head>
+        <title>
+            {% block title %} WMG Profile {% endblock %}
+        </title>
+    </head>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/plugins/select2/select2_metro.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/css/datepicker.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+      #wmg_map { width:100%; height:300px; }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+
+    <a  class="btn btn-danger pull-right" href="/bgmodule/" ><i class="fa fa-arrow-left"></i></a>
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> WMG Profile Details
+            </div>
+            <div class="tools">
+
+                <a href="javascript:;" class="collapse"></a>
+
+                <a href="javascript:;" class="remove"></a>
+            </div>
+        </div>
+        <div class="portlet-body">
+              <div class="row"  >
+            <div class="col-md-6"  >
+                     {{ wmg_html|safe }}
+           </div>
+
+            <div class="col-md-6" >
+                <div id="wmg_map"></div>
+
+           </div>
+              </div>
+
+
+
+
+
+               <ul class="nav nav-pills ">
+                <li class="nav-item active"><a class="nav-link " data-toggle="tab" href="#wmg_tracker">WMG Tracker Form</a></li>
+                <li class="nav-item "><a class="nav-link " data-toggle="tab" href="#monitoring">Participatory Monitoring Form</a></li>
+              </ul>
+
+              <div class="tab-content">
+                <div id="wmg_tracker" class="tab-pane fade in active">
+                    {{ tracker_html|safe }}
+                </div>
+                <div id="monitoring" class="tab-pane fade">
+                    {{ monitoring_html|safe }}
+                </div>
+              </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+{% block additional-javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/jquery.dataTables.js"></style>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript"
+            src="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/static/js/DataTables/datatables.js"></script>
+    <script type="text/javascript" src="/static/js/custom_data_view.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/scripts/jquery.formset.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
+    <script>
+
+
+
+    var wmg_gps={{ wmg_gps|safe }};
+    $( ".tabbed_table" ).each(function( index ) {
+      $(this).DataTable({
+            responsive: true,
+            bPaginate: true,
+            bFilter: true
+        });
+    });
+
+
+
+        color_ranges=[['WMG', '#00bb00']];
+        //var geoJson = {"type": "FeatureCollection", "features": [{"geometry": {"type": "Point", "coordinates": [90.4039866, 23.7987693]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "67.50", "title": "Good"}}, {"geometry": {"type": "Point", "coordinates": [90.254085, 22.2193733333333]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "68.33", "title": "Good"}}, {"geometry": {"type": "Point", "coordinates": [90.360715, 22.286175]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "67.50", "title": "Good"}}, {"geometry": {"type": "Point", "coordinates": [89.1275399, 22.7361552]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "71.67", "title": "Good"}}, {"geometry": {"type": "Point", "coordinates": [89.3996316666666, 22.752345]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "70.00", "title": "Good"}}, {"geometry": {"type": "Point", "coordinates": [90.23232, 22.2218516666666]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "71.67", "title": "Good"}}, {"geometry": {"type": "Point", "coordinates": [90.269975, 22.1878883333333]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "62.50", "title": "Good"}}, {"geometry": {"type": "Point", "coordinates": [90.2788233333333, 22.2519399999999]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "75.00", "title": "Good"}}, {"geometry": {"type": "Point", "coordinates": [90.2422966666666, 22.2173816666666]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "60.00", "title": "Good"}}, {"geometry": {"type": "Point", "coordinates": [90.2370433333333, 22.2123983333333]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "70.83", "title": "Good"}}, {"geometry": {"type": "Point", "coordinates": [90.2447216666666, 22.2027966666666]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "60.00", "title": "Good"}}, {"geometry": {"type": "Point", "coordinates": [90.2512766666666, 22.1862416666666]}, "type": "Feature", "properties": {"color": "#00bb00", "score": "74.17", "title": "Good"}}]};
+        var geoJson =  {"type": "FeatureCollection", "features": [{"geometry": {"type": "Point", "coordinates": [wmg_gps[1],wmg_gps[0]]}, "type": "Feature", "properties": {"color": "#00bb00", "title": "WMG"}} ]};
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaWJ0YXNoYW0iLCJhIjoiY2lmejE0eGswNWpudXU3bHhoMXJ2Zm5weiJ9.5KD2N8Y7YiKI3DfdMZwodQ';
+        var map = new mapboxgl.Map({
+            container: 'wmg_map',
+            style: 'mapbox://styles/mapbox/streets-v8',
+            center: [wmg_gps[1],wmg_gps[0] ], //khulna 22.8456° N, 89.5403° E
+            zoom: 14
+        });
+
+
+
+        map.on('load', function(){
+            // Add a new source from our GeoJSON data and set the
+            // 'cluster' option to true.
+            map.addSource("earthquakes", {
+                type: "geojson",
+                // Point to GeoJSON data.
+                data: geoJson
+            });
+
+            map.addLayer({
+                'id': 'population',
+                'type': 'circle',
+                "source": "earthquakes",
+                'source-layer': 'sf2010',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 7,
+                        'stops': [[11, 20], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': {
+                        property: 'title',
+                        type: 'categorical',
+                        stops:  color_ranges
+                    },
+                    'circle-opacity': 0.8
+                 }
+            });
+
+        });
+
+        //Adding Legend
+
+        map.addControl(new mapboxgl.Navigation());
+
+
+
+
+    </script>
+{% endblock %}

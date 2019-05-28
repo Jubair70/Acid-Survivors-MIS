@@ -1,0 +1,129 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% load app_filters %}
+
+
+
+{% block additional-headers %}
+    <head>
+        <title>
+            {% block title %} WMG Profile {% endblock %}
+        </title>
+    </head>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/plugins/select2/select2_metro.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/css/datepicker.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> WMG Profile
+            </div>
+            <div class="tools">
+                <a href="javascript:;" class="collapse"></a>
+                <a href="javascript:;" class="reload" onclick="reload_form();"></a>
+                <a href="javascript:;" class="remove"></a>
+            </div>
+        </div>
+        <div class="portlet-body form">
+            <div class="col-md-12" id="beneficiary_block">
+                    <table id="wmg_profile_table" class="table table-bordered table-hover">
+
+
+                        <thead>
+                        <tr>
+                            {% for col in col_name %}
+                                <th>col</th>
+                            {% endfor %}
+                        </tr>
+
+
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+           </div>
+        </div>
+
+    </div>
+
+
+{% endblock %}
+
+
+{% block additional-javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript"
+            src="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/static/js/DataTables/datatables.js"></script>
+    <script type="text/javascript" src="/static/js/custom_data_view.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/scripts/jquery.formset.js"></script>
+    <script>
+
+        var wmg_profile_table={{ datas|safe }}
+        initDataTable("wmg_profile_table", wmg_profile_table.data, wmg_profile_table.col_name);
+
+
+        /**
+         * Load All Household
+         * @persia
+         * */
+        function show_household() {
+            $.ajax({
+                url: "/hhmodule/show_household/",
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    initDataTable("table_id", response.data, response.col_name);
+                    $('#table_id').show();
+                }
+            }); //ajax end
+        } //End of show_household function
+
+
+        /**
+         * Load New Form in add_household_form_div
+         * @persia
+         * */
+        function reload_form() {
+            console.log("In reload_form");
+            $.ajax({
+                type: 'GET',
+                url: "/hhmodule/add_household/",
+                success: function (data) {
+                    $("#add_household_form_div").html(data);
+                    load_OneToManyRelation();
+                }
+            }); //ajax end
+        } //End of reload_form function
+
+
+        /**
+         * Load Selected household in Edit Mode
+         * @param: household id
+         * @persia
+         * */
+        function edit_entity(household_id) {
+            $.ajax({
+                type: 'GET',
+                url: "/hhmodule/edit_household/" + household_id + "/",
+                success: function (data) {
+                    $("#add_household_form_div").html(data);
+                    load_OneToManyRelation();
+                    //load_datepicker();
+                }
+            }); //ajax end
+        } //End of edit_program function
+
+
+    </script>
+{% endblock %}

@@ -1,0 +1,221 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <link href="/static/css/calendar.min.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> MIS Report Form
+            </div>
+        </div>
+
+        <div class="portlet-body">
+            <form class="horizontal-form" id="" method="post" action="/planmodule/update_mis_report_district_form/"
+                  enctype="multipart/form-data">
+                <input type="hidden" id="mis_report_id" name="mis_report_id" >
+                {% csrf_token %}
+                <div class="form-body">
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label>Activity Date: </label>
+                                <div class="ui calendar"  id="activity_date">
+                                    <input type="text" class="form-control" name="activity_date" value="{{ activity_date }}"  readonly>
+                                    <span style="color:red;font-weight:bold" id ="alert_date">No Date Selected</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="Activity Name">Activity Name:</label>
+                                <select class="form-control" name="activity_name" id="activity_name">
+                                    <option value="">Select One</option>
+                                    {% for act_id,act_name in activity %}
+                                        {% if act_id == set_activity_id %}
+                                            <option value="{{ act_id }}" selected>{{ act_name }}</option>
+                                        {% else %}
+                                            <option value="{{ act_id }}">{{ act_name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="">No of Activity:</label>
+                                <input type="number" min="0" class="form-control" name="number_of_activity"
+                                       id="number_of_activity" required>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="">Male/Boys Unmarried:</label>
+                                <input type="number" min="0" class="form-control" name="male_boys_unmarried"
+                                       id="male_boys_unmarried" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="">Male/Boys Married:</label>
+                                <input type="number" min="0" class="form-control" name="male_boys_married"
+                                       id="male_boys_married" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="">Female/Girls Unmarried:</label>
+                                <input type="number" min="0" class="form-control" name="female_girls_unmarried"
+                                       id="female_girls_unmarried" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="">Female/Girls Married:</label>
+                                <input type="number" min="0" class="form-control" name="female_girls_married"
+                                       id="female_girls_married" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="">Comment:</label>
+                                <textarea type="text" class="form-control" name="comments" id="comments"></textarea>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-danger pull-left" id="submit" name="submit" type="submit"
+                                    data-original-title=""
+                                    title="">Submit
+                            </button>
+                            <button onclick="history.go(-1);" style="margin-left:10px;" type="button"
+                                    class="btn btn-info pull-left" data-original-title="" title="">Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block additional-javascript %}
+{#    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>#}
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+    <script type="text/javascript" src="/static/js/calendar.min.js"></script>
+    <script type="text/javascript">
+
+
+        $('#activity_date').calendar({
+            type: 'date',
+            popupOptions: {
+                position: 'bottom right'
+            },
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+
+                    if (day < 10) {
+                        day = '0' + day
+                    }
+                    if (month < 10) {
+                        month = '0' + month
+                    }
+                    return year + '-' + month + '-' + day;
+                }
+            }
+        });
+
+        $('#alert_date').hide();
+
+
+
+        var data = {{ data|safe }};
+        $('#mis_report_id').val(data['mis_report_id']);
+        $('#number_of_activity').val(data['number_of_activity']);
+        $('#male_boys_unmarried').val(data['male_boys_unmarried']);
+        $('#male_boys_married').val(data['male_boys_married']);
+        $('#female_girls_unmarried').val(data['female_girls_unmarried']);
+        $('#female_girls_married').val(data['female_girls_married']);
+        $('#comments').val(data['comments']);
+
+        $('#submit').on('click',function () {
+           reg = $('#registration_date').calendar('get date');
+           if(!reg)
+           {
+                $('#alert_date').show();return false;
+
+           }
+           else $('#alert_date').hide();
+
+       });
+
+
+
+
+
+        function ajaxcall() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                }
+            });
+        }
+
+    </script>
+
+{% endblock %}

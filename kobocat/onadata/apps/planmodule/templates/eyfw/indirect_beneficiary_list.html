@@ -1,0 +1,267 @@
+{% extends 'base_test.html' %}
+
+{% block additional-headers %}
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-multiselect.css" type="text/css"/>
+    <link href="/static/css/datepicker.css" rel="stylesheet">
+    <!--Data Table -->
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/plugins/select2/select2_metro.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/beneficiary_style.css" type="text/css"/>
+
+
+    <style type="text/css">
+    .thumbnail{
+        border: 0;
+    }
+
+    </style>
+
+{% endblock %}
+
+
+{% block content %}
+    <div class="page-header align">
+        <h3>Indirect Beneficiary list</h3>
+    </div>
+
+    <!--<div class="row">-->
+        {% include "eyfw/indirect_bene_list_box.html" %}
+    <!--</div>-->
+
+    <div class="row">
+        <div class="col-md-3"><label class="control-label">Start Date </label><br>
+            <input  class="form-control datepicker" id = "start_date" type = "text">
+        </div>
+        <div class="col-md-3"><label class="control-label">End Date </label><br>
+            <input  class="form-control datepicker" id = "end_date" type = "text">
+        </div>
+
+        <div class="col-md-3"><label class="control-label">Activity Type </label><br>
+            <select class="form-control" id = "ac_type">
+                <option value = "%" > All </option>
+                    {% for list in ac_type_List %}
+                        <option value={{ list.0 }}>{{ list.1 }}</option>
+                    {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3"><label class="control-label">Activity Level </label><br>
+            <select class="form-control" id = "ac_level">
+                <option value = "%" > All </option>
+                    {% for list in ac_level_List %}
+                        <option value={{ list.0 }}>{{ list.1 }}</option>
+                    {% endfor %}
+            </select>
+        </div>
+
+
+    </div>
+    <div class="row">
+
+        <div class="col-md-3"><label class="control-label">District </label><br>
+            <select class="form-control" id = "district">
+                    <option value = "%" > All </option>
+                    {% for list in dist_List %}
+                        <option value={{ list.0 }}>{{ list.1 }}</option>
+                    {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3"><label class="control-label">Upazila </label><br>
+            <select class="form-control" id = "upazila">
+                <option value = '%'>All</option>
+            </select>
+        </div>
+        <div class="col-md-3"><label class="control-label">Union </label><br>
+            <select class="form-control" id = "union">
+                <option value = '%'>All</option>
+            </select>
+        </div>
+        <div class="col-md-3"><label class="control-label">Ward </label><br>
+            <select class="form-control" id = "ward">
+                    <option value = "%" > All </option>
+                    {% for list in ward_List %}
+                        <option value={{ list.0 }}>{{ list.1 }}</option>
+                    {% endfor %}
+            </select>
+        </div>
+
+
+    </div>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-3"></div>
+        <div class="col-md-3"></div>
+        <div class="col-md-3">
+            <button id="filter_beneList" style="margin-top:20px" class="btn red-custom btn-md"  data-original-title="" title="">Search</button>
+        </div>
+    </div>
+    <br>
+    <div class="row ">
+        <div class="col-md-12 search-table-outter">
+
+            <div id = "beneList_table_block"></div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block additional-javascript %}
+
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap-multiselect.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+
+    <!--datatable -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+    <!--datatable ended-->
+
+
+
+    <script>
+        var district = '%';
+        var upazila = '%';
+        var union = '%';
+        var ward = '%';
+        var start_date = '';
+        var end_date = '';
+        var ac_type = '%';
+        var ac_level = '%';
+        getBeneListTable();
+        $( ".datepicker" ).each(function() {
+            $(this).datepicker({autoclose:true  });
+        });
+
+
+        //  Page Loading First Time
+
+        $(document).ready(function () {
+
+
+
+        });
+
+
+
+        /*geo hierarchy loading*/
+         $(document).on("change", "#district", function () {
+            district = $(this).val()
+
+            $.ajax({
+                type: 'POST',
+                url: '/hhmodule/eyfw/add_new/getUpazilas_jq/',
+                data: {
+
+                    'district': district,
+                },
+                success: function (data) {
+                   list = JSON.parse(data)
+
+                    $('#upazila').find('option').remove()
+                    $('#upazila').append('<option value = "%">All</option>')
+                    for (var i = 0 ; i < list.upazila_List.length ; i++){
+                         $('#upazila').append('<option value = '+list.upazila_List[i][0]+'>'+list.upazila_List[i][1]+'</option>')
+                    }
+                }
+
+            });
+
+            //reDataTable()
+        });
+        $(document).on("change", "#upazila", function () {
+            upazila = $(this).val()
+                        $.ajax({
+                type: 'POST',
+                url: '/hhmodule/eyfw/add_new/getUnions_jq/',
+                data: {
+
+                    'upazila': upazila,
+                },
+                success: function (data) {
+                   list = JSON.parse(data)
+
+                    $('#union').find('option').remove()
+                    $('#union').append('<option value = "%">All </option>')
+
+                    for (var i = 0 ; i < list.union_List.length ; i++){
+                         $('#union').append('<option value = '+list.union_List[i][0]+'>'+list.union_List[i][1]+'</option>')
+                    }
+                }
+
+            });
+            //reDataTable()
+        });
+    function getfilterCriteria(){
+        district = $('#district').val();
+        upazila = $('#upazila').val();
+        union = $('#union').val();
+        ward = $('#ward').val();
+        ac_type = $('#ac_type').val();
+        start_date = $('#start_date').val();
+        end_date = $('#end_date').val();
+        ac_level = $('#ac_level').val();
+    }
+        /*geo hierarchy loading*/
+    function getBeneListTable(){
+        console.log("Bene list  table trigger");
+        getfilterCriteria();
+        $.ajax({
+            url: '/hhmodule/eyfw/getIndirectBeneTableData/',
+            type: 'POST',
+            data:{
+                    'district' : district,
+                    'upazila' : upazila,
+                    'union' : union,
+                    'ward': ward,
+                    'end_date' : end_date,
+                    'start_date' : start_date,
+                    'ac_level' : ac_level,
+                    'ac_type' : ac_type
+
+                },
+
+            success: function (data) {
+                $("#beneList_table_block").html(data);
+                $('#benelist_table_id').dataTable({
+                            "retrieve": true,
+                            "bFilter": true,
+                            "paging": true,
+                            "scrollCollapse": true,
+                            select: true,
+                            // dom: 'Bfrtip',
+                            //dom: 'Blfrtip',
+                            //buttons: [{extend: 'excel', text: "Export to excel", title: 'Conducted training and coverage'}],
+                            dom: 'Blfrtip',
+                buttons: [{extend: 'excel', className: 'exportExcel', text: "Export Excel", title: 'Indirect beneficiary list'}], ordering: false,
+                            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                            "scrollX": true
+
+                        });
+
+            }
+        });
+    //}
+    }
+
+     $(document).on("click", "#filter_beneList", function () {
+         console.log("trigger filter");
+         $('#benelist_table_id').DataTable().destroy()
+         getfilterCriteria();
+         getBeneListTable();
+     });
+
+</script>
+
+{% endblock %}

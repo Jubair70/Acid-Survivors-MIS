@@ -1,0 +1,106 @@
+
+     <form id="add_filtering_control_form" method="post" {% if CONTROL_EDIT_ID %} action="/dashboard_tool/edit_filtering_control/{{ CONTROL_EDIT_ID }}/" {% else %} action="/dashboard_tool/add_filtering_control/"  {% endif %}  enctype="multipart/form-data">
+         {% csrf_token %}
+         <div  class="flex ">
+            <div class="mpower-section left " >
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Tab No</label>
+                   <select class="form-control " id="navigation_bar" name="navigation_bar"  >
+                      {% for m,n in filtering_form.fields.navigation_bar.choices %}
+                            <option {% if filtering_form.navigation_bar.value == m %} selected {%  endif %} value="{{ m }}">{{ n }}
+                            </option>
+                       {% endfor %}
+
+                   </select>
+                </div></div>
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Label</label>
+                   <input class="form-control " {% if filtering_form.control_label.value %}  value="{{ filtering_form.control_label.value}}" {% endif %} id="control_label" name="control_label" type="text" />
+                </div></div>
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Name</label>
+                   <input class="form-control "  {% if filtering_form.control_name.value %}  value="{{  filtering_form.control_name.value  }}" {% endif %} id="control_name" name="control_name" type="text" />
+                </div></div>
+
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Type</label>
+                   <select class="form-control " id="control_type" name="control_type" type="text" >
+                       <option  value="">Select</option>
+                       <option {% if filtering_form.control_type.value == "single_select" %} selected{%  endif %}  value="single_select">Single Select</option>
+                       <option {% if filtering_form.control_type.value == "multiple_select" %} selected{%  endif %}  value="multiple_select">Multiple Select</option>
+                       <option {% if filtering_form.control_type.value == "checkbox" %} selected{%  endif %}  value="checkbox">Checkbox</option>
+                       <option {% if filtering_form.control_type.value == "radio" %} selected{%  endif %}  value="radio">Radio</option>
+                       <option {% if filtering_form.control_type.value == "date" %} selected{%  endif %}  value="date">Date</option>
+                        <option {% if filtering_form.control_type.value == "button" %} selected{%  endif %}  value="button">Button</option>
+                   </select>
+                </div></div>
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Data Source Type</label>
+                    <label>Query <input {% if filtering_form.datasource_type.value == "1" %} checked {%  endif %}  type="radio" name="datasource_type" value="1" ></label>
+                    <label>URL <input {% if filtering_form.datasource_type.value == "2" %} checked {%  endif %} type="radio" name="datasource_type" value="2" ></label>
+                    <label>Static JSON <input {% if filtering_form.datasource_type.value == "3" %} checked {%  endif %} type="radio" name="datasource_type" value="3" ></label>
+                    <label>N/A<input {% if filtering_form.datasource_type.value == "4" %} checked {%  endif %} type="radio" name="datasource_type" value="4" ></label>
+                </div> </div>
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Data Source</label>
+                    <textarea class="form-control " id="datasource"  name="datasource" rows="4">{% if filtering_form.datasource.value %} {{ filtering_form.datasource.value }} {% endif%}</textarea>
+                <a href="#">Query Builder</a> </div> </div>
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Cascaded By (iff applicable)</label>
+                   <select class="form-control " id="cascaded_by" name="cascaded_by"  >
+                      <option value="">Select</option>
+                       {% for m,n in filtering_form.fields.cascaded_by.choices %}
+                            <option {% if filtering_form.cascaded_by.value == m %} selected{%  endif %} value="{{ m }}">{{ n }} -- {{ m }}
+                            </option>
+                       {% endfor %}
+                   </select>
+                </div></div>
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Allignment</label>
+                   <select class="form-control " id="allignment" name="allignment" type="text" >
+                       <option value="" >Select</option>
+                       <option {% if filtering_form.allignment.value == "left" %} selected{%  endif %}  value="left">Left</option>
+                       <option {% if filtering_form.allignment.value == "right" %} selected{%  endif %} value="right">Right</option>
+                       <option {% if filtering_form.allignment.value == "top" %} selected{%  endif %} value="top">Top</option>
+                   </select>
+                </div></div>
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Order</label>
+                   <input class="form-control "  {% if filtering_form.element_order.value %}  value="{{  filtering_form.element_order.value }}" {% endif %}  id="element_order" name="element_order" type="number" />
+                </div></div>
+
+                <!--
+                <div class ="controls "> <div class ="form-group" >
+                        <button class="form-control  btn btn-primary" id="generateCode"> Generate </button>
+                    </div>
+                </div>
+                -->
+               <div class ="controls "> <div class ="form-group" >
+                        <button type="submit" class="btn btn-primary" > Save </button>
+                    </div>
+                </div>
+
+                <div class ="controls "> <div class ="form-group" >
+                       <div id="saveCode_status"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div  id="middle_3" class="mpower-section middle " >
+               <div class="mpower-section middle-top" id="top_3">
+               </div>
+                <div id="generated_graph"></div>
+            </div>
+            <div class="mpower-section right">
+            </div>
+         </div>
+     </form>
+
+

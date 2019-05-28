@@ -1,0 +1,373 @@
+{% extends 'base_test.html' %}
+{% block additional-headers %}
+<head>
+    <title>
+        {% block title %} Girl Boys Attendance Activity {% endblock %}
+    </title>
+    <style type="text/css">
+@media screen {
+        div.divHeader {
+            display: none;
+        }
+    }
+@media print {
+    .divHeader {
+        display: inline;
+        visibility: visible;
+        /*position: relative;*/
+        bottom: 0;
+    }
+
+  body * {
+    visibility: hidden;
+  }
+  .filter_elem {
+    visibility: hidden;
+    display: none;
+  }
+  #div_girls_tab * {
+    /*position: relative;*/
+    visibility: visible;
+  }
+  #div_boys_tab * {
+    /*position: relative;*/
+    visibility: visible;
+  }
+  #div_activities_tab * {
+    /*position: relative;*/
+    visibility: visible;
+  }
+}
+
+    </style>
+</head>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>{% if rpt_type == 'bd' %} BD {%endif%} {% if rpt_type == 'np' %} NP {%endif%} Girls Boys Attendance
+            Activity</h2></p>
+        <div class="form-group">
+            {% if rpt_type == 'bd' %}
+            <div class="col-md-4">
+                <label>Pngo Name</label>
+                <select id="pngo_name" class="pngolist form-control" onchange="populate_upzilla()">
+                    <option value="%">Select a Pngo</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>Upazila</label>
+                <select id="upozilla_name" class="upozillalist form-control" onchange="populate_union()">
+                    <option value="%">Select a Upzila</option>
+                </select>
+            </div>
+            {%endif%}
+            {% if rpt_type == 'np' %}
+            <div class="col-md-4">
+                <label>Pngo Name</label>
+                <select id="pngo_name" class="pngolist form-control" onchange="populate_vdc()">
+                    <option value="%">Select a Pngo</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>Vdc</label>
+                <select id="vdc_name" class="vdclist form-control">
+                    <option value="%">Select a Vdc</option>
+                </select>
+            </div>
+            {%endif%}
+            <div class="col-md-4">
+                <label>{% if rpt_type == 'bd' %}FF {%endif%}Name</label>
+                <input type="text" id="ff_name" class="form-control" placeholder="Specify Name">
+            </div>
+        </div>
+        <div class="form-group">
+            {% if rpt_type == 'bd' %}
+            <div class="col-md-4">
+                <label>Union</label>
+                <select id="union_name" class="unionlist form-control" onchange="populate_village()">
+                    <option value="%">Select a Union</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>Village</label>
+                <select id="village_name" class="villagelist form-control">
+                    <option value="%">Select a Village</option>
+                    {% for submitter in submitted_by %}
+                    <option value="{{submitter}}">{{submitter}}</option>
+                    {% endfor%}
+                </select>
+            </div>
+            {%endif%}
+        </div>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label>Date Range</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="From" class="datepicker" name="start_date"
+                           id="start_date"/>
+                    <span class="input-group-addon">-</span>
+                    <input type="text" class="form-control" placeholder="To" class="datepicker" name="end_date"
+                           id="end_date"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="col-md-4">
+                {% if rpt_type == 'bd' %}
+                <input type="hidden" name="country" id="rpt_type" value="BD">
+                {%endif%}
+                {% if rpt_type == 'np' %}
+                <input type="hidden" name="country" id="rpt_type" value="NP">
+                {%endif%}
+                <button type="button" class="submit btn red" id="submit">Show</button>
+                <button type="button" class="print btn default" id="print">Export</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row top-buffer"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive" id="div_girls_tab">
+            {% if girls_table %}
+            {{girls_table | safe }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive" id="div_boys_tab">
+            {% if boys_table %}
+            {{boys_table | safe }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive" id="div_activities_tab">
+            {% if activities_table %}
+            {{activities_table | safe }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block javascript %}
+{{ block.super }}
+<script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+    $(function () {
+            $('#start_date').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+            $('#end_date').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+        });
+
+    {% if filter_json  %}
+    var json = {{ filter_json | safe }}
+    {% endif %}
+
+    $(document).ready(function () {
+        populate_option('pngo_name',json);
+
+        $("#submit").on('click', function(){
+            console.log('Clicked');
+            send_filter();
+
+        });
+	$("#print").on('click', function(){
+            window.print();
+        });
+    });
+
+    var pngo_name = '';
+    var upzilla_name = '';
+    var union_name = '';
+
+    function populate_vdc(){
+
+        pngo_name = document.getElementById("pngo_name").value;
+        //console.log(pngo_name);
+        populate_option('vdc_name',json[pngo_name]);
+        //console.log(json[pngo_name]);
+    }
+
+    function populate_upzilla(){
+
+        pngo_name = document.getElementById("pngo_name").value;
+        //console.log(pngo_name);
+        populate_option('upozilla_name',json[pngo_name]);
+        //console.log(json[pngo_name]);
+    }
+    function populate_union(){
+        //removeOptions('union_name');
+        upzilla_name = document.getElementById("upozilla_name").value;
+        //console.log(upzilla_name);
+        populate_option('union_name',json[pngo_name][upzilla_name]);
+    }
+    function populate_village(){
+        //removeOptions('village_name');
+        union_name = document.getElementById("union_name").value;
+       // console.log(json[pngo_name][upzilla_name][union_name]);
+        populate_option('village_name',json[pngo_name][upzilla_name][union_name]);
+    }
+
+    function populate_option(id,json_data){
+        removeOptions(id);
+        $.each(json_data, function(i, value) {
+            if(isArray(json_data)){
+                $('#'+id).append($('<option>').text(value).attr('value', value));
+            }else{
+                $('#'+id).append($('<option>').text(i).attr('value', i));
+            }
+
+        });
+    }
+
+    function isArray(what) {
+        return Object.prototype.toString.call(what) === '[object Array]';
+    }
+
+    function removeOptions(elementID)
+    {
+        var selectbox = document.getElementById(elementID);
+        var i;
+        for(i=selectbox.options.length-1;i>0;i--)
+        {
+            selectbox.remove(i);
+        }
+    }
+
+    function getCurrentDate(){
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        if(dd<10) {
+            dd='0'+dd
+        }
+
+        if(mm<10) {
+            mm='0'+mm
+        }
+
+        today = yyyy+'-'+mm+'-'+dd;
+        return today;
+    }
+
+   function send_filter(){
+    var pngo = '%';
+    var upzilla ='%';
+    var union = '%';
+    var village = '%';
+    var vdc = '%';
+    var ff_name = '%';
+    var start_date = '2016-01-01';
+    var end_date = getCurrentDate();
+    var url = '/care-reports/bd_attendence_activity/';
+    if (document.getElementById('pngo_name') != null){
+        pngo = document.getElementById("pngo_name").value;
+    }
+    if (document.getElementById('upozilla_name') != null){
+        upzilla = document.getElementById("upozilla_name").value;
+    }
+    if (document.getElementById('union_name') != null){
+        union = document.getElementById("union_name").value;
+    }
+    if (document.getElementById('village_name') != null){
+        village = document.getElementById("village_name").value;
+    }
+    if (document.getElementById('vdc_name') != null){
+        vdc = document.getElementById("vdc_name").value;
+    }
+    if (document.getElementById('ff_name') != null){
+        ff_name = document.getElementById("ff_name").value;
+    }
+    if (document.getElementById('start_date') != null){
+        start_date = document.getElementById("start_date").value;
+        if (start_date === "")
+         start_date = '2016-01-01';
+    }
+    if (document.getElementById('end_date') != null){
+        end_date = document.getElementById("end_date").value;
+        if (end_date === "")
+         end_date = getCurrentDate();
+    }
+
+    var rpt_type = document.getElementById("rpt_type").value;
+    if (rpt_type == 'NP'){
+        url = '/care-reports/np_attendence_activity/'
+    }
+    var param_data = {
+            'pngo': pngo,
+            'upzilla': upzilla,
+            'union': union,
+            'village': village,
+            'vdc': vdc,
+	    'ff_name': ff_name,
+            'start_date': start_date,
+            'end_date': end_date
+        }
+        console.log(param_data);
+            $.ajaxSetup({
+                 beforeSend: function(xhr, settings) {
+                     function getCookie(name) {
+                         var cookieValue = null;
+                         if (document.cookie && document.cookie != '') {
+                             var cookies = document.cookie.split(';');
+                             for (var i = 0; i < cookies.length; i++) {
+                                 var cookie = jQuery.trim(cookies[i]);
+                                 // Does this cookie string begin with the name we want?
+                                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                     break;
+                                 }
+                             }
+                         }
+                         return cookieValue;
+                     }
+                     if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                         // Only send the token to relative URLs i.e. locally.
+                         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                     }
+                 }
+            });
+            $.ajax({
+                  url: url, // form action url
+                  type: 'POST', // form submit method get/post
+                  dataType: 'json', // request type html/json/xml
+                  data: param_data,
+
+                success: function(result) {
+                   //console.log(result);
+                   document.getElementById("div_girls_tab").innerHTML = result.girls_table;
+                   document.getElementById("div_boys_tab").innerHTML = result.boys_table;
+                   document.getElementById("div_activities_tab").innerHTML = result.activities_table;
+                    }
+                });
+   }
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+{% endblock %}

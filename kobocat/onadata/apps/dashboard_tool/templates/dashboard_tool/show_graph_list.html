@@ -1,0 +1,121 @@
+{% extends "base_test.html" %}
+{% block additional-headers %}
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}assets/plugins/select2/select2_metro.css"/>
+<link rel="stylesheet" href="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.css"/>
+<link rel="stylesheet" href="{{STATIC_URL}}assets/plugins/bootstrap-datepicker/css/datepicker.css"/>
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}js/DataTables/datatables.css">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+<div class="col-md-12">
+<a class="btn red pull-right" href="/dashboard_tool/build_dashboard_index/"   role="button" >  <i class="fa fa-2x fa-plus-square-o"></i> Add Graph Definition</a>
+</div></div>
+<br>
+<!-- Load graph_def Table-->
+ <div id="add_graph_defm_table_div">
+     <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption"><i class="fa fa-adn"></i>Graph Definition List</div>
+            <div class="tools">
+                <a href="javascript:;" class="collapse"></a>
+                <a onclick="show_graph_def();" href="#" class="reload"></a>
+                <a href="javascript:;" class="remove"></a>
+			</div>
+        </div>
+        <div class="portlet-body">
+            <table id = "table_id" class="table table-bordered table-striped table-condensed flip-content"></table>
+        </div>
+    </div>
+ </div>
+
+
+{% endblock %}
+
+
+
+{% block additional-javascript %}
+
+    <script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/DataTables/datatables.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/custom_data_view.js"></script>
+
+    <script type="text/javascript">
+        /* After Page Loading */
+    $(document).ready(function(){
+        show_graph_def();
+    }); // end of document ready
+    
+    /**
+     * Load All graph_defs
+     * @persia
+     * */
+    function show_graph_def(){
+        $.ajax({
+            url: "/dashboard_tool/show_graph_def_get_json/",
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                // document.getElementById("show_goal_data_div").innerHTML = result;
+                initDataTable("table_id", response.data, response.col_name);
+                $('#table_id').show();
+            }
+        }); //ajax end
+    } //End of show_graph_def function
+        
+        
+        
+
+    /**
+     * Load Selected graph_def in Edit Mode
+     * @param: graph_def id
+     * @persia
+     * */
+    function edit_entity(control_id){
+        window.location="/dashboard_tool/edit_graph_def/"+control_id+"/";
+    } //End of edit_graph_def function
+
+
+
+    /**
+     * This Function will show message in top For Asynchronous Request
+     * @param: Json (messages, type field)
+     * @persia
+     * */
+    function showAjaxConfirmationMessages(data){
+        $("#div_messages").html("");
+        $("#div_messages").append("<div class='alert alert-"+data.type+" fade in'><a class='close' href='#' data-dismiss='alert'>×</a> <p>"+data.messages+"</p></div>");
+    } //end of showAjaxConfirmationMessages
+
+
+
+
+     /**
+     * Delete Selected graph_def
+     * @param: graph_def id
+     * @persia
+     * */
+    function delete_entity(graph_id) {
+         var result = confirm("Are you sure, you want to delete?");
+         if (result) {
+             $.ajax({
+                 type: 'GET',
+                 url: "/dashboard_tool/delete_graph_def/" + graph_id + "/",
+                 success: function (data) {
+                     showAjaxConfirmationMessages(data);
+                     show_graph_def();
+                 },
+                 error: function (data) {
+                     showAjaxConfirmationMessages(data);
+                 }
+             }); //ajax end
+         }
+     }
+    </script>
+
+{% endblock %}
+
+

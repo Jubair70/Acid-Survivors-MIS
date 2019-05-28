@@ -1,0 +1,585 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <link href="/static/css/calendar.min.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption"><i class="fa fa-adn"></i>Test Report</div>
+        </div>
+        <div class="portlet-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>From Date: </label>
+                        <div class="ui calendar" id="from_date">
+                            <input type="text" class="form-control" name="from_date" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>To Date: </label>
+                        <div class="ui calendar" id="to_date">
+                            <input type="text" class="form-control" name="to_date" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>PNGO:</label>
+                        <select class="form-control" name="pngo" id="pngo">
+                            <option value="">Select One</option>
+                            {% for org_id,org_name in organization %}
+                                <option value="{{ org_id }}">{{ org_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Upazila: </label>
+                        <select class="form-control" name="upazila" id="upazila" onclick="load_union(this)">
+                            <option value="">Select One</option>
+                            {% for upz_id,upz_name in upazila %}
+                                <option value="{{ upz_id }}">{{ upz_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Union: </label>
+                        <select class="form-control" name="union" id="union">
+                            <option value="">Select One</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>CF: </label>
+                        <select class="form-control" name="username" id="username">
+                            <option value="">Select One</option>
+                            {% for user_id,user_name in user %}
+                                <option value="{{ user_id }}">{{ user_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Group: </label>
+                    <select class="form-control" name="group" id="group">
+                        <option value="">Select One</option>
+                        <option value="1">10-14 years age Boy</option>
+                        <option value="2">10-14 years age Girl</option>
+                        <option value="3">15-19 years age Boy</option>
+                        <option value="4">15-19 years age Girl</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Test Type: </label>
+                    <select class="form-control" name="test_type" id="test_type">
+                        <option value="">Select One</option>
+                        <option value="1">Pre</option>
+                        <option value="2">Post</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Age Group: </label>
+                    <select class="form-control" name="age_group" id="age_group">
+                        <option value="">Select One</option>
+                        <option value="1">10-14 years age</option>
+                        <option value="2">15-19 years age</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Gender: </label>
+                    <select class="form-control" name="gender" id="gender">
+                        <option value="">Select One</option>
+                        <option value="1">Boy</option>
+                        <option value="2">Girl</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Marital Status: </label>
+                    <select class="form-control" name="marital_status" id="marital_status">
+                        <option value="">Select One</option>
+                        <option value="1">Married</option>
+                        <option value="2">Unmarried</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Successfully Completed Session: </label>
+                    <select class="form-control" name="session" id="session">
+                        <option value="">Select One</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="9">8</option>
+                    </select>
+                </div>
+            </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <button class="btn btn-info pull-left" id="generate_report" name="generate_report"
+                                data-original-title=""
+                                title="">Generate Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="highchart"></div>
+                </div>
+            </div>
+
+            <br>
+            <div id="container"></div>
+            <table id="all_info_table" class="custom-table table table-bordered table-striped table-condensed flip-content nowrap">
+                <thead>
+                <tr>
+                    <th rowspan="1" colspan="4"></th>
+                    <th rowspan="1" colspan="3" class="td-center">Score by number of participants</th>
+                </tr>
+                <tr>
+                    <th>Group Number</th>
+                    <th>Test Type</th>
+                    <th>Date of Test</th>
+                    <th>No of Enrolled</th>
+                    <th>Poor(0-5)</th>
+                    <th>Good(6-9)</th>
+                    <th>Excellent(10-26)</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+{% block additional-javascript %}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+{#    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>#}
+{#    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>#}
+{#    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>#}
+{#    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>#}
+{#    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>#}
+{#    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>#}
+{#    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>#}
+{#    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>#}
+    <script src="/static/plugins/DataTables-1.10.15/media/js/jquery.dataTables.min.js"></script>
+    <script src="/static/plugins/DataTables-1.10.15/media/js/dataTables.bootstrap.min.js"></script>
+    <script src="/static/plugins/DataTables-1.10.15/extensions/Buttons/js/dataTables.buttons.min.js"></script>
+    <script src="/static/plugins/DataTables-1.10.15/extensions/Buttons/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+    <script src="/static/plugins/DataTables-1.10.15/extensions/Buttons/js/buttons.html5.js"></script>
+    <script src="/static/plugins/DataTables-1.10.15/extensions/Buttons/js/buttons.print.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+    <script type="text/javascript" src="/static/js/calendar.min.js"></script>
+
+    <script>
+        var tbody = '';
+        var test_list = {{ test_list|safe }};
+        console.log(test_list);
+
+        for (var idx in test_list) {
+            tbody += '<tr><td>' + test_list[idx].group_id + '</td><td>' + test_list[idx].test_type + '</td><td>' + test_list[idx].submission_date + '</td><td>' + test_list[idx].enrolled + '</td><td>' + test_list[idx].poor + '</td><td>' + test_list[idx].good + '</td><td>' + test_list[idx].excellent + '</td></tr>';
+        }
+
+        $("#all_info_table").find('tbody').html(tbody);
+
+
+        var table = $('#all_info_table').DataTable({
+            "scrollX": true, "ordering": false,
+            "searching": false,
+            deferRender: true,
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    filename: "Test Report",
+                    title: "",
+                    text: "<strong>Export</strong>",
+                    extend: 'excel'
+                }
+            ]
+
+        });
+
+
+        $('#from_date').calendar({
+            type: 'date', endCalendar: $('#to_date'),
+            popupOptions: {
+                position: 'bottom right'
+            },
+
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+
+                    if (day < 10) {
+                        day = '0' + day
+                    }
+                    if (month < 10) {
+                        month = '0' + month
+                    }
+                    return year + '-' + month + '-' + day;
+                }
+            }
+        });
+
+
+        $('#to_date').calendar({
+            type: 'date',
+            popupOptions: {
+                position: 'bottom right'
+            },
+
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+
+                    if (day < 10) {
+                        day = '0' + day
+                    }
+                    if (month < 10) {
+                        month = '0' + month
+                    }
+                    return year + '-' + month + '-' + day;
+                }
+            }
+        });
+
+        $('#group').on('click',function () {
+            if ($('#group option:selected').val()) {
+                $('#age_group option[value=""]').attr('selected','selected');
+                $('#gender option[value=""]').attr('selected','selected');
+                $('#age_group').attr('disabled', true);
+                $('#gender').attr('disabled', true);
+            }
+            else
+            {
+                $('#age_group').attr('disabled', false);
+                $('#gender').attr('disabled', false);
+            }
+
+        });
+
+        $('#from_date').calendar('set date', getDesiredDate(2));
+        $('#to_date').calendar('set date', getDesiredDate(1));
+
+
+        $('#generate_report').on('click', function () {
+            ajaxcall();
+            table.destroy();
+
+            var from_date = $('#from_date').calendar('get date');
+            var to_date = $('#to_date').calendar('get date');
+            var upazila = $('#upazila option:selected').val();
+            var pngo = $('#pngo option:selected').val();
+            var union = $('#union option:selected').val();
+            var username = $('#username option:selected').val();
+            var group = $('#group option:selected').val();
+            var test_type = $('#test_type option:selected').val();
+            var marital_status = $('#marital_status option:selected').val();
+            var session = $('#session option:selected').val();
+            var age_group = $('#age_group option:selected').val();
+            var gender = $('#gender option:selected').val();
+
+
+            if (group == "") {
+
+                if (age_group == "" && gender == "")
+                    group = "";
+                else if (age_group == "1" && gender == "1")
+                    group = "1";
+                else if (age_group == "1" && gender == "2")
+                    group = "2";
+                else if (age_group == "2" && gender == "1")
+                    group = "3";
+                else if (age_group == "2" && gender == "2")
+                    group = "4";
+                else
+                {
+                    if(age_group=="1" && gender=="" )
+                    {
+
+                        group = "12";
+                    }
+                    else if (age_group=="2" && gender=="" ) {
+                        group = "34";
+                    }
+                    else if (age_group=="" && gender=="1" ) {
+                        group = "13";
+                    }
+                    else if(age_group=="" && gender=="2")
+                    {
+                        group = "24";
+                    }
+                }
+
+            }
+
+            if (from_date != null)
+                from_date = getFormattedDate(from_date)
+            else from_date = ""
+            if (to_date != null)
+                to_date = getFormattedDate(to_date) ;
+            else to_date = ""
+            if (upazila == null)
+                upazila = ""
+            if (pngo == null)
+                pngo = ""
+            if (union == null)
+                union = ""
+
+            if (test_type == null)
+                test_type = ""
+            if (marital_status == null)
+                marital_status = ""
+            if (session == null)
+                session = ""
+            if (username == null)
+                username = ""
+
+            $.ajax({
+                url: '/planmodule/getTestData/',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    'from_date': from_date
+                    , 'to_date': to_date
+                    , 'upazila': upazila
+                    , 'union': union
+                    , 'pngo': pngo
+                    ,'username':username
+                    ,'group':group
+                    ,'test_type':test_type
+                    ,'marital_status':marital_status
+                    ,'session':session
+                },
+                beforeSend: function () {
+                    $('#container').show();
+                    $("#container").html('<div class="ui active inverted dimmer">\n' +
+                        '    <div class="ui text loader">Loading</div>\n' +
+                        '  </div>');
+                },
+                success: function (result) {
+                    test_list = JSON.parse( result.test_list);
+                    console.log(result.pretest);
+                    $('#container').hide();
+                    var tbody = '';
+                    for (var idx in test_list) {
+                        tbody += '<tr><td>' + test_list[idx].group_id + '</td><td>' + test_list[idx].test_type + '</td><td>' + test_list[idx].submission_date + '</td><td>' + test_list[idx].enrolled + '</td><td>' + test_list[idx].poor + '</td><td>' + test_list[idx].good + '</td><td>' + test_list[idx].excellent + '</td></tr>';
+                    }
+                    $("#all_info_table").find('tbody').html(tbody);
+                    table = datatable_reinitialize();
+                    load_highchart(result.pretest,result.posttest);
+                }
+            });
+
+
+        });
+
+
+        function datatable_reinitialize() {
+            return $('#all_info_table').DataTable({
+                "scrollX": true, "ordering": false,
+                deferRender: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        filename: "Test Report",
+                        title: "",
+                        text: "<strong>Export</strong>",
+                        extend: 'excel'
+                    }
+                ]
+
+            });
+        }
+
+        function ajaxcall() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                }
+            });
+        }
+
+        function getFormattedDate(date) {
+                var yy = date.getFullYear();
+                var mm = date.getMonth() + 1;
+                var dd = date.getDate();
+                if (dd < 10) {
+                    dd = '0' + dd
+                }
+                if (mm < 10) {
+                    mm = '0' + mm
+                }
+                {#                formatted_date = yyyy + '-' + mm + '-' + dd;#}
+                formatted_date = yy + '-' + mm + '-' + dd;
+                return formatted_date;
+            }
+
+        function getDesiredDate(n) {
+
+            var today = new Date();
+            var n_month_before_today = new Date(today);
+            n_month_before_today.setMonth((today.getMonth() + 1) - n);
+            var dd = n_month_before_today.getDate();
+            var mm = n_month_before_today.getMonth() + 1;
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            var yyyy = n_month_before_today.getFullYear();
+            {#                formatted_date = yyyy + '-' + mm + '-' + dd;#}
+            formatted_date = yyyy + '-' + mm + '-' + dd;
+            return formatted_date;
+
+        }
+
+        function load_union(upz_object) {
+            ajaxcall();
+            upz = parseInt(upz_object.value);
+            console.log(upz);
+            if (isNaN(parseFloat(upz))) {
+                $('#union').html("<option value=\"\">Select One</option>");
+            }
+            else {
+
+                $.ajax({
+                    url: '/planmodule/getUnions/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'upz': upz},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#union').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+        var pretest = {{ pretest|safe }};
+        var posttest = {{ posttest|safe }};
+        load_highchart(pretest,posttest);
+        function load_highchart(pretest,posttest) {
+            console.log(pretest);
+            console.log(posttest);
+
+            Highcharts.chart('highchart', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Pre & Post Test Score'
+                },
+                subtitle: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: [
+                        'Poor(0-5)','Good(6-9)','Excellent(10-26)'
+                    ],
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Participants'
+                    }
+                },
+
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'Pre Test',
+                    data: pretest
+
+                }, {
+                    name: 'Post Test',
+                    data: posttest
+
+                }]
+            });
+        }
+    </script>
+{% endblock %}

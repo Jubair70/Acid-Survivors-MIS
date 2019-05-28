@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Welcome To Blue Gold</title>
+	<link rel="stylesheet" href="{{STATIC_URL}}assets/css/bg_login_style.css">
+	<link rel="stylesheet" href="{{STATIC_URL}}assets/css/style-responsive.css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+
+<body>
+	<div class=" container-fluid login-area">
+    	<div class="row">
+        		<div class="col-md-12 logo"><img   src="/static/images/admin-logo.png"></div>
+      </div>
+      	<div class="row">
+
+    	  <div class="modal-dialog">
+				<div class="loginmodal-container">
+					<p>Welcome to Blue Gold! Please enter Your User ID and Password to Sign In</p><br>
+
+                     <form id="login_form" method="post" action="/usermodule/login/" class="registration registration--login">
+
+                            {% csrf_token %}
+                            <input placeholder="Username" class="user" type="text" name="username"   />
+
+
+                            <input  placeholder="Password" class="password" type="password" name="password"    />
+                            <input type="hidden" id="redirect_url" name="redirect_url" value="{{redirect_url}}"/>
+
+                              <input type="submit" name="login" class="login loginmodal-submit" value="Login">
+
+                          </form>
+
+				  <div class="login-help">
+					<a href="#">Forgot Password</a>
+				  </div>
+				</div>
+			</div>
+
+      	</div>
+    </div>
+
+    <div class="container-fluid footer">
+			<div class="col-lg-6 pull-left">Copyright &copy; 2017 by Blue Gold. All rights reserved.</div>
+			<div class="col-lg-6 pull-right"><a href="#"><img src="/static/images/footer-logo.png" alt="footer-logo"></a></div>
+		</div>
+
+
+</body>
+
+
+</html>
+

@@ -1,0 +1,36 @@
+<table id ="benelist_table_id" class="table table-bordered table-hover table-fixed table-striped">
+        <thead>
+
+            <th> Id </th>
+            <th> Name </th>
+            <th> Enrollment date </th>
+            <th> District </th>
+            <th> Upazila </th>
+            <th>Union </th>
+            <th> Ward </th>
+            <th> Gender</th>
+            <th> Age</th>
+            <th>Skills</th>
+            <th> </th>
+
+        </thead>
+        <tbody>
+        {% for data in dataset %}
+        <tr>
+            <td>{{data.bene_id}}</td>
+            <td>{{data.name}}</td>
+            <td>{{data.enroll_date}}</td>
+            <td>{{data.district}}</td>
+            <td>{{data.upazila}}</td>
+            <td>{{data.union}}</td>
+            <td>{{data.ward}}</td>
+            <td>{{data.gender}}</td>
+            <td>{{data.age}}</td>
+            <td>{{data.skills}}</td>
+            <td><a href="/hhmodule/eyfw/beneficiary_profile/{{ data.id }}" target="_blank" class="btn red-custom btn-md " type="button" data-original-title="" title="">View</a></td>
+
+
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>

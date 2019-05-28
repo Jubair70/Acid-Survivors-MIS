@@ -1,0 +1,173 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="/static/css/style_for_accordian.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .page-content {
+            padding: 0px 20px 20px 20px !important;
+        }
+
+        div, input, select, textarea, span, img, table, td, th, p, a, button, ul, code, pre, li {
+            -webkit-border-radius: 0px !important;
+        }
+
+        h3 {
+            color: black;
+        }
+
+
+
+
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Form</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3><strong>Victim Profile</strong></h3>
+        </div>
+    </div>
+
+    <div id="container"></div>
+
+
+
+{% endblock %}
+
+{% block additional-javascript %}
+
+{#    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>#}
+{#    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.dataTables.js"></script>#}
+{#    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.dataTables.pagination.js"></script>#}
+{#    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/sammy-0.7.1.min.js"></script>#}
+{#    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/sammy-plugins/sammy.meld-0.7.1.min.js"></script>#}
+{#    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/instance.js"></script>#}
+
+    <script>
+
+
+    var  opened = [];
+
+    $('#container').html({{ main_str | safe }});
+
+
+
+    function load_forms(category_id,div_id) {
+
+        victim_id = {{ victim_id | safe }};
+        if(opened.indexOf(category_id)>-1)
+            return
+        else
+        opened.push(category_id);
+
+        $.ajax({
+            url: '/asf/get_forms_data/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'category_id': category_id,'victim_id':victim_id},
+            beforeSend: function () {
+
+                $('#' + div_id).html('<div class="alert alert-success">Please Wait...loading....</div>');
+            },
+            success: function (result) {
+                setTimeout(function () {
+                $('#'+div_id).html(result);
+                }, 1000);
+
+            }
+        });
+    }
+
+    function load_forms_data(logger_id,div_id) {
+        console.log(logger_id);
+
+        if(opened.indexOf(logger_id)>-1)
+            return
+        else
+        opened.push(logger_id);
+
+        victim_id = {{ victim_id | safe }};
+
+        $.ajax({
+            url: '/asf/get_data_view/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'logger_id': logger_id},
+            beforeSend: function () {
+
+                $('#' + div_id).html('<div class="alert alert-success">Please Wait...loading....</div>');
+            },
+            success: function (result) {
+{#                console.log(result);#}
+                setTimeout(function () {
+                $('#'+div_id).html(result);
+                }, 500);
+
+            }
+        });
+    }
+
+
+    function load_forms_list(category_id) {
+        victim_id = {{ victim_id | safe }};
+        $('#form'+category_id).popover();
+
+        if(opened.indexOf('#form'+category_id)>-1)
+            return
+        else opened.push('#form'+category_id);
+
+        $.ajax({
+            url: '/asf/get_forms_list/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'category_id': category_id,'victim_id':victim_id},
+            beforeSend: function () {
+            },
+            success: function (result) {
+                console.log(result);
+
+                $('#form'+category_id).attr('data-content', result);
+                $('#form'+category_id).popover('show');
+
+            }
+        });
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}

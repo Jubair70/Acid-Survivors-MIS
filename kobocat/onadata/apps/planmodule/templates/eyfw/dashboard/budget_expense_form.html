@@ -1,0 +1,49 @@
+{% load crispy_forms_tags %}
+<div id="div_flash_messages"></div>
+            <div class ="row">
+                 <form name="dynamic_form" id="upload_data_form" enctype="multipart/form-data"  method="post"
+                        {% if BUDGETEXPENSE_EDIT_ID %}
+                  action="/hhmodule/eyfw/edit_budgetExpense_data/{{ BUDGETEXPENSE_EDIT_ID }}/"  {% else %}
+                  action="/hhmodule/eyfw/budget_expense/"  {% endif %}
+                       novalidate>
+                    {% csrf_token %}
+                     <div class = "col-md-12">
+                        <div class="page-header align">
+                            {% if BUDGETEXPENSE_EDIT_ID %}
+                            <h3>Budget-Expenditure Edit</h3>
+                            {% else %}
+                            <h3>Budget-Expenditure Entry</h3>
+                            {% endif %}
+
+                        </div>
+                        <!--<div class="col-md-12"><label class="control-label">NGO Name </label><br>
+                            <select class="form-control" id = "ngo" name ="ngo">
+                                <option>Select Any</option>
+                                <option value ="1">RDRS</option>
+                                <option value ="2">Oxfam</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12"><label class="control-label">Start Month </label><br>
+                            <input class="form-control datepicker_month_year" type ="text" name ="start_month" >
+                        </div>
+                        <div class="col-md-12"><label class="control-label">End Month </label><br>
+                            <input class="form-control datepicker_month_year" type ="text" name ="end_month">
+                        </div>
+                        <div class="col-md-12"><label class="control-label">Upload File </label><br>
+                            <input class="form-control" type ="file" name ="ex_file">
+                        </div>-->
+                        {% crispy form form.helper %}
+                         <div class="col-md-7">
+                         </div>
+                         <div class = "row"></div>
+                        <div class="col-md-12"><input type="submit" class = "btn red-custom btn-success" value="Submit"/></div>
+                    </div>
+                 </form>
+
+            </div>
+
+<script>
+    $( ".datepicker_month_year" ).each(function() {
+        $(this).datepicker({format:"M yyyy",autoclose:true  });
+    });
+</script>

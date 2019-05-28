@@ -1,0 +1,742 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+
+{% block additional-headers %}
+<style>
+        .flex-container {
+
+            display: -moz-box;
+            overflow-x: auto;
+}
+
+        .row {
+            margin-right: -15px;
+            margin-left: -15px;
+}
+
+        .flex-element {
+            -webkit-box-flex: 1;
+            -moz-box-flex: 1;
+            -ms-box-flex: 1;
+            box-flex: 1;
+            width: 1%;
+        }
+
+        .bg-grey-steel {
+            background: #e9edef !important;
+            width: 100%;
+        }
+
+        .mt-element-ribbon {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .mt-element-ribbon .ribbon.ribbon-color-danger {
+            background-color: #bb2413;
+            color: #fff;
+        }
+
+        .mt-element-ribbon .ribbon.ribbon-clip {
+            left: -10px;
+            top: -5px;
+            margin-left: 0;
+        }
+
+        .mt-element-ribbon .ribbon {
+            padding: .5em 1em;
+            z-index: 5;
+            float: left;
+            margin: 10px 0 0 -2px;
+            clear: left;
+            position: relative;
+        }
+
+        .mt-element-ribbon .ribbon.ribbon-color-danger > .ribbon-sub {
+            background-color: #bb2413;
+            color: #4f0a0f;
+        }
+
+        .mt-element-ribbon .ribbon > .ribbon-sub {
+            z-index: -1;
+            position: absolute;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .mt-element-ribbon .ribbon-content {
+            margin: 0;
+            padding: 10px;
+            clear: both;
+        }
+
+        .page-title {
+            font-size: 20px;
+            letter-spacing: -1px;
+            margin: 0px 0px 5px 0px;
+            padding: 0px;
+            display: block;
+            color: #666;
+            font-weight: 300;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .parent-table {
+            display: inline-block;
+            border: 2px solid #e4e4e4;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        .child-table {
+            border: 2px solid #e4e4e4;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        .form_header {
+            border-bottom: 2px solid #eee;
+            margin-bottom: 10px;
+        }
+
+        .col-xs-1, .col-xs-2, .col-xs-3, .col-xs-12, .col-xs-6, .col-xs-10, .col-xs-2 {
+            float: left;
+            position: relative;
+            min-height: 1px;
+            padding-right: 15px;
+            padding-left: 15px;
+            display: block;
+        }
+
+        .col-xs-12 {
+            width: 97%
+        }
+
+        .col-xs-11 {
+            width: 91.66666666666666%
+        }
+
+        .col-xs-10 {
+            width: 83.33333333333334%
+        }
+
+        .col-xs-9 {
+            width: 75%
+        }
+
+        .col-xs-8 {
+            width: 66.66666666666666%
+        }
+
+        .col-xs-7 {
+            width: 58.333333333333336%
+        }
+
+        .col-xs-6 {
+            width: 50%
+        }
+
+        .col-xs-5 {
+            width: 41.66666666666667%
+        }
+
+        .col-xs-4 {
+            width: 33.33333333333333%
+        }
+
+        .col-xs-3 {
+            width: 25%
+        }
+
+        .col-xs-2 {
+            width: 16.666666666666664%
+        }
+
+        .col-xs-1 {
+            width: 8.333333333333332%
+        }
+
+        @media print {
+            .flex-container {
+
+                display: -moz-box;
+                overflow-x: auto;
+            }
+
+            .row {
+                margin-right: -15px;
+                margin-left: -15px;
+            }
+
+            .flex-element {
+                -webkit-box-flex: 1;
+                -moz-box-flex: 1;
+                -ms-box-flex: 1;
+                box-flex: 1;
+                width: 1%;
+            }
+
+            .bg-grey-steel {
+                background: #e9edef !important;
+                width: 100%;
+            }
+
+            .mt-element-ribbon {
+                position: relative;
+                margin-bottom: 15px;
+            }
+
+            .mt-element-ribbon .ribbon.ribbon-color-danger {
+                background-color: #26ADE4;
+                color: #fff;
+            }
+
+            .mt-element-ribbon .ribbon.ribbon-clip {
+                left: -10px;
+                top: -5px;
+                margin-left: 0;
+            }
+
+            .mt-element-ribbon .ribbon {
+                padding: .5em 1em;
+                z-index: 5;
+                float: left;
+                margin: 10px 0 0 -2px;
+                clear: left;
+                position: relative;
+            }
+
+            .mt-element-ribbon .ribbon.ribbon-color-danger > .ribbon-sub {
+                background-color: #26ADE4;
+                color: #4f0a0f;
+            }
+
+            .mt-element-ribbon .ribbon > .ribbon-sub {
+                z-index: -1;
+                position: absolute;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+            }
+
+            .mt-element-ribbon .ribbon-content {
+                margin: 0;
+                padding: 10px;
+                clear: both;
+            }
+
+            .page-title {
+                font-size: 20px;
+                letter-spacing: -1px;
+                margin: 0px 0px 5px 0px;
+                padding: 0px;
+                display: block;
+                color: #666;
+                font-weight: 300;
+                font-family: 'Open Sans', sans-serif;
+            }
+
+            .parent-table {
+                display: inline-block;
+                border: 2px solid #e4e4e4;
+                margin-bottom: 10px;
+                padding: 5px;
+            }
+
+            .child-table {
+                border: 2px solid #e4e4e4;
+                margin-bottom: 10px;
+                padding: 5px;
+            }
+
+            .form_header {
+                border-bottom: 2px solid #eee;
+                margin-bottom: 10px;
+            }
+
+            .col-xs-1, .col-xs-2, .col-xs-3, .col-xs-12, .col-xs-6, .col-xs-10, .col-xs-2 {
+                float: left;
+                position: relative;
+                min-height: 1px;
+                padding-right: 15px;
+                padding-left: 15px;
+                display: block;
+            }
+
+            .col-xs-12 {
+                width: 97%
+            }
+
+            .col-xs-11 {
+                width: 91.66666666666666%
+            }
+
+            .col-xs-10 {
+                width: 83.33333333333334%
+            }
+
+            .col-xs-9 {
+                width: 75%
+            }
+
+            .col-xs-8 {
+                width: 66.66666666666666%
+            }
+
+            .col-xs-7 {
+                width: 58.333333333333336%
+            }
+
+            .col-xs-6 {
+                width: 50%
+            }
+
+            .col-xs-5 {
+                width: 41.66666666666667%
+            }
+
+            .col-xs-4 {
+                width: 33.33333333333333%
+            }
+
+            .col-xs-3 {
+                width: 25%
+            }
+
+            .col-xs-2 {
+                width: 16.666666666666664%
+            }
+
+            .col-xs-1 {
+                width: 8.333333333333332%
+            }
+
+            body * {
+                visibility: hidden;
+            }
+
+            #pagination_container * {
+                visibility: hidden;
+            }
+
+            #data * {
+                visibility: hidden;
+            }
+
+            #metaData * {
+                visibility: visible;
+            }
+
+            #root-0 * {
+                visibility: visible;
+            }
+
+            .form_header * {
+                visibility: visible;
+            }
+        }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+{% load i18n %}
+<div id="loading">
+  <p> {% trans "Loading..." %} </p>
+  <img id="loading-image" src="{{STATIC_URL}}images/ajax-loader.gif" alt="Loading..." />
+</div>
+{% if messages %}
+<div>{{messages}}</div>
+{% endif %}
+    <div class="row form_header">
+        <div class="col-xs-10"><span class="page-title">
+
+    </span>
+        </div>
+        <div class="col-xs-2" style="float:right;margin-top: -30px; margin-right: 35px;">
+            <select style="display: none;" id="lang-switch" onchange="changeLanguage(this);"
+                    class="form-control"></select>
+        </div>
+    </div>
+
+    <div id="pagination_container" style="padding-bottom: 20px;">
+        <div id="prev" class="col-xs-6"></div>
+        <div id="next" class="col-xs-6" style="float: right; margin-top: 0px;"></div>
+    </div>
+<div id="data"></div>
+
+
+    <div id="root-0" class="col-xs-12" style="margin-top: 20px;">
+
+    </div>
+
+    <div id="metaData" class="col-xs-12" style="border-top: 2px solid #44474a;padding-top: 20px;">
+
+    </div>
+
+ <div id="delete-modal" class="modal hide fade">
+            <div class="modal-header">
+              <a data-dismiss="modal" class="close">&times;</a>
+              <h3>{% trans "Delete Confirmation" %}</h3>
+            </div>
+            <div class="modal-body">
+              <p>{% trans "Are you sure you want to delete this record. If you are unsure about deleting this record press 'Cancel'." %}</p>
+            </div>
+            <div class="modal-footer">
+              <a href="#" onclick="$('#delete-modal').modal('hide');" class="btn btn-danger">{% trans "Delete" %}</a>
+              <a href="#" onclick="$('#delete-modal').modal('hide');" class="btn">{% trans "Cancel" %}</a>
+            </div>
+          </div>
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.dataTables.pagination.js"></script>
+<script type="text/javascript" charset="utf-8" src="{{STATIC_URL}}js/sammy-0.7.1.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="{{STATIC_URL}}js/sammy-plugins/sammy.meld-0.7.1.min.js"></script>
+    <script type="text/javascript">
+        var omitFields = ['formhub-uuid', 'meta-instanceID', '_xform_id_string'];
+        var separatedFields = ['areaName', 'slumName', 'username', 'area', 'hub', 'date', 'month', 'designation'];
+        var _base_url = '{{ request.META.HTTP_HOST }}';
+        var formTitle = '{{ form_title }}';
+        var _id_string = '{{ id_string }}';
+        var _username = '{{ username }}';
+        var instance_id = {{ instance_id }};
+        var prev_next_data = {{ prev_next_data|safe }};
+        var form_data = {{ form_data_matrix | safe }};
+        //console.log(form_data)
+        var languages = getFormLanguages(form_data);
+        var default_language = languages[0];
+        var approvedef = {{ approvedef|safe }};
+        //console.log(approvedef);
+
+        if (default_language != 'Default') {
+            languages.forEach(function (el) {
+                $('#lang-switch').append($('<option>', {value: el}).text(el));
+            });
+            $('#lang-switch').show();
+        }
+        $('.page-title').html('<a href="/usermodule/{{ form_owner }}/projects-views/{{ xform.id_string }}/"><small>' + formTitle + '</small></a> || Instance: ' + instance_id);
+
+        function generateInstanceView(form_data, omitFields, selected_lang) {
+            for (var i in form_data) {
+                var mainField = form_data[i]._field_name.replace(/\//g, '-')
+                var pField = form_data[i]._parent_field.replace(/\//g, '-')
+                if (omitFields.indexOf(mainField) == -1) {
+                    if (form_data[i]._field_value != null) {
+                        if (form_data[i]._field_type != 'repeat') {
+                            var tr = $('<div class="col-xs-3"> <div class="flex-element mt-element-ribbon bg-grey-steel"> <div class="ribbon ribbon-border-hor ribbon-clip ribbon-color-danger uppercase"> <div class="ribbon-sub ribbon-clip"></div>' + getQuestionTitle(form_data[i], selected_lang) + '</div><p class="ribbon-content">' + getAnswerLabel(form_data[i], selected_lang) + '</p></div></div>');
+                        } else {
+                            var tr = $('<div class="parent-table col-xs-12"> <div class="mt-element-ribbon"> <div class="ribbon ribbon-border-hor ribbon-clip ribbon-color-danger uppercase" style="cursor:pointer;"> <div class="ribbon-sub ribbon-clip"></div>' + getQuestionTitle(form_data[i], selected_lang) + '</div><div id="' + mainField + '"></div></div></div>');
+                        }
+                        if ($('#' + pField + '-' + form_data[i]._sl_no).length != 0) {
+                            if (separatedFields.indexOf(mainField) == -1) {
+                                $('#' + pField + '-' + form_data[i]._sl_no).append(tr);
+                            } else {
+                                $('#metaData').append(tr);
+                            }
+                        } else {
+                            generateInnerTable(form_data[i]._sl_no, pField);
+                            $('#' + pField + '-' + form_data[i]._sl_no).append(tr);
+                        }
+                    }
+                }
+            }
+        }
+
+        function generateInnerTable(slno, parent) {
+            repeatContent = '<div class="child-table flex-container col-xs-12" id="' + parent + '-' + slno + '"><tr></tr></div>';
+            $('#' + parent).append(repeatContent);
+        }
+
+        function getQuestionTitle(row_data, selected_lang) {
+            if (row_data._field_name == '_submitted_by') {
+                return 'Submitted By';
+            } else if (row_data._field_name == '_submission_time') {
+                return 'Submission time';
+            } else {
+                if (row_data._q_title.startsWith('{')) {
+                    return JSON.parse(row_data._q_title)[selected_lang];
+                } else {
+                    return row_data._q_title;
+                }
+            }
+        }
+
+        function getAnswerLabel(row_data, selected_lang) {
+            if (row_data._field_type != 'select one' && row_data._field_type != 'select all that apply') {
+                if (row_data._field_type == 'photo') {
+                    return '<a href="/media/' + _username + '/attachments/' + row_data._field_value + '" download>' + row_data._field_value + '</a>';
+                }
+                else {
+                    return row_data._field_value;
+                }
+            } else {
+                if (row_data._field_type == 'select one') {
+                    if (row_data._a_title != null) {
+                        if (row_data._a_title.startsWith('{')) {
+                            return JSON.parse(row_data._a_title)[selected_lang];
+                        } else {
+                            return row_data._a_title;
+                        }
+                    } else {
+                        return '';
+                    }
+                } else {
+                    satitle = JSON.parse(row_data._a_title);
+                    sa_title_label = '';
+                    satitle.forEach(function (elm, vdx) {
+                        if (elm.value_label != null) {
+                            if (elm.value_label.startsWith('{')) {
+                                sa_title_label += (vdx + 1) + ') ' + JSON.parse(elm.value_label)[selected_lang] + '  ';
+                            } else {
+                                sa_title_label += (vdx + 1) + ') ' + elm.value_label + '  ';
+                            }
+                        } else {
+                            sa_title_label = '';
+                        }
+                    });
+                    return sa_title_label;
+                }
+            }
+        }
+
+        function isObject(obj) {
+            return obj !== null && typeof obj === 'object';
+        }
+
+        function getFormLanguages(form_data) {
+            var omitFieldsLang = ['formhub/uuid', 'meta/instanceID', '_xform_id_string', 'username'];
+            var first_field = '';
+            var languages = [];
+            var n = 0;
+            for (var i = 0; i < form_data.length; i++) {
+                if (omitFieldsLang.indexOf(form_data[i]._field_name) == -1) {
+                    first_field = form_data[i]._q_title;
+                    //console.log(first_field);
+                    break;
+                }
+            }
+            if (first_field.startsWith('{')) {
+                languages = Object.keys(JSON.parse(first_field));
+            } else {
+                languages.push('Default');
+            }
+
+            return languages;
+        }
+
+        function changeLanguage(obj) {
+            selected_language = obj.value;
+            $('#root-0').html('');
+            generateInstanceView(form_data, omitFields, selected_language);
+        }
+
+        function generatePaginationLinks(prevNextData, username, id_string, instance_id, base_url) {
+            var prev_link = '';
+            var nxt_link = '';
+            if (prevNextData[0] != undefined) {
+                if (prevNextData[0][0] < instance_id) {
+                    prev_link = '/' + username + '/forms/' + id_string + '/instance/?s_id=' + prevNextData[0][0] + '#/' + prevNextData[0][0];
+                } else {
+                    nxt_link = '/' + username + '/forms/' + id_string + '/instance/?s_id=' + prevNextData[0][0] + '#/' + prevNextData[0][0];
+                }
+            }
+            if (prevNextData[1] != undefined) {
+                nxt_link = '/' + username + '/forms/' + id_string + '/instance/?s_id=' + prevNextData[1][0] + '#/' + prevNextData[1][0];
+            }
+
+
+            if (prev_link != '') {
+                $('#prev').append("<a onclick='openLink(\"" + prev_link + "\")' class='btn red'>Previous</a>")
+            }
+
+            if (nxt_link != '') {
+                $('#next').append("<a onclick='openLink(\"" + nxt_link + "\")' class='btn red pull-right'>Next</a>")
+            }
+        }
+
+        function openLink(url) {
+            window.location.href = url;
+        }
+
+        $(document).ready(function () {
+            //generatePaginationLinks(prev_next_data, _username, _id_string, instance_id, _base_url);
+            generateInstanceView(form_data, omitFields, default_language);
+            
+            
+        });
+
+    </script>
+<script type="text/javascript">
+var formJSONUrl = "{% url "onadata.apps.logger.views.download_jsonform" username id_string %}";
+var mongoAPIUrl = "{% url "onadata.apps.main.views.api" username id_string %}";
+var deleteAPIUrl = "{% url "onadata.apps.main.views.delete_data" username id_string %}";
+var app; // sammy app
+var questions = {};
+var languages = [];
+// TODO: this re should only accept valid js variable names so numbers/letter/underscore
+var cleanRe = /[\[\]\/]/g; // regular expression used to clean names with slashes
+var cleanReplacement = '_';
+var positionTpl = "{% trans 'Record {pos} of {total}' %}";
+var numRecords = null;
+        var browsePos = null;
+
+var canEdit = {% if can_edit %}true;{% else %}false;{% endif %}
+
+(function($) {
+
+  var _isFirstLoad = true
+
+  app = $.sammy('#data', function() {
+      this.use('Meld');
+
+      // index route
+      this.get('#/', function(context) {
+          /// get the first response object
+          // only re-direct if this is the first time
+          if(_isFirstLoad)
+              redirectToFirstId(context)
+          else
+              history.go(-2)// we first load instance, then redirect to instance#/ then to instance#/:id s we need to go back 2
+          _isFirstLoad = false
+      });
+
+      // #/id route
+      this.get('#/:id', function(context) {
+          var id = this.params['id'];
+          var query = '{"_id": ' + id + '}';
+          _isFirstLoad = false
+          loadData(context, query, canEdit,_id_string);
+                    checkEdit();
+      });
+
+      // #uuid/uuid route
+      this.get('#uuid/:uuid', function(context) {
+          var uuid = this.params['uuid'];
+          var query = '{"_uuid": "' + uuid + '"}';
+          _isFirstLoad = false
+          loadData(context, query, canEdit,_id_string);
+      });
+
+
+      // Delete modal
+      this.get('#del/:id', function(context) { with(this) {
+
+            $("#delete-modal").modal("show");
+
+      }
+      });
+
+
+      // Delete route
+      this.get('#delete/:id', function(context) {
+
+          var id = this.params['id'];
+                    /*var next = $('li.next').children('a').attr('href');
+          next = next.replace("#/", "");
+
+          var prev = $('li.prev').children('a').attr('href');
+          prev = prev.replace("#/", "");
+          var redirect_route = '#/';
+
+          if(next > 0 && next != id ){
+              redirect_route = '#/'  + next;
+          }
+          else if(prev > 0 && prev != id ){
+              redirect_route = '#/'  + prev;
+          }
+          else {
+              // Deleting the last instance
+              redirect_route ='#data-view/';
+                     }*/
+
+                    deleteData(context, id, _id_string, _username);
+      });
+      this.bind('error', {}, function(){
+          //alert('Invalid route requested')
+          //app.setLocation('#/');
+      })
+
+      // Redirect to Data View route
+      this.get('#data-view/', function(context) {
+          window.location.href = '{% url "onadata.apps.viewer.views.data_view" username id_string %}';
+      });
+
+  });
+
+  /// load form structure
+  $.getJSON(formJSONUrl)
+      .success(function(data){
+                        //parseChoices(data.choices);
+                        //parseQuestions(data.children);
+                        //parseLanguages(data.children);
+              // load count
+              $.getJSON(mongoAPIUrl, {'count': 1})
+                  .success(function(data){
+                          //todo: count num records before and num records after so we know our starting point
+                          numRecords = data[0]["count"];
+                          // load id of first record
+                          app.run('#/');
+                      })
+          });
+
+})(jQuery);
+
+function _attachment_url(name, size)
+{
+    return '{% url "onadata.apps.viewer.views.attachment_url" %}' + size + '?media_file=' + '{{ username }}/attachments/' + name;
+}
+
+</script>
+
+<script type="text/javascript" charset="utf-8" src="{{STATIC_URL}}js/instance.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#loading')
+        .ajaxStart(function() {
+            $(this).show();
+        })
+        .ajaxStop(function() {
+            $(this).hide();
+        });
+});
+
+        function checkEdit() {
+            var uri = window.location.href;
+            var instance_index = uri.lastIndexOf('/');
+            var instance_id = uri.substring(instance_index + 1);
+            var uri_first_part = uri.substring(0, instance_index - 1);
+            uri_first_part = uri_first_part.replace("/instance/", "/ajax-instance/");
+            $.ajax({
+                type: "GET",
+                url: uri_first_part + instance_id,
+                data: {},
+                success: function (data) {
+                    if (data['response'] == false) {
+                        setTimeout(function () {
+                            $('#title_edit').hide();
+                        }, 3000);
+                    }
+                },
+                error: function () {
+                    console.log("error occured");
+                }
+            }) // end-ajax
+        }
+
+        function printMe() {
+            setTimeout(function () {
+                window.print();
+            }, 1000);
+        }
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% load app_filters %}
+
+
+
+{% block additional-headers %}
+    <head>
+        <title>
+            {% block title %} Dashboard Generator {% endblock %}
+        </title>
+    </head>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/plugins/select2/select2_metro.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/css/datepicker.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <a class="btn red" href="/dashboard_tool/show_filtering_control/"   role="button" >  <i class="fa fa-2x fa-plus-square-o"></i> Add Filtering Controls</a>
+        <a class="btn red" href="/dashboard_tool/show_graph_list/"   role="button" >  <i class="fa fa-2x fa-plus-square-o"></i> Add Chart</a>
+        <a class="btn red" href="/dashboard_tool/add_navigation_bar/"   role="button" >  <i class="fa fa-2x fa-plus-square-o"></i> Add Navigation Bar </a>
+
+    </div>
+</div>
+<br>
+{% endblock %}
+
+
+{% block additional-javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript"
+            src="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/static/js/DataTables/datatables.js"></script>
+    <script type="text/javascript" src="/static/js/custom_data_view.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/scripts/jquery.formset.js"></script>
+
+{% endblock %}

@@ -1,0 +1,333 @@
+{% extends "base_test.html" %}
+{% load crispy_forms_tags %}
+
+{% block additional-headers %}
+
+<link href="/static/css/datepicker.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+<link rel="stylesheet" type="text/css" href="/static/js/spectrum.css">
+
+    <style>
+        .mpower-section {
+           margin: 10px;
+        }
+        .flex div.middle {
+          /*text-align: center;
+          margin: 0; */
+          flex-grow: 1;
+        }
+        .flex div.middle-top {
+          display: flex;
+          flex-flow: row;
+          flex-wrap: wrap;
+        }
+
+        .middle-top div.controls {
+          padding: 1%;
+        }
+
+        .flex {
+          border: 1px solid lightgrey;
+          display: flex;
+        }
+
+        /****** TAB COLORS ********/
+        .nav-pills > li.active > a, .nav-pills > li.active > a:focus {
+            color: black;
+            /*background-color: #fcd900;*/
+        }
+
+        .nav-pills > li.active > a:hover {
+            /*background-color: #efcb00;*/
+            color:black;
+        }
+        .tab-content{
+            background-color: #E4E4E4;
+            color:#000;
+            padding:5px
+        }
+        .nav-tabs > li > a{
+          border: medium none;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+<div class="portlet-body" >
+   <ul class="nav nav-pills">
+      <li class="active"><a data-toggle="tab"  href="#tab_3">Graph</a></li>
+   </ul>
+   <div class="tab-content">
+      <div class="tab-pane active" id="tab_3"  >
+         <div  class="flex ">
+            <div class="mpower-section left " >
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Tab No</label>
+                   <select class="form-control " id="tab_no">
+                      <option value="">Select</option>
+                      {% for nav in navigationBar %}
+                      <option value="{{ nav.id }}">{{ nav.link_name }}</option>
+                      {% endfor %}
+                   </select>
+                </div></div>
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Chart Title</label>
+                   <input class="form-control " id="chart_title" type="text" />
+                </div></div>
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Element ID</label>
+                   <input class="form-control " id="element_id" type="text" />
+                </div></div>
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Content Order</label>
+                   <input class="form-control " id="content_order" type="number" />
+                </div></div>
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Width</label>
+                   <input class="form-control " id="content_width" type="number" />
+                </div></div>
+
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Chart Type</label>
+                   <select class="form-control " id="chart_type">
+                      <option value="">Select</option>
+                      <option value="column">Column</option>
+                      <option value="bar">Horizontal Bar Chart</option>
+                      <option value="area">Area</option>
+                   </select>
+                </div></div>
+
+
+                <div class ="controls "> <div class ="form-group" >
+                       <label>Data Source Type</label>
+                        <label>Query <input checked type="radio" name="datasource_type" value="1" ></label>
+                        <label>URL <input type="radio" name="datasource_type" value="2" ></label>
+                    </div> </div>
+
+                <div class ="controls "> <div class ="form-group" >
+                       <label>Data Source</label>
+                        <textarea class="form-control " id="datasource"  rows="4"> SELECT  (select name from geo_ward where id=geo_ward_id) as category, sum(hh_member_number) as value FROM public.household group by geo_ward_id </textarea>
+                    <a href="#">Query Builder</a> </div> </div>
+
+
+                <div class ="controls "> <div class ="form-group" >
+                   <label>Set Different Color</label>
+                    <label>Enable <input type="radio" name="colorByPoint" value="true" ></label>
+                    <label>Disable <input checked type="radio" name="colorByPoint" value="false" ></label>
+                </div> </div>
+
+
+               <div class ="controls "> <div class ="form-group" >
+                        <button class="form-control btn btn-primary" id="saveCode"> Save </button>
+                    </div>
+                </div>
+
+                <div class ="controls "> <div class ="form-group" >
+                       <div id="saveCode_status"></div>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div  id="middle_3" class="mpower-section middle " >
+                   <div class="mpower-section middle-top" id="top_3">
+
+
+
+
+                    <div class ="controls flex"> <div id="color_palette" class ="form-group flex" >
+                        <label>Set Colors   </label>
+                        {% for i in colors %}
+                            <input class="form-control colors"  type="text" data-colors="{{ i }}" />
+                        {% endfor %}
+
+                    </div> <div><a id="addmorecolor" href="#"><i class="fa fa-plus"></i></a> </div> </div>
+                    <div class ="controls "> <div class ="form-group" >
+                        <button class="form-control  btn btn-primary" id="generateCode"> Generate </button>
+                    </div>
+                </div>
+               </div>
+                <div id="generated_graph"></div>
+            </div>
+            <div class="mpower-section right">
+
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+
+<div class="form-group">
+    <div class="col-md-5">
+        <label>HTML</label>
+        <textarea class="form-control" id="htmlcode_container" cols="150" rows="10"></textarea>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-5">
+        <label>Javascript</label>
+        <textarea class="form-control" id="jscode_container" cols="150" rows="10"></textarea>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}
+
+{% block additional-javascript %}
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript"  src="{{ STATIC_URL }}js/mpower.build.highcharts.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/cupdashboard.js"></script>
+    <script type="text/javascript" src="/static/js/spectrum.js"></script>
+
+    <script type="text/javascript">
+        $("#addmorecolor").on('click', function() {
+                console.log("TESr"  );
+                newid="newcolor_"+(new Date()).getMilliseconds()+Math.floor(Math.random()*1000);
+                $("#color_palette").append('<input id="'+newid+'" class="form-control colors"  type="text" data-colors="#ffffff" />');
+                    $("#"+newid).spectrum({
+                        color: $(this).attr("data-colors"),
+                        preferredFormat: "hex",
+                        showInput: true
+                    });
+            });
+        $(document).ready(function () {
+
+            $( ".colors" ).each(function( index ) {
+              var color= '"'+$(this).attr("data-colors") +'"';
+                  $(this).spectrum({
+                    color: $(this).attr("data-colors"),
+                    preferredFormat: "hex",
+                    showInput: true
+                  });
+            });
+});
+
+
+
+
+
+$("#generateCode").on('click', function() {
+    var element_id=$("#element_id").val();
+    var chart_type=$("#chart_type").val();
+    var chart_title=$("#chart_title").val();
+    var tab_no=$("#tab_no").val();
+    var datasource=$("#datasource").val();
+    var datasource_type=$('input[name="datasource_type"]:checked').val();
+    var colorByPoint=$('input[name="colorByPoint"]:checked').val();
+    var colors=[];
+    $( ".colors" ).each(function( index ) {
+        colors.push('"'+$(this).spectrum('get').toHexString()+'"');
+    });
+    console.log("Colors  "+colors);
+    //if(tab_no)
+    //    $("#htmlcode_container").html('<tab id="tab'+tab_no+'"><div id="'+element_id+'"></div></tab>');
+    //else
+    $("#htmlcode_container").html('<div id="'+element_id+'"></div>');
+    $("#jscode_container").html("");
+    $("#jscode_container").append('//*** Code Generator For Chart -'+chart_title+' ( Element: '+element_id+' ) *** \n');
+    $("#jscode_container").append('\nvar chart_object_'+element_id+'={chartType: "'+chart_type+'" , element: "'+element_id+'", title: "'+chart_title+'", colorByPoint: '+colorByPoint+', colors: ['+colors+']};');
+    $("#jscode_container").append('\n\nmpowerRequestForChart("/hhmodule/get_graph_json/", "'+element_id+'", chart_object_'+element_id+', {"chart_type": "'+chart_type+'", "query":"'+datasource+'"});');
+
+    html_code=$("#htmlcode_container").val();
+    js_code=$("#jscode_container").val();;
+    $.ajax({
+        type: 'POST',
+        url: "/hhmodule/get_generated_graph/",
+        data: {'js_code': js_code , 'html_code': html_code},
+        beforeSend: function () {
+            $("#generated_graph").html('<div class="alert alert-success">Please Wait...loading....</div>');
+        },
+        success: function (data) {
+            $("#generated_graph").html(data);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            //$("#saveCode_status").html("Error occurred! Please reload.");
+            $("#generated_graph").html('<div class="alert alert-danger">Error Occured. ' + textStatus + '</div>');
+            alert("Error Occured. " + textStatus);
+        }
+    });
+});
+
+
+$("#saveCode").on('click', function() {
+    var element_id=$("#element_id").val();
+    var chart_type=$("#chart_type").val();
+    var chart_title=$("#chart_title").val();
+    var htmlCode=$("#htmlcode_container").val();
+    var jsCode=$("#jscode_container").val();
+    var tab_no=$("#tab_no").val();
+    var datasource=$("#datasource").val();
+    var datasource_type=$('input[name="datasource_type"]:checked').val();
+    var colorByPoint=$('input[name="colorByPoint"]:checked').val();
+    content_order=$("#content_order").val();
+    content_width=$("#content_order").val();
+    chart_object='{"chartType": "'+chart_type+'" , "element": "'+element_id+'", "title": "'+chart_title+', "colorByPoint":'+colorByPoint+'", "width":"'+content_width+'" }';
+
+    $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie != '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                // Only send the token to relative URLs i.e. locally.
+                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            }
+        }
+    });
+
+
+    $.ajax({
+        type: 'POST',
+        url: "/hhmodule/save_dashboard_style/",
+        data: {'element_id': element_id , 'html_code':htmlCode, 'js_code':jsCode,'chart_object': chart_object, 'tab_no':tab_no, 'datasource':datasource, 'datasource_type': datasource_type, 'content_order':content_order},
+        beforeSend: function() {
+            $("#saveCode_status").html('<div class="alert alert-success">Please Wait...loading....</div>');
+        },
+        success: function(data) {
+            $("#saveCode_status").html('<div class="alert alert-success">Saved</div>');
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            //$("#saveCode_status").html("Error occurred! Please reload.");
+            $("#saveCode_status").html('<div class="alert alert-danger">Error Occured. '+textStatus+'</div>');
+            alert("Error Occured. "+textStatus);
+        }
+    });
+});
+
+
+
+    </script>
+
+
+
+{% endblock %}
+
+

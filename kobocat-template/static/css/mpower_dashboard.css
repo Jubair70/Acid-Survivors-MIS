@@ -1,0 +1,188 @@
+.mpower-section {
+   margin: 10px;
+}
+.flex div.middle {
+  /*text-align: center;
+  margin: 0; */
+  flex-grow: 1;
+}
+.flex div.right {
+
+}
+.flex div.middle-top {
+  display: flex;
+  /*flex-flow: row;*/
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.middle-top div.controls {
+  padding: 1%;
+}
+
+.middle-container {
+  display: flex;
+  flex-flow: row wrap;
+  align-content: space-around;
+  justify-content: space-between;
+  position:relative;
+    /*display: flex;
+    -webkit-flex-flow: row wrap;
+    justify-content: space-around;*/
+
+}
+
+.middle-item {
+    position:relative;
+    padding: 10px;
+    /* For Responsive width of content min-width: 0 is necessary */
+    min-width: 0;
+}
+
+.flex {
+  border: 1px solid lightgrey;
+  display: flex;
+}
+
+
+
+/****** TAB COLORS ********/
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus {
+    color: black;
+    /*background-color: #fcd900;*/
+}
+
+.nav-pills > li.active > a:hover {
+    /*background-color: #efcb00;*/
+    color:black;
+}
+.tab-content{
+    background-color: #ffffff;
+    color:#000;
+    padding:5px
+}
+.nav-tabs > li > a{
+  border: medium none;
+}
+.map
+{ position:absolute;  width:100%; min-height:400px; height:100%; }
+
+
+
+ /* ******************SLIDER Menu ******************/
+
+
+.sidenav a:hover, .offcanvas a:focus{
+    color: #f1f1f1;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav { padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+
+/* SLIDER Menu: RIGHT */
+.sidenav_right {
+    height: 100%;
+    width: 0;
+    position: absolute;
+    right:0;
+    z-index: 1;
+    background-color: #ffffff;
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+.sidenav_right .closebtn {
+    top: 0;
+    font-size: 36px;
+    margin-left: 10px;
+}
+
+.sidenav_right a {
+    /*padding: 1px 1px 1px 32px;*/
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+
+/* SLIDER Menu: Left */
+.sidenav_left {
+    width: 0;
+    position: absolute;
+    z-index: 1;
+    background-color: #ffffff;
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+
+.sidenav_left .closebtn {
+    top: 0;
+    font-size: 36px;
+    margin-right: 10px;
+}
+
+.sidenav_left a {
+    text-decoration: none;
+    float: right;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+
+/*************MAP BOX GL STYLES ************/
+.legend {
+    background-color: #fff;
+    border-radius: 3px;
+    bottom: 30px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.10);
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    padding: 10px;
+    position: absolute;
+    right: 10px;
+    z-index: 1;
+}
+
+.legend h4 {
+    margin: 0 0 10px;
+}
+
+.legend div span {
+    border-radius: 50%;
+    display: inline-block;
+    height: 10px;
+    margin-right: 5px;
+    width: 10px;
+}
+
+/********Grouped Datatable********/
+tr.group,  tr.group:hover {
+    background-color: #ddd !important;
+    font-style: italic;
+     font-weight: bold;
+}
+
+
+td.details-control {
+    background: url('http://next.datatables.net/examples/resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('http://next.datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
+
+
+
+#tb_wmg_tracker  td.sorting_1{
+    font-weight: bold;
+}
+
+
+.mp_submit{
+    margin: 25px 0 0 0;
+}

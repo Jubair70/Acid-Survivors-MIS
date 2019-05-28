@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<style >
+    body {
+        background-image:url('{{STATIC_URL}}/images/signup_photo.jpg'); background-size: cover;
+    }
+	tab { padding-left: 8em; }
+</style>
+<head>
+
+
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{% block additional-headers %}
+ <link rel="icon" type="image/x-icon" href="{{STATIC_URL}}images/favicon.ico" />
+    <!-- iPhone + iPad icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{STATIC_URL}}images/apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{STATIC_URL}}images/apple-touch-icon-72x72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="{{STATIC_URL}}img/apple-touch-icon-precomposed.png">
+  <link rel="apple-touch-icon" href="{{STATIC_URL}}images/apple-touch-icon.png">
+<link href="{{STATIC_URL}}css/login.css" rel="stylesheet">
+{% endblock %}
+</head>
+<body >
+    <div class="registration--logo">
+    <a href="/usermodule/login/"><img src="{{STATIC_URL}}images/login_box_logo.png" width="80" height="80"/></a>
+  </div>
+    <div id="content-shokhi" style="position: fixed; right: 460px; margin-left:80px;">
+        <h3 style="text-align: center">BlueGold MIS System</h3>
+        <h5  style="text-align: left">Overview on Blue Gold Program </h5>
+        <p style="text-align: justify">The Blue Gold Program (BGP) has been developed based on the lessons learned from IPSWAM and other water sector projects in Bangladesh. It is a poverty reduction and economic development program with a central focus on the water management – agriculture nexus, which is being implemented by BWDB and DAE and which is funded by the Governments of Bangladesh and the Embassy of the Kingdom of the Netherlands.  Blue Gold is implemented in 3 coastal districts of Bangladesh; Patuakhali, Khulna and Satkhira. The Blue Gold Program is guided by the following policies:
+</br>
+<li>&nbsp National Water Policy (NWPo, 1999)</li>
+<li>&nbsp Guidelines for Participatory Water Management (GPWM, 2000)</li>
+<li>&nbsp National Water Management Plan (NWMP).</li>
+<li>&nbsp Participatory Water Management Rules (PWMR 2014)</li>
+
+
+
+</p>
+    </div>
+  <div class="registration__bg">
+    
+  <!-- <form method="post" action="." class="registration registration--login"> -->
+  <form id="login_form" method="post" action="/usermodule/login/" class="registration registration--login">  
+
+    {% csrf_token %}
+    <p><label for="id_username">Username:</label> <input type="text" name="username" value="" size="20" /></p>
+
+    <p><label for="id_password">Password:</label> <input type="password" name="password" value="" size="20" /></p>
+    
+    <input type="hidden" id="redirect_url" name="redirect_url" value="{{redirect_url}}"/>
+    <input type="submit" value="Login" class="registration__action"/>
+  </form>
+</div>
+<!-- <div class="logo_foot">
+  <img src="{{STATIC_URL}}/images/oxfam_logo_foot.png"/>
+</div> -->
+</body>
+</html>
+
+{% block additional-javascript %}
+
+<script type="text/javascript" >
+  // console.log(window.location.href);
+  // var url = window.location.href;
+  // console.log(url.substring(url.indexOf("=")+1));
+  // var elem = document.getElementById("redirect_url");
+  // elem.value = window.location.href;
+  
+
+</script>
+{% endblock %}

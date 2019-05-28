@@ -1,0 +1,160 @@
+{% extends "base_test.html" %}
+{% block additional-headers %}
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}assets/plugins/select2/select2_metro.css"/>
+<link rel="stylesheet" href="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.css"/>
+<link rel="stylesheet" href="{{STATIC_URL}}assets/plugins/bootstrap-datepicker/css/datepicker.css"/>
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}js/DataTables/datatables.css">
+{% endblock %}
+
+
+{% block content %}
+<div class="portlet box red">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-reorder"></i> Navigation
+        </div>
+    </div>
+    <div class="portlet-body form">
+        <div id="add_navigation_bar_form_div">
+            {% include "dashboard_tool/add_navigation_bar_form.html" %}
+        </div>
+    </div>
+</div>
+
+    <div> </div>
+<!-- Load navigation_bar Table-->
+ <div id="add_navigation_barm_table_div">
+     <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption"><i class="fa fa-adn"></i>Navigation Bar List</div>
+            <div class="tools">
+                <a href="javascript:;" class="collapse"></a>
+                <a onclick="show_navigation_bar();" href="#" class="reload"></a>
+                <a href="javascript:;" class="remove"></a>
+			</div>
+        </div>
+        <div class="portlet-body">
+            <table id = "table_id" class="table table-bordered table-striped table-condensed flip-content"></table>
+        </div>
+    </div>
+ </div>
+    
+    
+{% endblock %}
+
+
+
+{% block additional-javascript %}
+
+    <script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/DataTables/datatables.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/custom_data_view.js"></script>
+
+    <script type="text/javascript">
+        /* After Page Loading */
+    $(document).ready(function(){
+
+        /********Datatable Show*******/
+        show_navigation_bar();
+
+    }); // end of document ready
+
+
+    /**
+     * Load Selected navigation_bar in Edit Mode
+     * @param: navigation_bar id
+     * @persia
+     * */
+    function edit_entity(navigation_bar_id){
+        $.ajax({
+            type : 'GET',
+            url : "/dashboard_tool/edit_navigation_bar/"+navigation_bar_id+"/",
+            success : function(data) {
+                $("#add_navigation_bar_form_div").html(data);
+                show_navigation_bar();
+            }
+	    }); //ajax end
+    } //End of edit_navigation_bar function
+
+
+
+
+    /**
+     * This Function will show message in top For Asynchronous Request
+     * @param: Json (messages, type field)
+     * @persia
+     * */
+    function showAjaxConfirmationMessages(data){
+        $("#div_messages").html("");
+        $("#div_messages").append("<div class='alert alert-"+data.type+" fade in'><a class='close' href='#' data-dismiss='alert'>×</a> <p>"+data.messages+"</p></div>");
+    } //end of showAjaxConfirmationMessages
+
+
+
+    /**
+     * Load All navigation_bars
+     * @persia
+     * */
+    function show_navigation_bar(){
+        $.ajax({
+            url: "/dashboard_tool/show_navigation_bar/",
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                // document.getElementById("show_goal_data_div").innerHTML = result;
+                initDataTable("table_id", response.data, response.col_name);
+                $('#table_id').show();
+            }
+        }); //ajax end
+    } //End of show_navigation_bar function
+
+
+    //***********Submit Form (post) on submit btn click**********
+    $(document).on("submit", "#add_navigation_bar", function(event) {
+        event.preventDefault();
+        form_url = $(this).attr('action');
+        console.log("IN   W  SUBMIT FORM  ");
+        $.ajax({
+            type : 'POST',
+            url : form_url,
+            data : $(this).serialize(),
+            success : function(data){
+                $("#add_navigation_bar_form_div").html(data);
+                show_navigation_bar();
+                showAjaxConfirmationMessages({"type":"success", "messages": "Saved Successfully." });
+            },
+            error : function(xhr, status, error) {
+                $("#add_navigation_bar_form_div").html(xhr.responseText);
+                showAjaxConfirmationMessages({"type":"danger", "messages": "Failed. Please Check Required Field again." });
+            }
+	    }); //ajax end
+    }); // ENd of add_navigation_bar_form form submit
+
+
+     /**
+     * Delete Selected navigation_bar
+     * @param: navigation_bar id
+     * @persia
+     * */
+    function delete_entity(navigation_bar_id) {
+         var result = confirm("Are you sure, you want to delete?");
+         if (result) {
+             $.ajax({
+                 type: 'GET',
+                 url: "/dashboard_tool/delete_navigation_bar/" + navigation_bar_id + "/",
+                 success: function (data) {
+                     showAjaxConfirmationMessages(data);
+                     show_navigation_bar();
+                 },
+                 error: function (data) {
+                     showAjaxConfirmationMessages(data);
+                 }
+             }); //ajax end
+         }
+     }
+    </script>
+
+{% endblock %}
+
+

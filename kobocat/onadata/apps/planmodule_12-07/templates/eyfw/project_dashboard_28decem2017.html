@@ -1,0 +1,578 @@
+{% extends 'base_test.html' %}
+
+{% block additional-headers %}
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-multiselect.css" type="text/css"/>
+
+    <!--Data Table -->
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/plugins/select2/select2_metro.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+
+
+    <!-- Project Dasboard  -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/project_dashboard_style.css" type="text/css"/>
+
+
+    <style type="text/css">
+        ul li {
+            /* Bullet color */
+            color: #5DCDC5;
+            list-style-type: disc;
+        }
+
+        .text1 {
+            /* Text color */
+            color: #000 !important;
+        }
+
+        .border {
+
+            border: 1px gainsboro solid;
+        }
+
+
+    </style>
+
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="row">
+        <!--<h3 class="page-title">
+            Dashboard
+            <small>reports &amp; statistics</small>
+        </h3>-->
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat green-madison" style = "min-height: 120px;">
+                <div class="visual">
+                    <i class="fa fa-comments"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        {{ dict_box.bene_total }}
+                    </div>
+                    <div class="desc">
+                        Direct Beneficiary
+                    </div>
+                    <div class="desc">
+                        Male: {{ dict_box.bene_male }} | Female: {{ dict_box.bene_female }}
+                    </div>
+                    <div class="desc">
+                        Male: {{ dict_box.bene_male_p }}% | Female: {{ dict_box.bene_female_p }}%
+                    </div>
+                </div>
+                <a class="more" href="javascript:;">
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat pink-madison" style = "min-height: 120px;">
+                <div class="visual">
+                    <i class="fa fa-comments"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        {{ dict_box.indirect_bene_total }}
+                    </div>
+                    <div class="desc">
+                        Indirect Beneficiary
+                    </div>
+                    <div class="desc">
+                        Male: {{ dict_box.indirect_bene_male }} | Female: {{ dict_box.indirect_bene_female }}
+                    </div>
+                    <div class="desc">
+                        Male: {{ dict_box.indirect_bene_male_p }}% | Female: {{ dict_box.indirect_bene_female_p }}%
+                    </div>
+                </div>
+                <a class="more" href="javascript:;">
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat purple-madison" style = "min-height: 120px;">
+                <div class="visual">
+                    <i class="fa fa-comments"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        {{ dict_box.total_training }}
+                    </div>
+                    <div class="desc">
+                        Persons Received Training
+                    </div>
+                    <div class="desc">
+                        Male: {{ dict_box.total_training_m }} | Female: {{ dict_box.total_training_f }}
+                    </div>
+                     <div class="desc">
+                        Male: {{ dict_box.train_male_p }}% | Female: {{ dict_box.train_female_p }}%
+                    </div>
+                </div>
+                <a class="more" href="javascript:;">
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat light-green-madison" style = "min-height: 120px;">
+                <div class="visual">
+                    <i class="fa fa-comments"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        {{ dict_box.unit_achieved }}
+                    </div>
+                    <div class="desc">
+                        Ward Level
+                    </div>
+                    <div class="desc">
+                        Youth groups
+                    </div>
+                </div>
+                <a class="more" href="javascript:;">
+                    {#                    View more <i class="m-icon-swapright m-icon-white"></i>#}
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+
+        <div class="col-sm-6">
+            <div class="portlet-title">
+                <center>Key Training Achievements</center>
+            </div>
+            <div class="col-sm-4" style="padding-left: 1px">
+                <div class="portlet-title-sub" style="background: #1ABB44 ;color: white">Soft Skills</div>
+                <div class="s-contaion">
+                    <div class="">
+                        <div id="soft_skill">
+                        </div>
+                    </div>
+                    <div class="f-contaion" style="background: #1ABB44 ; color: white ;">
+                        Total: {{ dict_box.total_ss }}<br>Male: {{ dict_box.ss_reached_male }} |
+                        Female: {{ dict_box.ss_reached_female }}
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-4" style="padding: 1px">
+                <div class="portlet-title-sub" style="background: #ff0066 ; color: white ;">Tech Skills</div>
+                <div class="s-contaion">
+                    <div class="">
+                        <div id="tech_skill">
+                        </div>
+                    </div>
+                    <div class="f-contaion" style="background: #ff0066 ; color: white ;">
+                        Total: {{ dict_box.total_ts }}<br>Male: {{ dict_box.ts_reached_male }} |
+                        Female: {{ dict_box.ts_reached_female }}
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-4" style="padding-right: 1px">
+                <div class="portlet-title-sub" style="background: #5D0C82 ; color: white ;">Ent. Skills</div>
+                <div class="s-contaion">
+                    <div class="">
+                        <div id="enterpreneurial_skill">
+                        </div>
+                    </div>
+                    <div class="f-contaion" style="background: #5D0C82 ; color: white ;">
+                        Total: {{ dict_box.total_es }}<br>Male: {{ dict_box.es_reached_male }} |
+                        Female: {{ dict_box.es_reached_female }}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="  col-lg-6">
+            <div class="portlet-title">
+                <center>Strategic Progress</center>
+            </div>
+            <div class="border" style="height: 258px">
+
+                <marquee direction="up" scrollamount="2" style="min-height: 250px;">
+                    <ul class="listStyle">
+                        {% for list in dict_box.stra_pro_List %}
+
+                            <li><span class="text1"><strong>{{ list.1 }}</strong></span></li>
+                        {% endfor %}
+                    </ul>
+                </marquee>
+                <!--<marquee direction="up" scrollamount="2">
+                <li><span class="text1">MoU signed with Access to Information (a2i) Programme</span></li>
+                <li><span class="text1">Mou signed woth Department of Youth Development</span></li>
+                <li><span class="text1">Partnership made with Maya Apa</span></li>
+                <li><span class="text1">Partnership mad with SIYB, ILO</span></li>
+                </marquee>-->
+
+                <!--<marquee direction="up" scrollamount="2"><li><span class="text1">MoU signed with Access to Information (a2i) Programme</span></li></marquee>
+                <marquee direction="up" scrollamount="2"><li><span class="text1">Mou signed woth Department of Youth Development</span></li></marquee>
+                <marquee direction="up" scrollamount="2"><li><span class="text1">Partnership made with Maya Apa</span></li></marquee>
+                <marquee direction="up" scrollamount="2"><li><span class="text1">Partnership mad with SIYB, ILO</span></li></marquee>-->
+
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="portlet-title" style="">
+                <center>Expenditure Summary</center>
+            </div>
+            <div class="col-lg-6 border" style="">
+                <h4 style=" font-size:20px;color:#53297D;">
+                    <center>Overall Summary Budget-Year-{{ dict_box.year }} {{ dict_box.quarter }}</center>
+                </h4>
+                <br>
+                <div class="">
+                    <div id="budget">
+                    </div>
+                </div>
+                <br><br>
+                <div class="">
+                    <div id="expenditure">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 border " style=" margin-left: 10px;
+    width: 49%;
+    height: 421px;">
+                <div class="">
+                    <div id="partner_wise_summary_budget">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block additional-javascript %}
+
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap-multiselect.js"></script>
+
+
+    <!--Data Table -->
+    <!--  <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript" src="/static/js/DataTables/datatables.js"></script>
+  -->
+
+    <!--datatable -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+    <!--datatable ended-->
+
+
+
+    <script type="text/javascript" src="/static/js/custom_data_view.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+
+
+
+
+    <script>
+
+
+        $(document).ready(function () {
+            //console.log({{ dict_box.percent_ss | safe}})
+            var ss_p = (parseInt({{ dict_box.total_ss }})*100/67000).toFixed(2);;
+            var ts_p = (parseInt({{ dict_box.total_ts }})*100/5100).toFixed(2);;
+            var es_p = (parseInt({{ dict_box.total_es }})*100/3150).toFixed(2);;
+            console.log({{ dict_box.percent_ss | safe}}+"dfgdgdfh");
+
+            soft_skill = [
+                ['Complete', {{ dict_box.percent_ss | safe}}],
+                ['Incomplete', (100 -{{ dict_box.percent_ss}})]
+            ]
+            //console.log(soft_skill)
+            tech_skill = [
+                ['Complete', {{ dict_box.percent_ts | safe}}],
+                ['Incomplete', (100 -{{ dict_box.percent_ts}})]
+            ]
+            ent_skill = [
+                ['Complete', {{ dict_box.percent_es | safe}}],
+                ['Incomplete', (100 -{{ dict_box.percent_es}})]
+            ]
+            partner_wise_summary_budget_data = [{
+                name: 'Budget(EURO)',
+                data: [171175, 31286, 64055, 19873, 19895]
+
+            }, {
+                name: 'Expenditure(EURO)',
+                data: [116519, 20663, 25278, 17273, 17291]
+
+            }]
+
+            {#            jsonDataList('soft_skill', '78', 'pie', true, false, false, soft_skill)#}
+            {#            jsonDataList('tech_skill', '18', 'pie', true, false, false, tech_skill)#}
+            {#            jsonDataList('enterpreneurial_skill', '5', true, 'pie', false, false, tech_skill)#}
+            {#            jsonDataList('partner_wise_summary_budget', '' ,false,'column', false, false, partner_wise_summary_budget_data)#}
+            {##}
+
+
+            /*budget = [
+             ['Project Management', 171175],
+             ['Meal', 31286],
+             ['Agency & Capacity', 64055],
+             ['Economic Oppotunities', 19873],
+             ['Policy & Norms', 19895]
+             ]*/
+            budget = {{dict_box.list_b_q | safe}}
+
+
+                    /*Expenditure = [
+                     ['Project Management', 116519],
+                     ['Meal', 20663],
+                     ['Agency & Capacity', 25278],
+                     ['Economic Oppotunities', 17273],
+                     ['Policy & Norms', 17291]
+                     ]*/
+                expenditure = {{ dict_box.list_e_q | safe }}
+                    dashboard('soft_skill', ss_p, soft_skill)
+            dashboard('tech_skill', ts_p, tech_skill)
+            dashboard('enterpreneurial_skill', es_p, ent_skill)
+            dashboardBudget('budget', 'Budget', budget)
+            dashboardBudget('expenditure', 'Expenditure', expenditure)
+            console.log("{{ dict_box.percent_ss | safe }}")
+
+
+        });
+
+
+        Highcharts.setOptions({
+            colors: ['#ff0066', '#A79EA3', '#1ABB44', '#5D0C82', '#9ECD18', '#F4F004', '#F4F004', '#F9DC23']
+        });
+
+        function dashboard(div, title, data) {
+            //console.log("Title is :"+title);
+            //console.log(data);
+
+            Highcharts.chart(div, {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie',
+                    height: 160
+                },
+                title: {
+                    text: title + "%",
+                    margin: 0,
+                    y: 10,
+                    x: 0,
+                    align: 'center',
+                    verticalAlign: 'middle',
+
+
+                },
+                tooltip: {
+                    pointFormat: '{point.y}%</b>'
+                },
+
+
+                plotOptions: {
+                    pie: {
+                        //center: [45, 50],
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        },
+
+                        innerSize: '65%',
+                        size: '120%'
+
+
+                    }
+                },
+                series: [{
+                    colorByPoint: true,
+                    data: data
+                }],
+
+                credits: {
+                    enabled: false
+                },
+                exporting: {enabled: false}
+
+
+            });
+
+        }
+        var test = [1, 2, 3, 4, 5, 6];
+
+
+        Highcharts.chart('partner_wise_summary_budget', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Partner-wise Summary Budget-Year-{{ dict_box.year }} {{ dict_box.quarter }}',
+                useHTML: true,
+                style: {
+                    fontSize: '20px',
+                    'color': '#53297D',
+
+                }
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                // categories: ['Project Managemetn', 'Meal', 'Agency & Capacity', 'Economic Opportunities', 'Policy & Norms'],
+                categories: {{ dict_box.partner_list | safe }},
+
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: ''
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:#000;padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+                /*formatter: function () {
+                 var s = '<b>' +'kk' + '</b>';
+
+                 $.each(this.points, function () {
+                 s += '<br/>Value: ' + this.y;
+                 });
+
+                 s+= '<br>Diff: ' + ( this.points[0].y - this.points[1].y );
+
+                 return s;
+                 }*/
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Budget',
+                data: {{ dict_box.partnerwise_b_list | safe }},
+                pointWidth: 20
+
+            }, {
+                name: 'Expenditure',
+                data: {{ dict_box.partnerwise_e_list | safe }},
+                pointWidth: 20
+
+            },
+                {
+                    name: 'Difference',
+                    data: {{ dict_box.partnerwise_percent_list | safe }},
+
+                    color: 'transparent',
+                    //visible: false,
+                    showInLegend: false,
+                    tooltip: {
+                        valueSuffix: ' %',
+
+                    }
+
+
+                }
+            ],
+
+            credits: {
+                enabled: false
+            },
+            exporting: {enabled: false}
+        });
+
+
+        function dashboardBudget(div, title, data) {
+
+            Highcharts.chart(div, {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie',
+                    height: 160,
+
+
+                },
+                title: {
+                    text: title,
+                    margin: 0,
+                    y: 0,
+                    x: 0,
+                    align: 'center',
+                    verticalAlign: 'middle',
+                    style: {
+
+                        fontSize: '14px'
+                    }
+
+                },
+                tooltip: {
+                    pointFormat: '{point.y}</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            //format: '<b>{point.name}</b>: {point.y}',
+                            format: '<b>{point.name}</b>',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        },
+
+                        innerSize: '65%',
+                        size: '120%'
+
+
+                    }
+                },
+                series: [{
+                    colorByPoint: true,
+                    data: data
+                }],
+
+                credits: {
+                    enabled: false
+                },
+                exporting: {enabled: false}
+
+
+            });
+
+        }
+
+
+    </script>
+
+{% endblock %}

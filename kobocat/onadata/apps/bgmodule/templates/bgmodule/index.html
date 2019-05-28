@@ -1,0 +1,266 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% load app_filters %}
+
+
+
+{% block additional-headers %}
+    <head>
+        <title>
+            {% block title %} Household Management {% endblock %}
+        </title>
+    </head>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/plugins/select2/select2_metro.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/css/datepicker.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+
+{% endblock %}
+
+{% block content %}
+
+    <!--Load Program Form-->
+    <div id="add_household_form_div">
+        {% include "hhmodule/add_household_form.html" %}
+    </div>
+    <div class="col-md-offset-0 col-md-12" style="display: none;">
+        <div class="portlet box red">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-reorder"></i> Household List
+                </div>
+            </div>
+
+            <div class="portlet-body">
+                <table id="table_id" class="table table-bordered table-striped table-condensed flip-content"></table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block additional-javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript"
+            src="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/static/js/DataTables/datatables.js"></script>
+    <script type="text/javascript" src="/static/js/custom_data_view.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/scripts/jquery.formset.js"></script>
+    <script>
+
+
+        /**
+         * Load All Household
+         * @persia
+         * */
+        function show_household() {
+            $.ajax({
+                url: "/hhmodule/show_household/",
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    initDataTable("table_id", response.data, response.col_name);
+                    $('#table_id').show();
+                }
+            }); //ajax end
+        } //End of show_household function
+
+
+        /**
+         * Load New Form in add_household_form_div
+         * @persia
+         * */
+        function reload_form() {
+            console.log("In reload_form");
+            $.ajax({
+                type: 'GET',
+                url: "/hhmodule/add_household/",
+                success: function (data) {
+                    $("#add_household_form_div").html(data);
+                    load_OneToManyRelation();
+                }
+            }); //ajax end
+        } //End of reload_form function
+
+
+        /**
+         * Load Selected household in Edit Mode
+         * @param: household id
+         * @persia
+         * */
+        function edit_entity(household_id) {
+            $.ajax({
+                type: 'GET',
+                url: "/hhmodule/edit_household/" + household_id + "/",
+                success: function (data) {
+                    $("#add_household_form_div").html(data);
+                    load_OneToManyRelation();
+                    //load_datepicker();
+                }
+            }); //ajax end
+        } //End of edit_program function
+
+
+        /**
+         * Load One to Many Relation table
+         * @persia
+         * */
+        function load_OneToManyRelation() {
+            console.log("In load_OneToManyRelation");
+            $('.link-formset').formset({
+                prefix: 'hhmember_set',
+                addText: '<i class="fa fa-2x fa-plus-square"></i>',
+                deleteText: '<i class="fa fa-2x fa-times"></i>'
+            });
+        } //End of load_OneToManyRelation function
+
+
+        /**
+         * This Function will show message in top For Asynchronous Request
+         * @param: Json (messages, type field)
+         * @persia
+         * */
+        function showAjaxConfirmationMessages(data) {
+            $("#div_messages").html("");
+            $("#div_messages").append("<div class='alert alert-" + data.type + " fade in'><a class='close' href='#' data-dismiss='alert'>×</a> <p>" + data.messages + "</p></div>");
+        } //end of showAjaxConfirmationMessages
+
+
+        //***********Submit Form (post) on submit btn click**********
+        $(document).on("submit", "#add_household_form", function (event) {
+            event.preventDefault();
+            form_url = $(this).attr('action');
+            $.ajax({
+                type: 'POST',
+                url: form_url,
+                data: $(this).serialize(),
+                success: function (data) {
+                    showAjaxConfirmationMessages(data);
+                    show_household();
+                    reload_form();
+                    //$('#add_household_form_div').load('/hhmodule/add_household/');
+                },
+                error: function (xhr, status, error) {
+                    $("#add_household_form_div").html(xhr.responseText);
+                    load_OneToManyRelation();
+                }
+            }); //ajax end
+        }); // ENd of add_household_form form submit
+
+
+        /* After Page Loading */
+        $(document).on('ready', function () {
+            active_hh_id = readCookie("active_hh_id")
+            console.log(active_hh_id)
+            edit_entity(active_hh_id);
+            /********Datepicker Enable*******/
+            //load_datepicker();
+            /********Datatable Show*******/
+            show_household();
+            load_OneToManyRelation();
+
+
+            //form validation
+            $('#add_household_form').validate({
+                rules: {
+                    holding_no: "required",
+                    hh_member_number: {
+                        required: true,
+                        min: 1
+                    },
+                    hh_serial: "required",
+                    hh_id: {
+                        required: true,
+                        minlength: 17
+                    },
+                    hh_phone: {
+                        required: true,
+                        number: true,
+                        maxlength:11
+                    },
+                    hh_status: {
+                        valueNotEquals: true
+                    },
+                    geo_ward: {
+                        valueNotEquals: true
+                    },
+                    hh_use_asset_grant: {
+                        valueNotEquals: true
+                    }
+                },
+                messages: {
+                    hh_member_number: {
+                        min: "Household should have atleast 1 member"
+                    },
+                    hh_phone: {
+                        number: "Only numerics are allowed"
+                    }
+                }
+            });
+            $("[name$='-highest_education_level']").each(function () {
+                $(this).rules("add", {
+                    valueNotEquals: true
+                });
+            });
+            $("[name$='-occupation']").each(function () {
+                $(this).rules("add", {
+                    valueNotEquals: true
+                });
+            });
+            $("[name$='-member_relationship']").each(function () {
+                $(this).rules("add", {
+                    valueNotEquals: true
+                });
+            });
+            $("[name$='-member_status']").each(function () {
+                $(this).rules("add", {
+                    valueNotEquals: true
+                });
+            });
+            $("[name$='-name']").each(function () {
+                $(this).rules("add", {
+                    required: true
+                });
+            });
+            $("[name$='-age']").each(function () {
+                $(this).rules("add", {
+                    required: true
+                });
+            });
+            $("[name$='-gender']").each(function () {
+                $(this).rules("add", {
+                    required: true
+                });
+            });
+            $("[name$='-member_id']").each(function () {
+                $(this).rules("add", {
+                    required: true
+                });
+            });
+            $("[name$='-disability']").each(function () {
+                $(this).rules("add", {
+                    required: true
+                });
+            });
+            $("[name$='-work_for_cash']").each(function () {
+                $(this).rules("add", {
+                    required: true
+                });
+            });
+            $("[name$='-mobile_no']").each(function () {
+                $(this).rules("add", {
+                    maxlength: 11
+                });
+            });
+        }); // end of document ready
+
+        $.validator.addMethod('valueNotEquals', function (value) {
+            return (value != '');
+        }, "Please select a option");
+
+
+    </script>
+{% endblock %}

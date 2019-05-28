@@ -1,0 +1,233 @@
+{% block content %}
+    <div  class="col-xs-12" style="margin-top: 20px;">
+        <table id="{{root}}" class="table table-bordered table-striped"></table>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+
+    <script type="text/javascript">
+        var omitFields = ['formhub-uuid', 'meta-instanceID', '_xform_id_string','meta-deprecatedID'];
+        var separatedFields = ['areaName', 'slumName', 'username', 'area', 'hub', 'date', 'month', 'designation'];
+
+        var _username = '{{ username }}';
+        var form_data = {{ form_data_matrix | safe }};
+        var languages = getFormLanguages(form_data);
+        var default_language = languages[0];
+
+        var root = {{root}};
+
+        if (default_language != 'Default') {
+            languages.forEach(function (el) {
+                $('#lang-switch').append($('<option>', {value: el}).text(el));
+            });
+            $('#lang-switch').show();
+        }
+
+
+        function generateInstanceTable(form_data, omitFields, selected_lang) {
+            {#            var t = document.getElementById('root');#}
+            for (var i in form_data) {
+                var mainField = form_data[i]._field_name.replace(/\//g, '-')
+                var pField = form_data[i]._parent_field.replace(/\//g, '-')
+                var prev_sl = 0
+                var pre_repeat_sl = 0
+                var sl = form_data[i]._sl_no;
+                var repeat_sl = form_data[i]._re_sl;
+                if (i > 0) {
+                    prev_sl = form_data[i - 1]._sl_no;
+                    pre_repeat_sl = form_data[i - 1]._re_sl;
+                }
+                var tr = '';
+                if (omitFields.indexOf(mainField) == -1) {
+                    if (form_data[i]._field_type != 'repeat') {
+
+                        if (pField == root) {
+                            var tr = document.createElement('tr');
+                            tr.id = mainField
+                            tr.innerHTML = '<td>' + getQuestionTitle(form_data[i], selected_lang) + '</td><td>' + getAnswerLabel(form_data[i], selected_lang) + '</td>';
+                            //var tr = '<tr class="" id ="'+form_data[i]._field_name+'-'+form_data[i]._sl_no+'" > <td>'+getQuestionTitle(form_data[i], selected_lang)+'</td><td>'+getAnswerLabel(form_data[i], selected_lang)+'</td></tr>';
+{#                            console.log(tr);#}
+                            $('#' + pField).append(tr);
+                        }
+                        else {
+
+                            var tr = document.createElement('tr');
+                            tr.id = mainField;
+                            if (pre_repeat_sl < repeat_sl) {
+{#                                console.log(pre_repeat_sl);#}
+{#                                console.log(repeat_sl);#}
+                                var tr1 = document.createElement('tr');
+                                tr1.innerHTML = '<td colspan=2> </td>';
+                                $('#' + pField).append(tr1);
+                            }
+                            tr.innerHTML = '<td>' + getQuestionTitle(form_data[i], selected_lang) + '</td><td>' + getAnswerLabel(form_data[i], selected_lang) + '</td>';
+                            //var tr = '<tr class="" id ="'+form_data[i]._field_name+'-'+form_data[i]._sl_no+'" > <td>'+getQuestionTitle(form_data[i], selected_lang)+'</td><td>'+getAnswerLabel(form_data[i], selected_lang)+'</td></tr>';
+{#                            console.log(tr);#}
+                            $('#' + pField).append(tr);
+                        }
+
+                    }
+                    else if (form_data[i]._field_type == 'repeat') {
+                        var tr = document.createElement('tr');
+                        var table = document.createElement('table');
+                        {#                        tr.innerHTML = '<td colspan=2><table class = "table table-bordered table-striped" border=1 cellpadding=10 id ="'+mainField+'"></table> </td>';#}
+                        tr.innerHTML = '<td colspan=2><div style = "padding-left: 1cm;"class = "sample"><table class = "table table-bordered table-striped" style="width:100%;" border=1  id ="' + mainField + '"><tr><td colspan=2>' + getQuestionTitle(form_data[i], selected_lang) + '</td></tr></table></div> </td>';
+                        {#                        <td>'+getQuestionTitle(form_data[i], selected_lang)+'</td>#}
+{#                        console.log(tr);#}
+                        $('#' + pField).append(tr);
+                    }
+                    //t.append(tr)i
+                }
+            }
+        }
+
+
+        function generateInstanceView(form_data, omitFields, selected_lang) {
+{#            console.log(JSON.stringify(form_data));#}
+            for (var i in form_data) {
+                var mainField = form_data[i]._field_name.replace(/\//g, '-')
+                var pField = form_data[i]._parent_field.replace(/\//g, '-')
+                if (omitFields.indexOf(mainField) == -1) {
+                    if (form_data[i]._field_type != 'repeat') {
+                        if (form_data[i]._field_value != null) {
+                            var tr = $('<div class="col-xs-3"> <div class="flex-element mt-element-ribbon bg-grey-steel"> <div class="ribbon ribbon-border-hor ribbon-clip ribbon-color-danger uppercase"> <div class="ribbon-sub ribbon-clip"></div>' + getQuestionTitle(form_data[i], selected_lang) + '</div><p class="ribbon-content">' + getAnswerLabel(form_data[i], selected_lang) + '</p></div></div>');
+                        }
+                    } else {
+                        var tr = $('<div class="parent-table col-xs-12"> <div class="mt-element-ribbon"> <div class="ribbon ribbon-border-hor ribbon-clip ribbon-color-danger uppercase" style="cursor:pointer;"> <div class="ribbon-sub ribbon-clip"></div>' + getQuestionTitle(form_data[i], selected_lang) + '</div><div id="' + mainField + '"></div></div></div>');
+                    }
+                    if ($('#' + pField + '-' + form_data[i]._sl_no).length != 0) {
+                        if (separatedFields.indexOf(mainField) == -1) {
+                            $('#' + pField + '-' + form_data[i]._sl_no).append(tr);
+                        } else {
+                            $('#metaData').append(tr);
+                        }
+                    } else {
+                        generateInnerTable(form_data[i]._sl_no, pField);
+                        $('#' + pField + '-' + form_data[i]._sl_no).append(tr);
+                    }
+                }
+            }
+        }
+
+        function generateInnerTable(slno, parent) {
+            repeatContent = '<div class="child-table flex-container col-xs-12" id="' + parent + '-' + slno + '"><tr></tr></div>';
+            $('#' + parent).append(repeatContent);
+        }
+
+        function getQuestionTitle(row_data, selected_lang) {
+
+{#            console.log(row_data._field_name);#}
+            if (row_data._field_name == '_submitted_by') {
+                return 'Submitted By';
+            } else if (row_data._field_name == '_submission_time') {
+                return 'Submission time';
+            } else if (row_data._field_name == '_geolocation') {
+                return 'Geo Location';
+            } else {
+                if (row_data._q_title.startsWith('{')) {
+                    return JSON.parse(row_data._q_title)[selected_lang];
+                } else {
+                    if (row_data._q_title.startsWith('{')) {
+
+                        var question = JSON.parse(row_data._q_title)[selected_lang];
+{#                        console.log("here");#}
+{#                        console.log(question);#}
+                        var pos = question.indexOf("${");
+                        if (pos != -1) {
+                            var end = question.search("}");
+                            var title = question.substring(pos + 2, end);
+                            question = question.replace(question.substring(pos, end + 1), data_matrix[title])
+
+                        }
+
+                        return question;
+                    } else {
+                        return row_data._q_title;
+                    }
+                }
+            }
+        }
+
+        function getAnswerLabel(row_data, selected_lang) {
+            if (row_data._field_type != 'select one' && row_data._field_type != 'select all that apply') {
+                if (row_data._field_type == 'photo') {
+                    //return '<a href="/media/' + _username + '/attachments/' + row_data._field_value + '" download><img src="/media/' + _username + '/attachments/' + row_data._field_value + '" height="42" width="42"></a>';
+                    return '<a href="/media/' + _username + '/attachments/' + row_data._field_value + '" data-lightbox="image-1" data-title="' + row_data._field_value + '"><img src="/media/' + _username + '/attachments/' + row_data._field_value + '"></a>';
+                }
+                else {
+                    return row_data._field_value;
+                }
+            } else {
+                if (row_data._field_type == 'select one') {
+                    if (row_data._a_title != null) {
+                        if (row_data._a_title.startsWith('{')) {
+                            return JSON.parse(row_data._a_title)[selected_lang];
+                        } else {
+                            return row_data._a_title;
+                        }
+                    } else {
+                        return '';
+                    }
+                } else {
+                    satitle = JSON.parse(row_data._a_title);
+                    sa_title_label = '';
+                    satitle.forEach(function (elm, vdx) {
+                        if (elm.value_label != null) {
+                            if (elm.value_label.startsWith('{')) {
+                                sa_title_label += (vdx + 1) + ') ' + JSON.parse(elm.value_label)[selected_lang] + '  ';
+                            } else {
+                                sa_title_label += (vdx + 1) + ') ' + elm.value_label + '  ';
+                            }
+                        } else {
+                            sa_title_label = '';
+                        }
+                    });
+                    return sa_title_label;
+                }
+            }
+        }
+
+        function isObject(obj) {
+            return obj !== null && typeof obj === 'object';
+        }
+
+        function getFormLanguages(form_data) {
+            var omitFieldsLang = ['formhub/uuid', 'meta/instanceID', '_xform_id_string', 'username'];
+            var first_field = '';
+            var languages = [];
+            var n = 0;
+            for (var i = 0; i < form_data.length; i++) {
+                if (omitFieldsLang.indexOf(form_data[i]._field_name) == -1) {
+                    first_field = form_data[i]._q_title;
+{#                    console.log(first_field);#}
+                    break;
+                }
+            }
+            if (first_field.startsWith('{')) {
+                languages = Object.keys(JSON.parse(first_field));
+            } else {
+                languages.push('Default');
+            }
+
+            return languages;
+        }
+
+        function changeLanguage(obj) {
+            selected_language = obj.value;
+            $('#root-0').html('');
+            generateInstanceView(form_data, omitFields, selected_language);
+        }
+
+
+
+
+
+
+
+            generateInstanceTable(form_data, omitFields, default_language);
+
+
+
+    </script>
+{% endblock %}

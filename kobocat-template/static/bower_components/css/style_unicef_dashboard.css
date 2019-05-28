@@ -1,0 +1,89 @@
+.btn {
+  background: #3498db;
+  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+  background-image: -o-linear-gradient(top, #3498db, #2980b9);
+  background-image: linear-gradient(to bottom, #3498db, #2980b9);
+  -webkit-border-radius: 34;
+  -moz-border-radius: 34;
+  border-radius: 34px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 10px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #db770b;
+  background-image: -webkit-linear-gradient(top, #db770b, #d19419);
+  background-image: -moz-linear-gradient(top, #db770b, #d19419);
+  background-image: -ms-linear-gradient(top, #db770b, #d19419);
+  background-image: -o-linear-gradient(top, #db770b, #d19419);
+  background-image: linear-gradient(to bottom, #db770b, #d19419);
+  text-decoration: none;
+}
+
+#container{
+    position:relative;
+    width:100%;
+    height:100%;
+}
+
+.dashboard_query{
+  width:100%;
+  height:100%;
+  text-align: left;
+  background-color: lightblue;
+}
+.class-float-left{
+  float: left;
+  width: 50%;
+  background-color: lightblue;
+}
+.class-float-right{
+  float: right;
+  width: 50%;
+  background-color: lightblue;
+}
+
+.class-float-center{
+  float: left;
+  width: 50%;
+}
+.query-table-foot{
+  width: 50%;
+  background: #3498db;
+  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+  background-image: -o-linear-gradient(top, #3498db, #2980b9);
+  background-image: linear-gradient(to bottom, #3498db, #2980b9);
+  -webkit-border-radius: 34;
+  -moz-border-radius: 34;
+  border-radius: 34px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 10px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+.empty_view{
+  width:100%;
+  height:100%;
+  display: inline-block;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  border: none;
+  font: normal 30px/1 "Aladin", Helvetica, sans-serif;
+  color: rgba(48,48,48,1);
+  text-align: center;
+  text-transform: normal;
+  -o-text-overflow: clip;
+  text-overflow: clip;
+  white-space: pre;
+  text-shadow: 1px 1px 0 rgba(140,140,140,0.6) , -1px -1px 1px rgba(0,0,0,0.67) ;
+}

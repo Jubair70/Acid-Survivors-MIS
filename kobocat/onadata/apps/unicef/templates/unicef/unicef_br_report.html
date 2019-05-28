@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block title %}{{ head_title }}{% endblock %}
+   
+   {% block additional-headers %}
+      <link rel="stylesheet" href="{{STATIC_URL}}css/style_unicef_dashboard.css">
+      <link href="{{STATIC_URL}}js/datetimepicker/datepicker.css" rel="stylesheet">
+  {% endblock %}  
+     {% block additional-javascript %}
+
+    <script type="text/javascript" src="{{STATIC_URL}}js/highcharts/highcharts.js"></script>
+    <!-- 2. You can add print and export feature by adding this line -->
+    <script src="{{STATIC_URL}}js/highcharts/modules/exporting.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/highchartcreate.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/unicef_dashboard.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/datetimepicker/datepicker.js" ></script>
+
+    <script type="text/javascript">
+        
+      // When the document is ready
+      $(document).ready(function () {
+        createFormButton('{{ reportdata|safe }}',true,false);  
+            
+        $('#from-date').click(function () {
+          $('#from-date').datepicker({
+                    format: "yyyy-mm-dd"
+          }); 
+          
+        });
+        $('#to-date').click(function () {
+          $('#to-date').datepicker({
+              format: "yyyy-mm-dd"
+          }); 
+        });
+        initializeOptions('sel-district');
+        initializeOptions('sel-upazilla');
+        initializeOptions('sel-union');
+        initializeOptions('sel-psu');
+        callServer('initial','sel-district');
+        onChange('sel-district','sel-upazilla');
+        onChange('sel-upazilla','sel-union');
+        onChange('sel-union','sel-psu');
+        onClickSubmit('btn_submit_query');
+      });
+      
+    </script>
+
+     {% endblock %}
+
+  
+
+  {% block content %}
+  
+  <div id="container">
+    <div id="tg-xY4Sf" class="form_btn"></div>
+    <br>
+    <br>
+    <div class="dashboard_query">
+      <div class="class-float-left">
+        <label><strong>From</strong></label>
+        <input  type="text" placeholder="click to enter date"  id="from-date">
+      </div>
+      <div class="class-float-right">
+        <label><strong>To</strong></label>
+        <input  type="text" placeholder="click to enter date"  id="to-date">
+      </div> 
+      <div class="class-sub-query">
+        <table style="width:300px;border:0;">
+          <thead>
+            <tr>
+              <th>District</th>
+              <th>Upazilla</th>
+              <th>Union</th>
+              <th>PSU</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <select id="sel-district" name="sel-district"></select>
+              </td>
+              <td>
+                <select id="sel-upazilla" name="sel-upazilla"></select>
+              </td>
+              <td>
+                <select id="sel-union" name="sel-union"></select>
+              </td>
+              <td>
+                <select id="sel-psu" name="sel-psu"></select>
+              </td>
+            </tr>
+            <tfoot>
+              <tr>
+                <td colspan="4" class="class-float-center">
+                  <button id="btn_submit_query" class="query-table-foot">Show</button>
+                </td>
+              </tr>
+            </tfoot>
+        </table>
+      </div>
+
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div id="div_graph1">
+      <table id="tg" class="tg" style="width:100%">
+        <tbody>
+          <tr>
+            <th id="graph1_h">Coverage Levels Following Tanahashi Framework</th>
+          </tr>
+          <tr>
+            <td id="graph1" class="chart" width="800px" height="300px" align="center"></td>
+          </td>
+          </tr>
+          </tbody>
+        </tbody>
+      </table>
+      <br></br>
+      <div style="width:100%;height:75%; margin:0 auto;" >
+      <span id="footer">
+        <strong style="color:steelblue">Accessbility:</strong>
+            Proportion of parents of children born in the last 1 year who know where and how or who can help them reporting and obtaining birth registration certificate.
+            <br>
+        <strong style="color:steelblue">Utilization:</strong>
+            Proportion of children born in the last 1 year for whom birth registration has been applied for (including those who already have birth registration certificate).
+            <br>
+        <strong style="color:steelblue">Adequate coverage:</strong>
+                Proportion of children born in last 1 year registered who have been provided birth registration certificate.
+            <br>
+        <strong style="color:steelblue">Effective coverage:</strong>
+            Proportion of children born in the last 1 year registered who have been provided birth registration certificate within 45 days of birth. 
+            <br>
+      </span>
+      <br>
+      <br>
+      <table id="tb2" class="coverage" style="width:100%">
+        <tbody>
+          <tr>
+            <th>Birth Registration Status</th>
+            <th>Reason For Not Showing Birth Certificate</th>
+          </tr>
+          <tr>
+            <td id="graph2" class="chart" width="50%" height="300px"></td>
+            <td id="graph3" class="chart" width="50%" height="300px"></td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <table id="tb2" class="coverage" style="width:100%">
+        <tbody>
+          <tr>
+            <th>Awareness About Birth Registration </th>
+            <th>Birth Certificate- Reasons For Delay</th>
+          </tr>
+          <tr>
+            <td id="graph4" class="chart" width="50%" height="300px"></td>
+            <td id="graph5" class="chart" width="50%" height="300px"></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  
+  {% endblock %}  
+

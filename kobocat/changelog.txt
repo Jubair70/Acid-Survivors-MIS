@@ -1,0 +1,68 @@
+2016-Jan-21  Rumman  <rumman@mpower-social.com>
+	Purpose: User Registration and Edit errorlist showing bug fix for all user types
+	
+    * ~/src/kobocat/onadata/apps/usermodule/views.py 
+    #(functions): Changes
+    #(register): added admin_check param for posted form
+    #(edit_profile): added admin_check param for posted form
+
+    * ~/src/kobocat/onadata/apps/usermodule/forms.py 
+    #(functions): Changes
+    # UserProfileForm 
+    from 
+    def __init__(self, *args, **kwargs):
+        admin_check = kwargs.pop('admin_check', None)
+    to
+
+    def __init__(self, *args, **kwargs):
+        admin_check = kwargs.pop('admin_check', False)
+
+    
+
+
+
+
+2016-Jan-20  Rumman  <rumman@mpower-social.com>
+	Purpose: Organization major restructuring
+	Backup Before these Changes location : home/Documents/backups/kobo/dist-kobo_18[core-product]
+
+    * ~/src/kobocat/onadata/apps/usermodule/views.py 
+    #(functions): Changes
+    #(index): remove unnecessary all_organization varaible and comments removed.
+
+	#(get_organization_by_user): This function now uses function "get_recursive_organization_children" to get org id list by parent-children relation, previously used to children list from OrganizationDataAccess model.
+
+	#(get_recursive_organization_children): This function now uses Organization model to get organization list by parent-children relation, previously used to children list from OrganizationDataAccess model.
+
+	#(organization_index): Removed the form submission part, no longer insert to 
+	OrganizationDataAccess table.
+
+	#(add_organization,edit_organization): When Creating Organization, parent list is retrieved using current user's org and then dropdown populated only with current users org + his children or using recursion.
+
+	When Editing Organization, parent list is retrieved using current user's org and then dropdown populated only with current users org + his children or using recursion.
+
+	#(organization_access_list): show the view permission of organization using recursion, previously was done via OrganizationDataAccess table.
+
+	#(delete_organization_mapping): removed. no longer necessry.
+
+	#(add_user_role_map): function renamed to adjust_user_role_map.
+
+    * ~/src/kobocat/onadata/apps/usermodule/templates/usermodule/organization_list.html
+	# removed the adder form
+	# made table centered
+
+	* ~/src/kobocat/onadata/apps/usermodule/templates/usermodule/roles_list.html
+	# fixed bootstrap table borders css
+	# made table centered
+
+	* ~/src/kobocat/onadata/apps/usermodule/templates/usermodule/user_role_map.html
+	# changed the url of adjust_user_role_map
+
+    * ~/src/kobocat-template/static/js/organization_access.js
+    # commented the js the responded to the adder form
+    # made table centered
+
+	* ~/src/kobocat/onadata/apps/usermodule/urls.py
+	# removed url which pointed to delete_organization_mapping
+	# changed url of add_user_role_map to adjust_user_role_map
+	

@@ -1,0 +1,116 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+<head>
+    <title>
+        {% block title %} Pending Approval {% endblock %}
+    </title>
+</head>
+<link rel="stylesheet" href="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.css"/>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet box red">
+            <div class="portlet-title">
+                <div class="caption"><i class="fa fa-eye"></i>{% blocktrans with nb_sub=stats.submission_count.total_submission_count %}Approval Pending Submissions
+                    ({{nb_sub }}){% endblocktrans %}</div>
+            </div>
+            <div class="portlet-body">
+                <table id="stats-table" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>{% trans "FormID" %}</th>
+                        <th>{% trans "SubmissionId" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for v in approvals %}
+                    <tr>
+                        <td class="click-link">{{v.formid}}</td>
+                        <td>{{v.subbmissionid}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascript %}
+{{ block.super }}
+<script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.js"></script>
+<script type="text/javascript">
+
+	$(document).ready(function() {
+     $('#stats-table').dataTable({
+                // set the initial value
+                "iDisplayLength": 25,
+                "sPaginationType": "bootstrap",
+                "aLengthMenu": [
+                    [25, 50, 75, -1],
+                    [25, 50, 75, "All"] // change per page values here
+                ]
+          });
+
+          $('#stats-table_wrapper .dataTables_filter input').addClass("form-control input-medium"); // modify table search input
+          $('#stats-table_wrapper .dataTables_length select').addClass("form-control input-xsmall"); // modify table per page dropdown
+
+	  $('#stats-table tr').click( function () {
+	    var index = parseInt($(this).index());
+
+	    var form_id = $('td', this).eq(0).text();
+		var submission_id = $('td', this).eq(1).text();
+		if (submission_id) {
+		var location = window.location.href;
+		var host = window.location.host;
+		var pathname = window.location.pathname;
+
+		console.log("location::"+location);
+		console.log("host::"+host);
+		console.log("pathname::"+pathname);
+
+        var url = '/data/approval-info/'
+        post_data = {'submissionid': submission_id,'formid':form_id};
+	    $.ajaxSetup({
+                 beforeSend: function(xhr, settings) {
+                     function getCookie(name) {
+                         var cookieValue = null;
+                         if (document.cookie && document.cookie != '') {
+                             var cookies = document.cookie.split(';');
+                             for (var i = 0; i < cookies.length; i++) {
+                                 var cookie = jQuery.trim(cookies[i]);
+                                 // Does this cookie string begin with the name we want?
+                                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                     break;
+                                 }
+                             }
+                         }
+                         return cookieValue;
+                     }
+                     if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                         // Only send the token to relative URLs i.e. locally.
+                         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                     }
+                 }
+            });
+	    $.ajax({
+           url: url,
+           type: "POST",
+           data: post_data,
+           success: function(data){
+                 var form_owner = data["form_owner"];
+                 location = location.replace('stats/pending-approval/','');
+                 window.open(window.location.protocol+"//"+host+'/'+ form_owner +'/forms/'+form_id +'/pending_instance/?s_id='+submission_id+ "#/" + submission_id, "_blank");
+           }
+      });
+
+    }
+	  });
+	});
+
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+
+{% block additional-headers %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.css"/>
+{% endblock %}
+
+{% block content %}
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> Upload Monthly Target Data
+            </div>
+        </div>
+
+        <div class="portlet-body">
+            <a href="/media/mist.xlsx"><button style="margin-top: 20px;" class="btn green" download>Download Template</button></a>
+            <form class="horizontal-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Upload Month</label>
+                            <input name="upload_month" id="upload_month" type="text" class="form-control"
+                                   readonly="readonly" required/>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col-md-3">
+                            <input type="file" name="target_file" required>
+                            <button style="margin-top: 20px;" class="btn red" type="submit">Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block additional-javascript %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript">
+        $('#upload_month').datepicker({
+            format: "MM yyyy",
+            minViewMode: 1,
+            autoclose: true,
+            defaultViewDate: {day: 01}
+        });
+    </script>
+{% endblock %}

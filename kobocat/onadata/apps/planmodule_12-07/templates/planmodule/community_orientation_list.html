@@ -1,0 +1,205 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" rel="stylesheet">
+{% endblock %}
+
+
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption"><i class="fa fa-adn"></i>Community Orientation List</div>
+        </div>
+        <div class="portlet-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label >PNGO:</label>
+                        <select class="form-control" name="pngo" id="pngo">
+                            <option value="">Select One</option>
+                            <option value="LAMB">LAMB</option>
+                            <option value="ESDO">ESDO</option>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Orientation Type: </label>
+                        <select class="form-control" name="orientation_type" id="orientation_type">
+                            <option value="">Select One</option>
+                            <option value="2">ধর্মীয় নেতা</option>
+                            <option value="1">কমিউনিটি ওরিয়েন্টেশন</option>
+                            <option value="3">বিবাহিত কিশোরী /দম্পত্তি ওরিয়েন্টেশন</option>
+                            <option value="4"> ইস্যুভিত্তিক মিটিং</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <button class="btn btn-info pull-left" style="margin-top: 24px" id="generate_report" name="generate_report"
+                                    data-original-title=""
+                                    title="">View List</button>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="/planmodule/commnity_orientation_form/">
+                        <button type="submit" class="btn btn-info pull-left" id="add_new" data-original-title=""
+                                title="">Add New
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            <br>
+            <div id="container"></div>
+            <table id="all_info_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
+                <thead class="flip-content">
+                <tr>
+                    <th>PNGO</th>
+                    <th>Upazilla</th>
+                    <th>Union</th>
+                    <th>Orientation Date</th>
+                    <th>Orientation Type</th>
+                    <th class="td-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>You are about to delete a community info, this procedure is irreversible.</p>
+                    <p>Do you want to proceed?</p>
+                    <p class="debug-url"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" class="btn btn-danger btn-ok">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block additional-javascript %}
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () { 
+
+            var table = $('#all_info_table').DataTable({
+            "scrollX": true, "ordering": false,
+            deferRender: true
+
+        });
+
+
+
+                $('#generate_report').on('click',function () {
+            table.destroy();
+            var pngo = $('#pngo option:selected').val();
+            var orientation_type = $('#orientation_type option:selected').val();
+
+            if(pngo==null)
+                pngo=""
+            if(orientation_type==null)
+                orientation_type=""
+
+            $.ajax({
+                    url: '/planmodule/getCommunityData/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'orientation_type':orientation_type
+                        , 'pngo':pngo},
+                    beforeSend: function () {
+                        $('#container').show();
+                    $("#container").html('<div class="ui active inverted dimmer">\n' +
+                            '    <div class="ui text loader">Loading</div>\n' +
+                            '  </div>');
+                    },
+                success: function (result) {
+                    console.log(result);
+                    $('#container').hide();
+                    var tbody = '';
+
+                    for (var idx in result) {
+                        tbody += '<tr><td>' + result[idx].pngo_name + '</td><td>' + result[idx].upazila_name + '</td><td>' + result[idx].union_name  + '</td><td>' + result[idx].orientation_date + '</td><td>' + result[idx].orientation_type + '</td><td class="td-center"><a class="tooltips" data-container="body" data-placement="top" data-original-title="Edit" href=""><i class="fa fa-2x fa-pencil-square-o"></i></a><a class="delete-item tooltips" data-placement="top" data-container="body" data-toggle="modal" data-target="#confirm-delete" data-original-title="Delete" href="#" data-href="/planmodule/delete_community_orientation/' + result[idx].data_id + '"><i class="fa fa-2x fa-trash-o"></i></a></td></tr>';
+                    }
+
+                    $("#all_info_table").find('tbody').html(tbody);
+                    table = datatable_reitialize();
+                }
+            });
+
+
+        });
+            
+
+        });
+
+        var tbody = '';
+        var community_orientation_list = {{ community_orientation_list|safe }};
+
+        for (var idx in community_orientation_list) {
+            tbody += '<tr><td>' + community_orientation_list[idx].pngo_name + '</td><td>' + community_orientation_list[idx].upazila_name + '</td><td>' + community_orientation_list[idx].union_name  + '</td><td>' + community_orientation_list[idx].orientation_date + '</td><td>' + community_orientation_list[idx].orientation_type + '</td><td class="td-center"><a class="tooltips" data-container="body" data-placement="top" data-original-title="Edit" href=""><i class="fa fa-2x fa-pencil-square-o"></i></a><a class="delete-item tooltips" data-container="body" data-placement="top" data-toggle="modal" data-target="#confirm-delete" data-original-title="Delete" href="#" data-href="/planmodule/delete_community_orientation/' + community_orientation_list[idx].data_id + '"><i class="fa fa-2x fa-trash-o"></i></a></td></tr>';
+        }
+
+        $("#all_info_table").find('tbody').html(tbody);
+        
+        
+
+        $('.delete-item').on('click', function (e) {
+            var criteria_id = $(this).attr("data-href");
+            $('.btn-ok').attr("href", criteria_id);
+        });
+        if ($('.alert-block').is(':visible')) {
+            window.setTimeout(function () {
+                $(".alert-success").fadeTo(1500, 0).slideUp(500, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        }
+
+
+
+
+        function datatable_reitialize() {
+            return  $('#all_info_table').DataTable({
+            "scrollX": true, "ordering": false,
+            deferRender: true
+
+        });
+        }
+    </script>
+{% endblock %}

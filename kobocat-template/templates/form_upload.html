@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Form Upload</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+</head>
+<body>
+ <div class="container-fluid container__wide projects__advanced">
+    <h3>Advanced Users: <a class="projects__toggle-advanced">Upload your XLS form here directly</a></h3>
+    <div class="projects__advanced-xls hidden-form">
+      <form action="." method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="uploadform" id="url">
+          <table class="uploadform__table">
+            <p><label for="id_xls_file">XLS File:</label> <input id="id_xls_file" name="xls_file" type="file" /></p>
+          </table>
+          <input type="submit" class="uploadform__publish" value="Publish" />
+        </div>
+      </form>
+    </div>
+  </div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+

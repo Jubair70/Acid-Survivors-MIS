@@ -1,0 +1,273 @@
+{% extends "base_test.html" %}
+{% block additional-headers %}
+    <link href="/static/css/datepicker.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.29.0/mapbox-gl.css' rel='stylesheet'/>
+    <style type="text/css">
+
+
+    </style>
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="tab-content">
+        <!--<div class="tab-pane fade active in" id="tab_1_1">
+            <div class ="row">
+                <div class = "col-md-12">
+                    <div  class = "col-md-5">
+                        <label>Month</label>
+                        <input class="datepicker_month_year " value="{{ month_latest }}" id="report_month" maxlength="50" name="month" type="text">
+                    </div>
+                    <div  class = "col-md-5">
+                        <label>NGO</label>
+                         <select class="" id="report_ngo" name="ngo">
+                            <!--<option value="" selected="selected">Select</option>-->
+                            <!--<option value="RDRS" {% if  ngo_latest == 'RDRS'%} selected="selected" {% endif %} >RDRS</option>
+                            <option value="oxfam" {% if  ngo_latest == 'oxfam'%} selected="selected" {% endif %}>OXFAM</option>
+                         </select>
+                    </div>
+                    <div  class = "col-md-2">
+                        <button id="report_filter">Search</button><br><br><button id = "monthly_repo" style = "float:left;">Export</button>
+                    </div>
+                </div>
+            </div>
+            <div class = "col-md-12" style = "margin-bottom: 20px;">
+
+            </div>
+            <div class ="row">
+                <div class = "col-md-12">
+                    <div id ="mon_report_table_div">
+
+
+                    </div>
+
+                </div>
+            </div>
+            </div>
+-->
+
+
+        <!--<div class="tab-pane fade" id="tab_1_2">-->
+
+            <!--Load report Form-->
+            <div id="add_report_form_div">
+                {% include "eyfw/evaluation/evaluation_form.html" %}
+            </div>
+            <!--<div class ="col-md-12" style = "margin-top: 10px;">
+                <div class="page-header align">
+                   <h4> Narrative Data List</h4>
+                </div>
+                <div id="narrative_table_block">
+
+                </div>
+            </div>-->
+        </div>
+
+ <!--</div>-->
+    </div>
+    <!--modal-->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="margin-top: -10px;">×</button>
+                        <h4 class="modal-title" id="myModalLabel">Data has been uploaded successfully.</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn  btn-success" data-dismiss="modal">Close</button>
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <!--modal ended-->
+     <!-- data delete success modal-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="margin-top: -10px;">×</button>
+                        <h4 class="modal-title" id="myModalLabel">Data has been uploaded successfully.</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn  btn-success" data-dismiss="modal">Close</button>
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <!--modal ended-->
+
+{% endblock %}
+
+{% block additional-javascript %}
+    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+    <!--<script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/jquery.dataTables.js"></script>-->
+	
+    <!--<script type="text/javascript" src="/static/js/jquery.table2excel.js"></script>-->
+    <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script>-->
+<!--datatable -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+    <!--datatable ended-->
+        <script>
+         $( ".datepicker_month_year" ).each(function() {
+            $(this).datepicker({format:"yyyy-mm-dd",autoclose:true  });
+        });
+
+
+        $(document).ready(function () {
+
+            getMonthlyDataListTable();
+
+        });
+
+        function getMonthlyDataListTable(){
+        console.log("Monthly  list  table trigger");
+        $.ajax({
+            url: '/hhmodule/eyfw/getNarrativeDataList/',
+            type: 'POST',
+            success: function (data) {
+                $("#narrative_table_block").html(data);
+                $('#narrative_dataList_table_id').dataTable({
+                            "retrieve": true,
+                            "bFilter": true,
+                            "paging": true,
+                            "scrollCollapse": true,
+                            select: true,
+                            // dom: 'Bfrtip',
+                            //dom: 'Blfrtip',
+                            //buttons: [{extend: 'excel', text: "Export to excel", title: 'Conducted training and coverage'}],
+                            ordering: true,
+                            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                            "scrollX": true
+
+                        });
+
+            }
+        });
+    //}
+    }
+    function showAjaxConfirmationMessages(data) {
+            $("#div_flash_messages").html("");
+            $("#div_flash_messages").append("<div class='alert alert-" + data.type + " fade in'><a class='close' href='#' data-dismiss='alert'>×</a> <p>" + data.messages + "</p></div>");
+    }
+    $(document).on("submit", "#upload_data_form", function (event) {
+            event.preventDefault();
+            form_url = $(this).attr('action');
+            var data = new FormData(this); // <-- 'this' is form element
+            //return formData;
+            $.ajax({
+                type: 'POST',
+                url: form_url,
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (data) {
+                    //showAjaxConfirmationMessages(data);
+
+                    //getMonthlyDataListTable();
+                    window.location.href = "/hhmodule/eyfw/evaluationDataList/";
+                     $('#successModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    $("#add_report_form_div").html(xhr.responseText);
+                    //load_OneToManyRelation();
+                }
+            }); //ajax end
+        });
+
+        function edit_entity(ngo,month){
+            console.log(month+"====="+ngo);
+            $.ajax({
+                type : 'GET',
+                url : "/hhmodule/eyfw/edit_report_data/"+ngo+"/"+month+"/",
+                success : function(data) {
+                    $("#add_report_form_div").html(data);
+                    //load_datepicker();
+                }
+            }); //ajax end
+        }
+
+        function delete_entity(id){
+            console.log("====="+id );
+            if(confirm("Are you sure you want to delete this?")){
+                $.ajax({
+                type : 'GET',
+                url : "/hhmodule/eyfw/delete_narrative_data/"+id+"/",
+                success : function(data) {
+                    $('#deleteModal').modal('show');
+                    //showAjaxConfirmationMessages(data);
+                    getMonthlyDataListTable();
+                }
+            }); //ajax end
+            }
+            else{
+                return false;
+            }
+
+        }
+
+        $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+            var tab_id = $(e.target).attr('href');
+            if (tab_id == '#tab_1_2') {
+                //generateHHListTable({{ hh_list_data|safe }});
+            } else if (tab_id == '#tab_1_3') {
+                //generateSLAListTable({{ sla_list_data|safe }});
+            }
+            else if (tab_id == '#tab_1_4') {
+               // getTrainingTable();
+            }
+        })
+
+
+
+        $("#report_filter" ).on( "click", function() {
+            var report_month = $('#report_month').val();
+            var report_ngo = $('#report_ngo').val();
+            //$('#mon_report_table_div').html('');
+            if (report_month != '') {
+                $.ajax({
+                    url: '/hhmodule/eyfw/get_report_filter_data/',
+                    type: 'POST',
+                    data: {
+                        'report_month': report_month,
+                        'report_ngo': report_ngo
+                    },
+                    success: function (result) {
+                        $('#mon_report_table_div').html(result);
+                        //updateReportTotalValues();
+                    }
+                });
+            }
+            else{
+                alert("Please select month");
+            }
+        });
+
+
+        $("#monthly_repo").click(function(){
+            console.log("trigger export");
+              $("#monthly_report_table").table2excel({
+                // exclude CSS class
+                  //exclude: ".noExl",
+                  name: "Results",
+                  filename: "SomeFile.xls"
+
+              });
+            });
+
+
+
+    </script>
+{% endblock %}

@@ -1,0 +1,244 @@
+{% extends 'base_test.html' %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <link href="/static/css/calendar.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+    <head>
+        <title>
+            {% block title %} Edit Log {% endblock %}
+        </title>
+    </head>
+    <style>
+    #generate_report
+    {
+            margin-top: 23px;
+    }
+
+    </style>
+{% endblock %}
+{% block additional-javascript %}
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+    <script type="text/javascript" src="/static/js/calendar.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/audit_log_main.js"></script>
+    <script type="text/javascript">
+        request_user = "{{request_user}}";
+        {% if log_detail %}
+            createTableRow('{{ log_detail|safe }}');
+            console.log({{ log_detail|safe }});
+        {% endif %}
+        console.log(request_user);
+
+        function getDesiredDate(n) {
+
+            var today = new Date();
+            var n_month_before_today = new Date(today);
+            n_month_before_today.setMonth((today.getMonth() + 1) - n);
+            var dd = n_month_before_today.getDate();
+            var mm = n_month_before_today.getMonth() + 1;
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            var yyyy = n_month_before_today.getFullYear();
+            {#                formatted_date = yyyy + '-' + mm + '-' + dd;#}
+            formatted_date = yyyy + '-' + mm + '-' + dd;
+            return formatted_date;
+
+        }
+
+        function getToday(n) {
+            var today = new Date();
+            var n_month_before_today = new Date(today);
+            n_month_before_today.setMonth((today.getMonth() + 1) - n);
+            var dd = n_month_before_today.getDate();
+            var mm = n_month_before_today.getMonth() + 1;
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            var yyyy = n_month_before_today.getFullYear();
+            {#                formatted_date = yyyy + '-' + mm + '-' + dd;#}
+            formatted_date = yyyy + '-' + mm + '-' + dd;
+            return formatted_date;
+        }
+
+        $('#from_date').calendar({
+            type: 'date', endCalendar: $('#to_date'),
+            popupOptions: {
+                position: 'bottom right'
+            },
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+
+                    if (day < 10) {
+                        day = '0' + day
+                    }
+                    if (month < 10) {
+                        month = '0' + month
+                    }
+                    return year + '-' + month + '-' + day;
+                }
+            }
+        });
+
+        $('#to_date').calendar({
+            type: 'date',
+            popupOptions: {
+                position: 'bottom right'
+            }
+            ,
+
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+
+                    if (day < 10) {
+                        day = '0' + day
+                    }
+                    if (month < 10) {
+                        month = '0' + month
+                    }
+                    return year + '-' + month + '-' + day;
+                }
+            }
+        });
+
+        function getFormattedDate(date) {
+                var yy = date.getFullYear();
+                var mm = date.getMonth() + 1;
+                var dd = date.getDate();
+                if (dd < 10) {
+                    dd = '0' + dd
+                }
+                if (mm < 10) {
+                    mm = '0' + mm
+                }
+                {#                formatted_date = yyyy + '-' + mm + '-' + dd;#}
+                formatted_date = yy + '-' + mm + '-' + dd;
+                return formatted_date;
+            }
+
+        $('#generate_report').on('click', function () {
+            var from_date = $('#from_date').calendar('get date');
+            var to_date = $('#to_date').calendar('get date');
+            var form_id = $('#form_id option:selected').val();
+            if (from_date != null)
+                from_date = getFormattedDate(from_date)
+            else from_date = ""
+            if (to_date != null)
+                to_date = getFormattedDate(to_date)
+            else to_date = ""
+            if (form_id == null)
+                form_id = ""
+
+
+            $.ajax({
+                url: '/audit/getFormData/',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    'from_date': from_date
+                    , 'to_date': to_date
+                    , 'form_id': form_id
+                },
+                beforeSend: function () {
+                    $('#container').show();
+                    $("#container").html('<div class="ui active inverted dimmer">\n' +
+                        '    <div class="ui text loader">Loading</div>\n' +
+                        '  </div>');
+                },
+                success: function (result) {
+                    $('#container').hide();
+                    $('#tg-xY4Sf').html("<thead>\n" +
+                        "    <tr>\n" +
+                        "        <th class=\"td-center tg-yw4l\">Serial</th>\n" +
+                        "        <th class=\"td-center tg-yw4l\">Form Name</th>\n" +
+                        "        <th class=\"td-center tg-yw4l\">Submitted By</th>\n" +
+                        "        <th class=\"td-center tg-yw4l\">Change Time</th>\n" +
+                        "        <th class=\"td-center tg-yw4l\">View Difference</th>\n" +
+                        "    </tr>\n" +
+                        "    </thead>");
+                    createTableRow(JSON.stringify(result));
+
+                }
+            });
+
+
+        });
+
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="portlet box red">
+    <div class="portlet-title">
+        <div class="caption"><i class="fa fa-adn"></i>Edit Log</div>
+    </div>
+    <div class="portlet-body">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>From Date: </label>
+                <div class="ui calendar" id="from_date">
+                    <input type="text" class="form-control" name="from_date" value="getDesiredDate(1)" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+            <div class="form-group">
+                <label>To Date: </label>
+                <div class="ui calendar" id="to_date">
+                    <input type="text" class="form-control" name="to_date" value="getToday(2)" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+            <div class="form-group">
+                <label>Form Name:</label>
+                <select class="form-control" name="form_id" id="form_id">
+                    <option value="">Select One</option>
+                    {% for form_id,form_name in form %}
+                        <option value="{{ form_id }}">{{ form_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <button class="btn btn-info pull-left" id="generate_report" name="generate_report"
+                        data-original-title=""
+                        title="">Generate Report
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="container"></div>
+    <table id="tg-xY4Sf" name="summary_table"
+           class="table table-bordered table-striped table-condensed flip-content">
+    <thead>
+    <tr>
+        <th class="td-center tg-yw4l">Serial</th>
+        <th class="td-center tg-yw4l">Form Name</th>
+        <th class="td-center tg-yw4l">Submitted By</th>
+        <th class="td-center tg-yw4l">Change Time</th>
+        <th class="td-center tg-yw4l">View Difference</th>
+    </tr>
+    </thead>
+{% endblock %}

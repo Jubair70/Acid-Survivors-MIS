@@ -1,0 +1,440 @@
+{% extends "base_test.html" %}
+{% block additional-headers %}
+<head>
+    <title>
+        {% block title %} Girl Boys Status Change {% endblock %}
+    </title>
+</head>
+<link rel="stylesheet" href="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.css"/>
+{% endblock %}
+{% block content %}
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Other types</h4>
+
+            </div>
+            <div class="modal-body">
+                <ul id="list"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container__fluid">
+    <p>
+    <h2>{% if rpt_type == 'bd' %} BD {%endif%} {% if rpt_type == 'np' %} NP {%endif%} Girls Boys Status Change</h2></p>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <div class="" id="chart-main-container"></div>
+    </div>
+    <div class="col-md-4">
+        {% if rpt_type == 'bd' %}
+        <div class="pngo_area form-group">
+            <label>Pngo Name</label>
+            <select id="pngo_name" class="form-control pngolist" onchange="populate_upzilla()">
+                <option value="%">Select a Pngo</option>
+            </select>
+        </div>
+        <div class="upozilla_area form-group">
+            <label>Upazila</label>
+            <select id="upozilla_name" class="form-control upozillalist" onchange="populate_union()">
+                <option value="%">Select a Upzila</option>
+            </select>
+        </div>
+
+        <div class="union_area form-group">
+            <label>Union</label>
+            <select id="union_name" class="form-control unionlist" onchange="populate_village()">
+                <option value="%">Select a union</option>
+
+            </select>
+        </div>
+        <div class="village_area form-group">
+            <label>Village</label>
+            <select id="village_name" class="form-control villagelist">
+                <option value="%">Select a Village</option>
+            </select>
+        </div>
+        {%endif%}
+        {% if rpt_type == 'np' %}
+        <div class="pngo_area form-group">
+            <label>Pngo Name</label>
+            <select id="pngo_name" class="form-control pngolist" onchange="populate_vdc()">
+                <option value="%">Select a Pngo</option>
+            </select>
+        </div>
+        <div class="vdc_area form-group">
+            <label>Vdc Name</label>
+            <select id="vdc_name" class="form-control vdclist">
+                <option value="%">Select a Vdc</option>
+            </select>
+        </div>
+        <div class="gender_area form-group">
+            <label>Gender</label>
+            <select id="gender_name" class="form-control genderlist">
+                <option value="%">Select a Gender</option>
+                <option value="1">Girls</option>
+                <option value="2">Boys</option>
+            </select>
+        </div>
+        {%endif%}
+        <div class="status_area form-group">
+            <label>Status</label>
+            <select id="status_list" class="form-control statuslist">
+                <option value="%">Select a Status</option>
+                {% if rpt_type == 'np' %}
+                <option value="1">Unmarried To Married</option>
+                <option value="2">Out of School to In School</option>
+                <option value="3">In School to dropout</option>
+                <option value="4">Not Gouna to Gouna</option>
+                <option value="5">Others</option>
+                {%endif%}
+                {% if rpt_type == 'bd' %}
+                <option value="1">Unmarried To Married</option>
+                <option value="2">School Re-enrollment</option>
+                <option value="3">School dropout</option>
+                <option value="4">IGA involvment</option>
+                <option value="5">Others</option>
+                {%endif%}
+            </select>
+        </div>
+
+        <div id="datetimepicker1" class="input-append date form-group">
+            <label>Date Range</label>
+            <div class="input-group">
+                <input type="text" placeholder="From" class="form-control datepicker" name="start_date"
+                       id="start_date"/>
+                <span class="input-group-addon">-</span>
+                <input type="text" placeholder="To" class="form-control datepicker" name="end_date" id="end_date"/>
+            </div>
+
+        </div>
+        <div class="submit" id="submit">
+            {% if rpt_type == 'bd' %}
+            <input type="hidden" name="country" id="rpt_type" value="BD">
+            {%endif%}
+            {% if rpt_type == 'np' %}
+            <input type="hidden" name="country" id="rpt_type" value="NP">
+            {%endif%}
+            <button type="button" class="btn red">Show</button>
+            <button type="button" id="print" class="print btn default">Export</button>
+        </div>
+    </div>
+</div>
+<div class="row top-buffer"></div>
+<div class="row">
+    <div class="col-md-12" id="change_status_tab">
+        {% if chng_stat_table %}
+        {{ chng_stat_table | safe }}
+        {% endif %}
+    </div>
+</div>
+
+
+{% endblock %}
+{% block javascript %}
+{{ block.super }}
+<script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" charset="utf-8" src="{{STATIC_URL}}js/highchartcreate.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/highcharts/highcharts.js"></script>
+<script src="{{STATIC_URL}}js/highcharts/modules/data.js"></script>
+<script type="text/javascript">
+
+    var chart_data;
+    {% if filter_json  %}
+    var json = {{ filter_json | safe }}
+    {% endif %}
+    {% if status_chart_data  %}
+        chart_data = {{ status_chart_data | safe }};
+    {% endif %}
+
+    {% if rpt_type %} 
+    var rpt_type = '{{rpt_type }}';
+    {% endif %}
+
+    function populateDatatable(){
+        $('#sortable').dataTable({
+            "bFilter":false,
+            "bLengthChange": false,
+            "bPaginate":false,
+            "sPaginationType": "bootstrap",
+            "aLengthMenu": [
+                [10, 20, 50, -1],
+                [10, 20, 50, "All"] // change per page values here
+            ]
+        });
+        $('#sortable_wrapper .dataTables_filter input').addClass("form-control input-medium"); // modify table search input
+        $('#sortable_wrapper .dataTables_length select').addClass("form-control input-xsmall"); // modify table per page dropdown
+    }
+
+     $(function () {
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+
+
+        populateDatatable();
+
+        populate_option('pngo_name',json);
+
+        $("#submit").on('click', function(){
+            console.log('Clicked');
+            send_filter();
+            
+        });
+        $("#print").on('click', function(){
+            window.print();
+        });
+
+        var pngo_name = '';
+        var upzilla_name = '';
+        var union_name = '';
+    	x_axis_catag = ['Unmarried To Married','School Re-enrollment','School dropout','IGA involvment','Others'];
+    	if ( chart_data ){
+            populate_chart_data(chart_data,rpt_type,0);
+            //console.log(chart_data);
+        }
+        
+    });
+
+    function populate_chart_data(data_json,rpt_type,gender_type){ 
+    var json_data = null; 
+    if(rpt_type == 'bd') {
+        json_data = {
+            columns:[
+                [null,'Unmarried To Married','School Re-enrollment','School dropout','IGA involvment','Others'],
+                ['Unmarried To Married',data_json.unm_to_marr, 0, 0, 0, 0],
+                ['School Re-enrollment',0, data_json.s_re_enrol, 0, 0, 0],
+                ['School dropout',0, 0, data_json.sch_drop, 0, 0],
+                ['IGA involvment',0, 0, 0, data_json.iga_inv, 0],
+                ['Others',0, 0, 0, 0, data_json.oth]
+            ],
+            
+        }
+    }else{
+        json_data = {
+            columns:[
+                [null,'Unmarried To Married','Out of School to In School','In School to dropout','Not Gouna to Gouna','Others'],
+                ['Unmarried To Married',data_json.unm_to_marr, 0, 0, 0, 0],
+                ['Out of School to In School',0, data_json.out_sch_in_sch, 0, 0, 0],
+                ['In School to dropout',0, 0, data_json.in_sch_dout, 0, 0],
+                ['Not Gouna to Gouna',0, 0, 0, data_json.not_gou_to_gou, 0],
+                ['Others',0, 0, 0, 0, data_json.oth],
+                
+            ],
+            
+        }
+    }
+    var chart_title = '';
+    if (gender_type == 0){
+        chart_title = 'Girls/Boys status change report';
+    }
+    else if (gender_type == 1){
+        chart_title = 'Girls status change report'
+    }
+    else{
+        chart_title = 'Boys status change report'   
+    }
+    //console.log(data_json.oth_type);
+    // list container
+    var listContainer = $('#list');
+    if(typeof data_json.oth_type != 'undefined'){
+	listContainer.empty();
+       data_json.oth_type.forEach(function(entry) {
+        // console.log(entry);
+        // add new list item
+        listContainer.prepend('<li> ' + entry + '</li>');
+        }); 
+    }
+    
+
+    createNewChart('column','chart-main-container', json_data, chart_title,'Total submisson on each catagories','');
+    }
+
+    function populate_vdc(){
+        
+        pngo_name = document.getElementById("pngo_name").value;
+        //console.log(pngo_name);
+        populate_option('vdc_name',json[pngo_name]);
+        //console.log(json[pngo_name]);
+    }
+    
+    function populate_upzilla(){
+        
+        pngo_name = document.getElementById("pngo_name").value;
+        //console.log(pngo_name);
+        populate_option('upozilla_name',json[pngo_name]);
+        //console.log(json[pngo_name]);
+    }
+    function populate_union(){
+        //removeOptions('union_name');
+        upzilla_name = document.getElementById("upozilla_name").value;
+        //console.log(upzilla_name);
+        populate_option('union_name',json[pngo_name][upzilla_name]);
+    }
+    function populate_village(){
+        //removeOptions('village_name');
+        union_name = document.getElementById("union_name").value;
+       // console.log(json[pngo_name][upzilla_name][union_name]);
+        populate_option('village_name',json[pngo_name][upzilla_name][union_name]);
+    }
+
+    function populate_option(id,json_data){
+        removeOptions(id);
+        $.each(json_data, function(i, value) {
+            if(isArray(json_data)){
+                $('#'+id).append($('<option>').text(value).attr('value', value));    
+            }else{
+                $('#'+id).append($('<option>').text(i).attr('value', i));    
+            }
+            
+        });
+    }
+    function isArray(what) {
+        return Object.prototype.toString.call(what) === '[object Array]';
+    }
+
+    function removeOptions(elementID)
+    {
+        var selectbox = document.getElementById(elementID);
+        var i;
+        for(i=selectbox.options.length-1;i>0;i--)
+        {
+            selectbox.remove(i);
+        }
+    }
+
+    function getCurrentDate(){
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        if(dd<10) {
+            dd='0'+dd
+        } 
+
+        if(mm<10) {
+            mm='0'+mm
+        } 
+
+        today = yyyy+'-'+mm+'-'+dd;
+        return today;
+    }
+
+    function send_filter(){
+    var pngo = '%';
+    var upzilla ='%';
+    var union = '%';
+    var village = '%';
+    var vdc = '%';
+    var start_date = '2016-01-01';
+    var end_date = getCurrentDate();
+    var status = '%';
+    var gender = '%';
+    var url = '/care-reports/bd_g_b_status_change/';
+    if (document.getElementById('pngo_name') != null){
+        pngo = document.getElementById("pngo_name").value;
+    }
+    if (document.getElementById('upozilla_name') != null){
+        upzilla = document.getElementById("upozilla_name").value;
+    }
+    if (document.getElementById('union_name') != null){
+        union = document.getElementById("union_name").value;
+    }
+    if (document.getElementById('village_name') != null){
+        village = document.getElementById("village_name").value;
+    }
+    if (document.getElementById('vdc_name') != null){
+        vdc = document.getElementById("vdc_name").value;
+    }
+    if (document.getElementById('start_date') != null){
+        start_date = document.getElementById("start_date").value;
+        if (start_date === "")
+         start_date = '2016-01-01';
+    }
+    if (document.getElementById('end_date') != null){
+        end_date = document.getElementById("end_date").value;
+        if (end_date === "")
+         end_date = getCurrentDate();
+    }
+    if (document.getElementById('status_list') != null){
+        status = document.getElementById("status_list").value;
+    }
+    if (document.getElementById('gender_name') != null){
+        gender = document.getElementById("gender_name").value;
+    }
+    // console.log(gender);
+    var rpt_type = document.getElementById("rpt_type").value;
+     if (rpt_type == 'NP'){
+         url = '/care-reports/np_g_b_status_change/'
+     }
+    var param_data = {
+            'pngo': pngo,
+            'upzilla': upzilla,
+            'union': union,
+            'village': village,
+            'vdc': vdc,
+            'status':status,
+            'start_date': start_date,
+            'end_date': end_date,
+            'gender':gender,
+        }
+        //console.log(param_data);
+            $.ajaxSetup({
+                 beforeSend: function(xhr, settings) {
+                     function getCookie(name) {
+                         var cookieValue = null;
+                         if (document.cookie && document.cookie != '') {
+                             var cookies = document.cookie.split(';');
+                             for (var i = 0; i < cookies.length; i++) {
+                                 var cookie = jQuery.trim(cookies[i]);
+                                 // Does this cookie string begin with the name we want?
+                                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                     break;
+                                 }
+                             }
+                         }
+                         return cookieValue;
+                     }
+                     if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                         // Only send the token to relative URLs i.e. locally.
+                         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                     }
+                 }
+            });
+            $.ajax({
+                  url: url, // form action url
+                  type: 'POST', // form submit method get/post
+                  dataType: 'json', // request type html/json/xml 
+                  data: param_data,
+                  
+                success: function(result) {
+                   // console.log(result);
+                   document.getElementById("change_status_tab").innerHTML = result.chng_stat_table;
+                   populateDatatable();
+
+                   if( result.hasOwnProperty("status_chart_data") ){
+
+                        populate_chart_data( result.status_chart_data,result.rpt_type, gender)
+                   }
+                   //console.log('result:'+ result);
+                    }
+                });
+   }
+
+
+</script>
+{% endblock %}
+
+

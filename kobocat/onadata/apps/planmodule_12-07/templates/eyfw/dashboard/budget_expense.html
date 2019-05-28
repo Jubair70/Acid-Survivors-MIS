@@ -1,0 +1,291 @@
+{% extends "base_test.html" %}
+{% block additional-headers %}
+    <link href="/static/css/datepicker.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-multiselect.css" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.29.0/mapbox-gl.css' rel='stylesheet'/>
+    <style type="text/css">
+    .multiselect_class button{
+        height: 50px; !important;
+        font-size: 14px;
+        font-weight: 400;
+        color: #000000;!important;
+        background: #fafafa;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding-left: 15px;
+    }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+
+
+    <div class ="row"><div class = "col-md-12" style = "margin-bottom: 2px;"></div></div>
+
+
+
+            <!--Load Program Form-->
+            <div id="add_report_form_div">
+
+                {% include "eyfw/dashboard/budget_expense_form.html" %}
+            </div>
+            <div class ="col-md-12" style = "margin-top: 10px;">
+
+                   <h4>Budget-Expenditure Data List</h4>
+
+                <div id="budgetExpense_table_block">
+
+                </div>
+            </div>
+
+
+
+
+    <!-- data upload success modal-->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="margin-top: -10px;">×</button>
+                        <h4 class="modal-title" id="myModalLabel">Data has been uploaded successfully.</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn  btn-success" data-dismiss="modal">Close</button>
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <!--modal ended-->
+    <!-- data delete success modal-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="margin-top: -10px;">×</button>
+                        <h4 class="modal-title" id="myModalLabel">Data has been deleted successfully.</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn  btn-success" data-dismiss="modal">Close</button>
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <!--modal ended-->
+     <!-- data delete success modal-->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="margin-top: -10px;">×</button>
+                        <h4 class="modal-title" id="myModalLabel">Data has been edited successfully.</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn  btn-success" data-dismiss="modal">Close</button>
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <!--modal ended-->
+{% endblock %}
+
+{% block additional-javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap-multiselect.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+    <!--<script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/jquery.dataTables.js"></script>-->
+    <script type="text/javascript" src="/static/js/jquery.table2excel.js"></script>
+    <!--datatable -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+    <!--datatable ended-->
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script>-->
+        <script>
+         $( ".datepicker_month_year" ).each(function() {
+            $(this).datepicker({format:"M yyyy",autoclose:true  });
+        });
+
+
+        $(document).ready(function () {
+            $('#month_id').multiselect({
+                buttonWidth: '60%',
+                numberDisplayed: 1,
+                includeSelectAllOption: true,
+            });
+            var monArr = []
+            //var monArr =['{{ month_latest | safe }}'];
+            monArr.push('{{ month_latest | safe }}')
+            //console.log('monArr::'+monArr);
+            $('#month_id').val(monArr);
+            $("#month_id").multiselect("refresh");
+
+            getBudgetExpenseDataListTable();
+
+        });
+
+        function getBudgetExpenseDataListTable(){
+            $.ajax({
+                url: '/hhmodule/eyfw/getBudgetExpenseDataList/',
+                type: 'POST',
+                success: function (data) {
+                    $("#budgetExpense_table_block").html(data);
+                    $('#budgetExpense_dataList_table_id').dataTable({
+                                "retrieve": true,
+                                "bFilter": true,
+                                "paging": true,
+                                "scrollCollapse": true,
+                                select: true,
+                                ordering: true,
+                                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                                "scrollX": true,
+                                dom: 'Blfrtip',
+                                buttons: [{extend: 'excel', text: "Export/Download", title: 'Budget_expense_list'}],
+
+                            });
+
+                }
+            });
+    //}
+    }
+    function showAjaxConfirmationMessages(data) {
+            $("#div_flash_messages").html("");
+            $("#div_flash_messages").append("<div class='alert alert-" + data.type + " fade in'><a class='close' href='#' data-dismiss='alert'>×</a> <p>" + data.messages + "</p></div>");
+    }
+    $(document).on("submit", "#upload_data_form", function (event) {
+            event.preventDefault();
+            form_url = $(this).attr('action');
+            var data = new FormData(this); // <-- 'this' is form element
+            //return formData;
+            $.ajax({
+                type: 'POST',
+                url: form_url,
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (data) {
+
+                    //showAjaxConfirmationMessages(data);
+                    if (data.messages == '1'){
+                        $('#successModal').modal('show');
+                    }
+                    else{
+                        $('#editModal').modal('show');
+                    }
+
+                   getBudgetExpenseDataListTable();
+                },
+                error: function (xhr, status, error) {
+                    $("#add_report_form_div").html(xhr.responseText);
+
+                }
+            }); //ajax end
+        });
+
+        function edit_entity(id){
+            $.ajax({
+                type : 'GET',
+                url : "/hhmodule/eyfw/edit_budgetExpense_data/"+id,
+                success : function(data) {
+                    $("#add_report_form_div").html(data);
+
+                    getBudgetExpenseDataListTable();
+                    window.location.href = "#add_report_form_div";
+                }
+            }); //ajax end
+        }
+
+        function delete_entity(id){
+            console.log("====="+id);
+            if(confirm("Are you sure you want to delete this?")){
+                $.ajax({
+                type : 'GET',
+                url : "/hhmodule/eyfw/delete_budgetExpense_data/"+id,
+                success : function(data) {
+                    //showAjaxConfirmationMessages(data);
+                    $('#deleteModal').modal('show');
+                    getBudgetExpenseDataListTable();
+                }
+            }); //ajax end
+            }
+            else{
+                return false;
+            }
+
+        }
+
+        $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+            var tab_id = $(e.target).attr('href');
+            if (tab_id == '#tab_1_2') {
+                //generateHHListTable({{ hh_list_data|safe }});
+            } else if (tab_id == '#tab_1_3') {
+                //generateSLAListTable({{ sla_list_data|safe }});
+            }
+            else if (tab_id == '#tab_1_4') {
+               // getTrainingTable();
+            }
+        })
+
+
+
+        $("#report_filter" ).on( "click", function() {
+            var report_month = $('#month_id').val();
+            var report_ngo = $('#report_ngo').val();
+
+            //$('#mon_report_table_div').html('');
+            if (report_month != '') {
+                $.ajax({
+                    url: '/hhmodule/eyfw/get_report_filter_data/',
+                    type: 'POST',
+                    data: {
+                        'report_month': report_month,
+                        'report_ngo': report_ngo
+                    },
+                    success: function (result) {
+                        $('#mon_report_table_div').html(result);
+                        //updateReportTotalValues();
+                    }
+                });
+            }
+            else{
+                alert("Please select month");
+            }
+        });
+
+
+        $("#monthly_repo").click(function(){
+            console.log("trigger export");
+              $("#monthly_report_table").table2excel({
+                // exclude CSS class
+                  //exclude: ".noExl",
+                  name: "Results",
+                  filename: "MonthlyReport.xls"
+
+              });
+            });
+
+        function updateReportTotalValues() {
+            var ratingTdText = 0;
+
+            $("tbody").find("tr").each(function() { //get all rows in table
+
+            tempratingTdText = parseInt($(this).find('td.target_male').text());
+            //gets the text out of the rating td for this row
+            ratingTdText = ratingTdText+tempratingTdText;
+
+        });
+        console.log(ratingTdText)
+        }
+
+    </script>
+{% endblock %}

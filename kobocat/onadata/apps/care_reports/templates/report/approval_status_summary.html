@@ -1,0 +1,157 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+<head>
+    <title>
+        {% block title %} Approval Status Summary {% endblock %}
+    </title>
+</head>
+<style>
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .filter_elem {
+    visibility: hidden;
+    display: none; 
+  }
+
+  #data_view,#data_view * {
+    /*position: relative;*/
+    visibility: visible; 
+  }
+  #header,#header *{
+    /*position: relative;*/
+    visibility: visible; 
+  }
+}
+
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>{% if rpt_type == 'bd' %} BD {%endif%} {% if rpt_type == 'np' %} NP {%endif%}Operational Status</h2>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label>Date Range</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="From" class="datepicker" name="start_date"
+                           id="start_date"/>
+                    <span class="input-group-addon">-</span>
+                    <input type="text" class="form-control" placeholder="To" class="datepicker" name="end_date"
+                           id="end_date"/>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label>User Name</label>
+                <select id="userlist" class="userlist form-control">
+                    <option value="%">Select a User</option>
+                    {% for submitter in submitted_by %}
+                    <option value="{{submitter}}">{{submitter}}</option>
+                    {% endfor%}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>PNGO Name</label>
+                <select id="pngo_list" class="pngo_list form-control">
+                    <option value="%">Select a Pngo</option>
+                    {% for key, values in org_filter_list.items %}
+                    <option value="{{key}}">{{values}}</option>
+                    {% endfor%}
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="col-md-4">
+                <button type="button" class="btn btn-primary submit">Show</button>
+                <button type="button" id="print" class="btn btn-primary print">Export</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row top-buffer"></div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="data_view" class="table-responsive">
+            {% if status_table %}
+            {{status_table | safe }}
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+    $(function () {
+            $('#start_date').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+            $('#end_date').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+        });
+    $(function (){
+    	$('.submit')
+    });
+
+    $(document).ready(function(){
+  		$('.submit').click(function(e){
+      		e.preventDefault();
+      		$.ajaxSetup({
+                 beforeSend: function(xhr, settings) {
+                     function getCookie(name) {
+                         var cookieValue = null;
+                         if (document.cookie && document.cookie != '') {
+                             var cookies = document.cookie.split(';');
+                             for (var i = 0; i < cookies.length; i++) {
+                                 var cookie = jQuery.trim(cookies[i]);
+                                 // Does this cookie string begin with the name we want?
+                                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                     break;
+                                 }
+                             }
+                         }
+                         return cookieValue;
+                     }
+                     if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                         // Only send the token to relative URLs i.e. locally.
+                         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                     }
+                 }
+            });
+		    $.ajax({type: "POST",
+		            url: "/care-reports/operational-status/",
+		            data: {   start_date: $("#start_date").val() 
+		            		, end_date: $("#end_date").val() 
+		            		, submitter: $("#userlist").val() 
+		            		, org_id: $("#pngo_list").val()
+		            	  },
+		            success:function(result){
+		            	$('#data_view').empty();
+		            	$('#data_view').html(result);
+		    		}});
+  		});
+	$("#print").on('click', function(){
+            window.print();
+        });
+
+	});
+
+
+
+</script>
+{% endblock %}

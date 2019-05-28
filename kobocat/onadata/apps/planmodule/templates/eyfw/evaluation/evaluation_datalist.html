@@ -1,0 +1,190 @@
+{% extends "base_test.html" %}
+{% block additional-headers %}
+    <link href="/static/css/datepicker.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.29.0/mapbox-gl.css' rel='stylesheet'/>
+    <style type="text/css">
+
+
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="tab-content">
+
+            <div class ="col-md-12" style = "margin-top: 10px;">
+
+                <div class="page-header align">
+                   <h4> Evaluation Data List</h4>
+                </div>
+                  <div class="row">
+                <div class="col-md-4"><label class="control-label">Survey Type </label>
+                    <select class="form-control" id = "s_type">
+                            <option value = "%" > All </option>
+                            {% for list in dataList %}
+                                <option value={{ list.0 }}>{{ list.1 }}</option>
+                            {% endfor %}
+                    </select>
+                </div>
+                  <!--</div>-->
+                  <!--<div class="row">-->
+                <div class="col-md-4"><label class="control-label">Content Type </label>
+                    <select class="form-control  form-control" id="id_content_type" name="content_type">
+                        <option value="%" >All</option>
+                        <option value="1">Infografic</option>
+                        <option value="2">Data</option>
+                        <option value="3">Report</option>
+                        <option value="4">Questionnaire</option>
+                    </select>
+                </div>
+                 <!--</div>-->
+            <!--<div class="row">-->
+                  <div class="col-md-2" style="margin-top: 35px;">
+                        <button id="filter_evalDataList"  class="btn red btn-md red-custom"  data-original-title="" title="">Show</button>
+                   </div>
+            <!--</div>-->
+                  </div>
+                <div class = "col-md-12" style="margin-bottom:15px;"></div>
+                <div id="evaluationdata_table_block">
+
+                </div>
+            </div>
+        </div>
+
+ <!--</div>-->
+    </div>
+
+<!-- data delete success modal-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="margin-top: -10px;">×</button>
+                        <h4 class="modal-title" id="myModalLabel">Data has been deleted successfully.</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn  btn-success" data-dismiss="modal">Close</button>
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <!--modal ended-->
+
+{% endblock %}
+
+{% block additional-javascript %}
+    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+    <!--<script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/jquery.dataTables.js"></script>-->
+    <!--<script type="text/javascript" src="/static/js/jquery.table2excel.js"></script>-->
+    <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script>-->
+	<!--datatable -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+    <!--datatable ended-->
+        <script>
+         $( ".datepicker_month_year" ).each(function() {
+            $(this).datepicker({format:"M yyyy",autoclose:true  });
+        });
+
+
+        $(document).ready(function () {
+            //var s_type = ''
+            get_evaluation_data_table();
+            //getfilterCriteria();
+
+        });
+        function getfilterCriteria() {
+            s_type = $('#s_type').val();
+             c_type = $('#id_content_type').val();
+        }
+
+        function get_evaluation_data_table(){
+            var s_type = $('#s_type').val();
+            var c_type = $('#id_content_type').val();
+            //console.log("Monthly  list  table trigger");
+            $.ajax({
+                url: '/hhmodule/eyfw/get_evaluation_data_table/',
+                type: 'POST',
+                data:{ 's_type' : s_type,'content_type': c_type},
+                success: function (data) {
+                    $("#evaluationdata_table_block").html(data);
+                    $('#evaluationdata_table_id').dataTable({
+                                "retrieve": true,
+                                "bFilter": true,
+                                "paging": true,
+                                "scrollCollapse": true,
+                                select: true,
+                                // dom: 'Bfrtip',
+                                //dom: 'Blfrtip',
+                                //buttons: [{extend: 'excel', text: "Export to excel", title: 'Conducted training and coverage'}],
+                                ordering: true,
+                                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                                "scrollX": true
+
+                            });
+
+                }
+            });
+    //}
+    }
+    function showAjaxConfirmationMessages(data) {
+            $("#div_flash_messages").html("");
+            $("#div_flash_messages").append("<div class='alert alert-" + data.type + " fade in'><a class='close' href='#' data-dismiss='alert'>×</a> <p>" + data.messages + "</p></div>");
+    }
+
+
+        function edit_entity(ngo,month){
+            console.log(month+"====="+ngo);
+            $.ajax({
+                type : 'GET',
+                url : "/hhmodule/eyfw/edit_report_data/"+ngo+"/"+month+"/",
+                success : function(data) {
+                    $("#add_report_form_div").html(data);
+                    //load_datepicker();
+                }
+            }); //ajax end
+        }
+
+     function delete_entity(id){
+    console.log("====="+id );
+    if(confirm("Are you sure you want to delete this?")){
+        $.ajax({
+        type : 'GET',
+        url : "/hhmodule/eyfw/delete_evaluation_data/"+id+"/",
+        success : function(data) {
+            $('#deleteModal').modal('show');
+            //showAjaxConfirmationMessages(data);
+           get_evaluation_data_table();
+        }
+    }); //ajax end
+    }
+    else{
+        return false;
+    }
+
+}
+
+
+
+
+        $(document).on("click", "#filter_evalDataList", function () {
+                 //console.log("trigger filter");
+                 //$('#evaluationdata_table_id').DataTable().destroy();
+                 //getfilterCriteria();
+                 get_evaluation_data_table();
+        });
+
+
+
+    </script>
+{% endblock %}

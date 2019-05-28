@@ -1,0 +1,3366 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <link href="/static/css/calendar.min.css" rel="stylesheet" type="text/css"/>
+    <style type="text/css">
+        table.tableizer-table {
+            font-size: 12px !important;
+            border: 1px solid #CCC !important;
+            font-family: Times New Roman, Times, serif !important;
+            border-collapse: separate !important;
+        }
+
+        .tableizer-table tr {
+            background-color: #fdf7d0;
+        }
+
+        .tableizer-table td {
+            padding: 2px !important;
+            margin: 2px !important;
+            border: 1px solid #CCC;
+        }
+
+        .tableizer-table th {
+            background-color: #4fdfe0 !important;
+            color: #09123c !important;
+            font-weight: bold !important;
+            padding: 2px !important;
+            margin: 2px !important;
+            border: 1px solid #CCC;
+        }
+
+        .targettd {
+            text-align: center;
+            background-color: #90ddf5;
+        }
+
+        .achievementtd {
+            text-align: center;
+            background-color: #17f519;
+        }
+
+        .tableizer-table tbody {
+            overflow: auto;
+            height: 500px;
+        }
+
+        .tableizer-table tbody, table thead {
+            display: block;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        th:nth-child(1) {
+            width: 15px;
+        }
+
+        td:nth-child(1) {
+            width: 15px;
+        }
+        th:nth-child(2) {
+            width: 50px;
+        }
+
+        td:nth-child(2) {
+            width: 50px;
+        }
+        th:nth-child(5) {
+            width: 400px;
+        }
+
+        td:nth-child(5) {
+            width: 400px;
+        }
+    </style>
+
+
+{% endblock %}
+
+
+
+{% block content %}
+    <h3 style="text-align: center;font-weight: 800;">Monthy MIS Report</h3>
+    <div class="portlet-body">
+        <form class="horizontal-form" id="" method="post" action="" id="form"
+              enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Reporting Month</label>
+                            <div class="ui calendar" id="from_date">
+                                <input type="text" class="form-control" name="from_date" required readonly>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <button style="margin-top: 24px;" class="btn btn-danger pull-left" id="submit" name="submit"
+                            type="submit"
+                            data-original-title=""
+                            title="">Submit
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <table style="display: {{ displayflag }};" class="tableizer-table">
+        <thead>
+        <tr class="tableizer-firstrow">
+            <th>Sl NO</th>
+            <th>Activity Code</th>
+            <th>IndicatorCode</th>
+            <th>SubindicatorCode</th>
+            <th>Management Information System (MIS), USAID Advancing Adolescent Health (A2H), Plan International
+                Bangladesh.
+            </th>
+            <th>Instructions</th>
+            <th>Disaggregation</th>
+            <th class="targettd" colspan="5">Targets in October 2017</th>
+            <th class="targettd" colspan="5">Achievements in October 2017</th>
+        </tr>
+        <tr class="tableizer-firstrow">
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th class="targettd" colspan="2">Boys/Male</th>
+            <th class="targettd" colspan="2">Girls/Female</th>
+            <th class="targettd">Total</th>
+            <th class="targettd" colspan="2">Boys/Male</th>
+            <th class="targettd" colspan="2">Girls/Female</th>
+            <th class="targettd">Total</th>
+        </tr>
+        <tr class="tableizer-firstrow">
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th class="targettd">Married</th>
+            <th class="targettd">Unmarried</th>
+            <th class="targettd">Married</th>
+            <th class="targettd">Unmarried</th>
+            <th>&nbsp;</th>
+            <th class="targettd">Married</th>
+            <th class="targettd">Unmarried</th>
+            <th class="targettd">Married</th>
+            <th class="targettd">Unmarried</th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr style="background: #da7bca;">
+            <td>1</td>
+            <td>IR 1</td>
+            <td>IR 1</td>
+            <td>&nbsp;</td>
+            <td>IR 1: Delay age at marriage</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td colspan="2">&nbsp;</td>
+            <td colspan="2">&nbsp;</td>
+            <td>&nbsp;</td>
+            <td colspan="2">&nbsp;</td>
+            <td colspan="2">&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background: #da7bca;">
+            <td>2</td>
+            <td>IR1.1</td>
+            <td>IR1.1</td>
+            <td>&nbsp;</td>
+            <td>IR1.1: Increased self-efficacy, negotiation skills and decision making power among adolescents regarding
+                appropriate age at marriage
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background: #da7bca;">
+            <td>3</td>
+            <td>1.1.a</td>
+            <td>1.1.a</td>
+            <td>&nbsp;</td>
+            <td>Continue Basic Life Skills Training for Adolescents through A2H Platforms</td>
+            <td></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>1</td>
+            <td>IR1_1A_01</td>
+            <td>IR1_1A_011</td>
+            <td rowspan="2">Number of adolescents enrolled in life skills sessions</td>
+            <td rowspan="2">Including the adolescents from ethnic minority groups</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>&nbsp;</td>
+            <td>IR1_1A_01</td>
+            <td>IR1_1A_012</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>2</td>
+            <td>IR1_1A_02</td>
+            <td>IR1_1A_021</td>
+            <td rowspan="2">Number of adolescents who attended only one session</td>
+            <td rowspan="2">Including the adolescents from ethnic minority groups</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>&nbsp;</td>
+            <td>IR1_1A_02</td>
+            <td>IR1_1A_022</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>3</td>
+            <td>IR1_1A_03</td>
+            <td>IR1_1A_031</td>
+            <td rowspan="2">Number of adolescents who attended total two sessions</td>
+            <td rowspan="2">Including the adolescents from ethnic minority groups</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>&nbsp;</td>
+            <td>IR1_1A_03</td>
+            <td>IR1_1A_032</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>4</td>
+            <td>IR1_1A_04</td>
+            <td>IR1_1A_041</td>
+            <td rowspan="2">Number of adolescents who attended total three sessions</td>
+            <td rowspan="2">Including the adolescents from ethnic minority groups</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>&nbsp;</td>
+            <td>IR1_1A_04</td>
+            <td>IR1_1A_042</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>12</td>
+            <td>5</td>
+            <td>IR1_1A_05</td>
+            <td>IR1_1A_051</td>
+            <td rowspan="2">Number of adolescents who attended total four sessions</td>
+            <td rowspan="2">Including the adolescents from ethnic minority groups</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>13</td>
+            <td>&nbsp;</td>
+            <td>IR1_1A_05</td>
+            <td>IR1_1A_052</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>14</td>
+            <td>6</td>
+            <td>IR1_1A_06</td>
+            <td>IR1_1A_061</td>
+            <td rowspan="2">Number of adolescents who attended total five sessions</td>
+            <td rowspan="2">Including the adolescents from ethnic minority groups</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>15</td>
+            <td>&nbsp;</td>
+            <td>IR1_1A_06</td>
+            <td>IR1_1A_062</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>16</td>
+            <td>7</td>
+            <td>IR1_1A_07</td>
+            <td>IR1_1A_071</td>
+            <td>Number of adolescents who attended total six sessions</td>
+            <td>Including the adolescents from ethnic minority groups</td>
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>17</td>
+            <td>8</td>
+            <td>IR1_1A_08</td>
+            <td>IR1_1A_081</td>
+            <td>Number of adolescents who attended total seven sessions</td>
+            <td>Including the adolescents from ethnic minority groups</td>
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>18</td>
+            <td>9</td>
+            <td>IR1_1A_09</td>
+            <td>IR1_1A_091</td>
+            <td>Number of adolescents who attended total eight sessions</td>
+            <td>Including the adolescents from ethnic minority groups</td>
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>19</td>
+            <td>10</td>
+            <td>IR1_1A_10</td>
+            <td>IR1_1A_101</td>
+            <td>Number of platforms established</td>
+            <td>Including the adolescents from ethnic minority groups</td>
+            <td>10-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>20</td>
+            <td>11</td>
+            <td>IR1_1A_11</td>
+            <td>IR1_1A_111</td>
+            <td rowspan="2">Number of life skills sessions conducted</td>
+            <td rowspan="2">Including the adolescents from ethnic minority groups</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>21</td>
+            <td>&nbsp;</td>
+            <td>IR1_1A_11</td>
+            <td>IR1_1A_112</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>22</td>
+            <td>12</td>
+            <td>IR1_1A_12</td>
+            <td>IR1_1A_121</td>
+            <td rowspan="2">Number of adolescents exclusively from ethnic minority groups attended life skills session
+            </td>
+            <td rowspan="2">Only the adolescents from ethnic minority groups</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>23</td>
+            <td>&nbsp;</td>
+            <td>IR1_1A_12</td>
+            <td>IR1_1A_122</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>24</td>
+            <td>13</td>
+            <td>IR1_1A_13</td>
+            <td>IR1_1A_131</td>
+            <td rowspan="2">Number of adolescents from ethnic minority groups completed life skills sessions (5 for
+                10-14 and 8 for
+                others)
+            </td>
+            <td rowspan="2">Only the adolescents from ethnic minority groups</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>25</td>
+            <td>&nbsp;</td>
+            <td>IR1_1A_13</td>
+            <td>IR1_1A_132</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>26</td>
+            <td>IR 1.2:</td>
+            <td>IR 1.2:</td>
+            <td>IR 1.2:</td>
+            <td>Increased community support for delaying age at marriage and investing in adolescents .</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>27</td>
+            <td>1.2.a</td>
+            <td>1.2.a</td>
+            <td>1.2.a</td>
+            <td>Provide orientation to parents and community leaders</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>28</td>
+            <td>14</td>
+            <td>IR1_2A_14</td>
+            <td>IR1_2A_141</td>
+            <td rowspan="4">Number of parents and community gatekeepers oriented for supporting to delaying marriage
+            </td>
+            <td rowspan="4">FWC and CC management committee members and health service providers</td>
+            <td>Parents</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>29</td>
+            <td>&nbsp;</td>
+            <td>IR1_2A_14</td>
+            <td>IR1_2A_142</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>SMC</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>30</td>
+            <td>&nbsp;</td>
+            <td>IR1_2A_14</td>
+            <td>IR1_2A_143</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>UP</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>31</td>
+            <td>&nbsp;</td>
+            <td>IR1_2A_14</td>
+            <td>IR1_2A_144</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>FWC, CC & SPs</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>32</td>
+            <td>15</td>
+            <td>IR1_2A_15</td>
+            <td>IR1_2A_151</td>
+            <td rowspan="2">Number of adolescents and gatekeepers committed to delay marriage through signing pledging
+                paper
+            </td>
+            <td rowspan="2">LAMB & ESDO to decide their targets</td>
+            <td># Adolescents</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>33</td>
+            <td>&nbsp;</td>
+            <td>IR1_2A_15</td>
+            <td>IR1_2A_152</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># Gatekeepers</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>34</td>
+            <td>16</td>
+            <td>IR1_2A_16</td>
+            <td>IR1_2A_161</td>
+            <td>Incidences of girls marriages took place in the communities recorded by A2H</td>
+            <td>All marriages of girls/females should record using the formats and databases</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>35</td>
+            <td>17</td>
+            <td>IR1_2A_17</td>
+            <td>IR1_2A_171</td>
+            <td>Number of adolescent girls marriages before age 18 prevented due to community intervention</td>
+            <td>The information on prevention need to recorded in registers/database</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>36</td>
+            <td>IR 1.3:</td>
+            <td>IR 1.3:</td>
+            <td>IR 1.3:</td>
+            <td>IR 1.3: Improved knowledge on benefits of delaying age at marriage and gender norms among adolescents
+                and
+                their gatekeepers
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>37</td>
+            <td>1.3.a</td>
+            <td>1.3.a</td>
+            <td>1.3.a</td>
+            <td>Conducting Issue Specific Meetings with Adolescents and Their gatekeepers</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>38</td>
+            <td>18</td>
+            <td>IR1_3A_18</td>
+            <td>IR1_3A_181</td>
+            <td rowspan="3">Number of adolescents and their gatekeepers attended issue specific meetings on the benefits
+                of delayed
+                marriage.
+            </td>
+            <td rowspan="3">adolescents and gatekeepers should equal number</td>
+            <td># Sessions</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>39</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>IR1_3A_182</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># adolescents</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>40</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>IR1_3A_183</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># gatekeepers</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>41</td>
+            <td>IR 1.4</td>
+            <td>IR 1.4</td>
+            <td>IR 1.4</td>
+            <td>IR 1.4: Increased exposure to platforms/messages for delaying at marriage.</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>42</td>
+            <td>1.4.a</td>
+            <td>1.4.a</td>
+            <td>1.4.a</td>
+            <td>Use creative ICT and other media to increase exposure to delaying age at marriage</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>43</td>
+            <td>19</td>
+            <td>IR1_4A_19</td>
+            <td>IR1_4A_191</td>
+            <td>Number of platforms with internet-enabled tablets</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>44</td>
+            <td>1.4.b</td>
+            <td>1.4.b</td>
+            <td>1.4.b</td>
+            <td>Use TFD to increase exposure to delaying age at marriage:</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>45</td>
+            <td>20</td>
+            <td>IR1_4A_20</td>
+            <td>IR1_4A_201</td>
+            <td rowspan="2">Number of TFD shows demonstrated</td>
+            <td rowspan="2">Viewers to be counted approximately</td>
+            <td># shows</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>46</td>
+            <td>&nbsp;</td>
+            <td>IR1_4A_20</td>
+            <td>IR1_4A_202</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># viewers</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>47</td>
+            <td>IR2</td>
+            <td>IR2</td>
+            <td>IR2</td>
+            <td>IR2: Delay First Birth and Improving Birth Spacing Among Adolescents</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>48</td>
+            <td>IR 2.1</td>
+            <td>IR 2.1</td>
+            <td>IR 2.1</td>
+            <td>IR 2.1: Family planning knowledge improved among adolescents (including discussions, intentions and use)
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>49</td>
+            <td>2.1.a</td>
+            <td>2.1.a</td>
+            <td>2.1.a</td>
+            <td>Provide training to Adolescent Leaders to build their capacity on ASRH, and FP commodity distribution.
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>50</td>
+            <td>21</td>
+            <td>IR2_1A_21</td>
+            <td>IR2_1A_211</td>
+            <td>Number of Session on "ASRH " FP commodity distribution / CSA.</td>
+            <td>&nbsp;</td>
+            <td>Total # Sessions</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>51</td>
+            <td>&nbsp;</td>
+            <td>IR2_1A_21</td>
+            <td>IR2_1A_212</td>
+            <td>Number of ALs are trained on "ASRH " FP commodity distribution</td>
+            <td>&nbsp;</td>
+            <td># trained on ASRH</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>52</td>
+            <td>&nbsp;</td>
+            <td>IR2_1A_21</td>
+            <td>IR2_1A_213</td>
+            <td>Number of ALs are trained on CSA.</td>
+            <td>&nbsp;</td>
+            <td># trained on CSA</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>53</td>
+            <td>22</td>
+            <td>IR2_1A_22</td>
+            <td>IR2_1A_221</td>
+            <td>Number of existing adolescent leaders completed refreshers on "ASRH " issues.</td>
+            <td>&nbsp;</td>
+            <td># Sessions</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>54</td>
+            <td>&nbsp;</td>
+            <td>IR2_1A_22</td>
+            <td>IR2_1A_222</td>
+            <td>Number of existing adolescent leaders completed refreshers on "ASRH " issues.</td>
+            <td>&nbsp;</td>
+            <td># adolescents</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>55</td>
+            <td>2.2. a</td>
+            <td>2.2. a</td>
+            <td>2.2. a</td>
+            <td>Provide orientation to Religious leaders</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>56</td>
+            <td>23</td>
+            <td>IR2_2A_23</td>
+            <td>IR2_2A_231</td>
+            <td>Number of Religious leaders oriented</td>
+            <td>&nbsp;</td>
+            <td># Sessions</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>57</td>
+            <td>&nbsp;</td>
+            <td>IR2_2A_23</td>
+            <td>IR2_2A_232</td>
+            <td>Number of Religious leaders oriented</td>
+            <td>&nbsp;</td>
+            <td># Participants</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>58</td>
+            <td>2.2.b</td>
+            <td>2.2.b</td>
+            <td>2.2.b</td>
+            <td>Organize film shows in public gatherings to increase to Increase exposure to men on ASRH issues</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>59</td>
+            <td>24</td>
+            <td>IR2_2B_24</td>
+            <td>IR2_2B_241</td>
+            <td>Number of film shows organized</td>
+            <td>&nbsp;</td>
+            <td># shows</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>60</td>
+            <td>&nbsp;</td>
+            <td>IR2_2B_24</td>
+            <td>IR2_2B_242</td>
+            <td>Number of Viewers</td>
+            <td>&nbsp;</td>
+            <td># viewers</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>61</td>
+            <td>IR 2.3</td>
+            <td>IR 2.3</td>
+            <td>IR 2.3</td>
+            <td>Improve attitute and knowledge to delay birth</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>62</td>
+            <td>2.3.a</td>
+            <td>2.3.a</td>
+            <td>2.3.a</td>
+            <td>Orient the married adolescent girls on importance of delayed pregnancy and access to contraception.</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>63</td>
+            <td>25</td>
+            <td>IR2_3A_25</td>
+            <td>IR2_3A_251</td>
+            <td>Number of married adolescent girls oriented</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>64</td>
+            <td>2.3.b</td>
+            <td>2.3.b</td>
+            <td>2.3.b</td>
+            <td>Provide Orientation to Positive Deviant Married Adolescents Couple</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>65</td>
+            <td>26</td>
+            <td>IR2_3B_26</td>
+            <td>IR2_3B_261</td>
+            <td rowspan="2">Number of positive deviant married adolescents oriented</td>
+            <td rowspan="2">&nbsp;</td>
+            <td># Sessions</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>66</td>
+            <td>&nbsp;</td>
+            <td>IR2_3B_26</td>
+            <td>IR2_3B_262</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># Participants</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>67</td>
+            <td>27</td>
+            <td>IR2_3B_27</td>
+            <td>IR2_3B_271</td>
+            <td>Number of positive deviant married adolescents engaged to share their life experience.</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>68</td>
+            <td>2.3. c.</td>
+            <td>2.3. c.</td>
+            <td>2.3. c.</td>
+            <td>Orient Change Agents to reach special/vulnerable adolescents groups</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>69</td>
+            <td>28</td>
+            <td>IR2_3C_28</td>
+            <td>IR2_3C_281</td>
+            <td rowspan="2">Number of Change Agents oriented</td>
+            <td rowspan="2">&nbsp;</td>
+            <td># Sessions</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>70</td>
+            <td>&nbsp;</td>
+            <td>IR2_3C_28</td>
+            <td>IR2_3C_282</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># Participants</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>71</td>
+            <td>29</td>
+            <td>IR2_3C_29</td>
+            <td>IR2_3C_291</td>
+            <td>Number of Change Agents engaged to support project activity.</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>72</td>
+            <td>IR 2.4</td>
+            <td>IR 2.4</td>
+            <td>IR 2.4</td>
+            <td>Increased exposure to platforms/ messages for delaying births.</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>73</td>
+            <td>2.4.a</td>
+            <td>2.4.a</td>
+            <td>2.4.a</td>
+            <td>Establish linkage between adolescents and health service facilities through arranging exposure visits
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>74</td>
+            <td>30</td>
+            <td>IR2_4A_30</td>
+            <td>IR2_4A_301</td>
+            <td>Number of Visit</td>
+            <td>&nbsp;</td>
+            <td># visits</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>75</td>
+            <td>&nbsp;</td>
+            <td>IR2_4A_30</td>
+            <td>IR2_4A_302</td>
+            <td>Number of adolescents visited health facilities through exposure visits arranged by A2H.</td>
+            <td>&nbsp;</td>
+            <td># adolescents</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>76</td>
+            <td>2.4.b.</td>
+            <td>2.4.b.</td>
+            <td>2.4.b.</td>
+            <td>Organize special sessions for newly-wed couples</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>77</td>
+            <td>31</td>
+            <td>IR2_4B_31</td>
+            <td>IR2_4B_311</td>
+            <td rowspan="2">Number of couples attended the sessions</td>
+            <td rowspan="2">&nbsp;</td>
+            <td># sessions</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>78</td>
+            <td>&nbsp;</td>
+            <td>IR2_4B_31</td>
+            <td>IR2_4B_312</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># couples</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>79</td>
+            <td>IR 2.4.c.</td>
+            <td>IR 2.4.c.</td>
+            <td>IR 2.4.c.</td>
+            <td>Use TFD to increase exposure to delaying birth:</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>80</td>
+            <td>32</td>
+            <td>IR2_4C_32</td>
+            <td>IR2_4C_321</td>
+            <td>Number of TFD shows organized</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>81</td>
+            <td>33</td>
+            <td>IR2_4C_33</td>
+            <td>IR2_4C_331</td>
+            <td>Number of audiences enjoyed the shows</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>82</td>
+            <td>IR3</td>
+            <td>IR3</td>
+            <td>IR3</td>
+            <td>IR3: Improve Healthy ASRH behavior</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>83</td>
+            <td>IR 3.1</td>
+            <td>IR 3.1</td>
+            <td>IR 3.1</td>
+            <td>IR 3.1: Increased use of Reproductive Health services among adolescents</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>84</td>
+            <td>3.1.a</td>
+            <td>3.1.a</td>
+            <td>3.1.a</td>
+            <td>Implement referral system in 168 health facilities of 8 Upazilas</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>85</td>
+            <td>34</td>
+            <td>IR3_1A_34</td>
+            <td>IR3_1A_341</td>
+            <td>Number of health facilities with referrel system</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>86</td>
+            <td>35</td>
+            <td>IR3_1A_35</td>
+            <td>IR3_1A_351</td>
+            <td rowspan="2">Number of adolescents referred to health facilities for SRH services.</td>
+            <td rowspan="2">&nbsp;</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>87</td>
+            <td>&nbsp;</td>
+            <td>IR3_1A_35</td>
+            <td>IR3_1A_352</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>88</td>
+            <td>36</td>
+            <td>IR3_1A_36</td>
+            <td>IR3_1A_361</td>
+            <td rowspan="2">Number of referred adolescents completed/received SRH services.</td>
+            <td rowspan="2">&nbsp;</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>89</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>IR3_1A_362</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>90</td>
+            <td>IR 3.2</td>
+            <td>IR 3.2</td>
+            <td>IR 3.2</td>
+            <td>Improved knowledge about SRH services</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>91</td>
+            <td>3.2.a</td>
+            <td>3.2.a</td>
+            <td>3.2.a</td>
+            <td>Form TFD Groups with Adolescents and perform TFD shows:</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>92</td>
+            <td>37</td>
+            <td>IR3_2A_37</td>
+            <td>IR3_2A_371</td>
+            <td>Number of TFD groups formed</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>93</td>
+            <td>38</td>
+            <td>IR3_2A_38</td>
+            <td>IR3_2A_381</td>
+            <td>Number of TFD shows organized</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>94</td>
+            <td>39</td>
+            <td>IR3_2A_39</td>
+            <td>IR3_2A_391</td>
+            <td>Number of participants</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>95</td>
+            <td>3.2.b</td>
+            <td>3.2.b</td>
+            <td>3.2.b</td>
+            <td>Integrate Aponjon App in Life Skills education session:</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>96</td>
+            <td>40</td>
+            <td>IR3_2B_40</td>
+            <td>IR3_2B_401</td>
+            <td>Number of platforms used aponjon apps in LSE sessions</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>97</td>
+            <td>41</td>
+            <td>IR3_2B_41</td>
+            <td>IR3_2B_411</td>
+            <td>Number of LSE sessions used aponjon apps</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>98</td>
+            <td>3.2.c.</td>
+            <td>3.2.c.</td>
+            <td>3.2.c.</td>
+            <td>Information pocket card on ASRH information and services</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>99</td>
+            <td>42</td>
+            <td>IR3_2C_42</td>
+            <td>IR3_2C_421</td>
+            <td>Number of pocket card distributed</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>100</td>
+            <td>IR 3.3</td>
+            <td>IR 3.3</td>
+            <td>IR 3.3</td>
+            <td>Increased availability of adolescent-friendly sources of services and information</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>101</td>
+            <td>IR 3.3.a</td>
+            <td>IR 3.3.a</td>
+            <td>IR 3.3.a</td>
+            <td>Conduct Initial Training for Clinic-based Health Care Providers</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>102</td>
+            <td>43</td>
+            <td>IR3_3A_43</td>
+            <td>IR3_3A_431</td>
+            <td>Number of facility-based service providers attended initial training</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>103</td>
+            <td>IR 3.3.a.1</td>
+            <td>IR 3.3.a.1</td>
+            <td>IR 3.3.a.1</td>
+            <td>Conduct Refresher Training for Clinic-based Health Care Providers</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>104</td>
+            <td>44</td>
+            <td>IR3_3A_44</td>
+            <td>IR3_3A_441</td>
+            <td>Number of facility-based service providers attended refresher training</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>105</td>
+            <td>IR 3.3. b</td>
+            <td>IR 3.3. b</td>
+            <td>IR 3.3. b</td>
+            <td>Conduct Initial AFHS Training for Outreach Providers</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>106</td>
+            <td>45</td>
+            <td>IR3_3B_45</td>
+            <td>IR3_3B_451</td>
+            <td>Number of outreach providers attended initial training</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>107</td>
+            <td>IR 3.3.b.1</td>
+            <td>IR 3.3.b.1</td>
+            <td>IR 3.3.b.1</td>
+            <td>Conduct AFHS Refresher Training for Outreach Providers</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>108</td>
+            <td>46</td>
+            <td>IR3_3B_46</td>
+            <td>IR3_3B_461</td>
+            <td>Number of outreach providers attended refresher training</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>109</td>
+            <td>IR 3.3. c.</td>
+            <td>IR 3.3. c.</td>
+            <td>IR 3.3. c.</td>
+            <td>Improved drug and logistics supplies</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>110</td>
+            <td>47</td>
+            <td>IR3_3C_47</td>
+            <td>IR3_3C_471</td>
+            <td>Number of meeting held at Upazila levels</td>
+            <td>24 meetings at upazila level</td>
+            <td>Upazila</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>111</td>
+            <td>&nbsp;</td>
+            <td>IR3_3C_47</td>
+            <td>IR3_3C_472</td>
+            <td>Number of meeting held at district levels</td>
+            <td>3 meetings at district level</td>
+            <td>District</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>112</td>
+            <td>IR 3.3.d.</td>
+            <td>IR 3.3.d.</td>
+            <td>IR 3.3.d.</td>
+            <td>Quality monitoring of AFHS at the facility level and enhance clinic interfaces with the communities</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>113</td>
+            <td>48</td>
+            <td>IR3_3D_48</td>
+            <td>IR3_3D_481</td>
+            <td rowspan="2">Number of review sessions held for assessing AFHS at the facilities (using Community Score
+                Card)
+            </td>
+            <td rowspan="2">&nbsp;</td>
+            <td># facilities</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>114</td>
+            <td>&nbsp;</td>
+            <td>IR3_3D_48</td>
+            <td>IR3_3D_482</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># review sessions</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>115</td>
+            <td>IR 3.3.e.1</td>
+            <td>IR 3.3.e.1</td>
+            <td>IR 3.3.e.1</td>
+            <td>Institutionalization of ASRH information of services</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>116</td>
+            <td>49</td>
+            <td>IR3_3E_49</td>
+            <td>IR3_3E_491</td>
+            <td rowspan="3">Number of meeting held with the stakeholders at different levels</td>
+            <td rowspan="3">&nbsp;</td>
+            <td>Upazila</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>117</td>
+            <td>&nbsp;</td>
+            <td>IR3_3E_49</td>
+            <td>IR3_3E_492</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>USHEFP</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>118</td>
+            <td>&nbsp;</td>
+            <td>IR3_3E_49</td>
+            <td>IR3_3E_493</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>FWC & CC committee</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>119</td>
+            <td>IR 3.3.f.1</td>
+            <td>IR 3.3.f.1</td>
+            <td>IR 3.3.f.1</td>
+            <td>School based programs facilitated by trained teachers</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>120</td>
+            <td>50</td>
+            <td>IR3_3F_50</td>
+            <td>IR3_3F_501</td>
+            <td>Number of teachers oriented to conduct ASRH sessions</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>121</td>
+            <td>51</td>
+            <td>IR3_3F_51</td>
+            <td>IR3_3F_512</td>
+            <td rowspan="2">Number of school based sessions organized by guest speakers</td>
+            <td rowspan="2">&nbsp;</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>122</td>
+            <td>&nbsp;</td>
+            <td>IR3_3F_51</td>
+            <td>IR3_3F_513</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>123</td>
+            <td>52</td>
+            <td>IR3_3F_52</td>
+            <td>IR3_3F_521</td>
+            <td rowspan="2">Number of adolescents attended sessions organized by guest speakers</td>
+            <td rowspan="2">&nbsp;</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>124</td>
+            <td>&nbsp;</td>
+            <td>IR3_3F_52</td>
+            <td>IR3_3F_522</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>125</td>
+            <td>53</td>
+            <td>IR3_3F_53</td>
+            <td>IR3_3F_531</td>
+            <td rowspan="2">Number of school based sessions organized by trained teachers</td>
+            <td rowspan="2">&nbsp;</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>126</td>
+            <td>&nbsp;</td>
+            <td>IR3_3F_53</td>
+            <td>IR3_3F_532</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>127</td>
+            <td>54</td>
+            <td>IR3_3F_54</td>
+            <td>IR3_3F_541</td>
+            <td rowspan="2">Number of adolescents attended sessions organized by trained teachers</td>
+            <td rowspan="2">&nbsp;</td>
+            <td>10-14</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>128</td>
+            <td>&nbsp;</td>
+            <td>IR3_3F_54</td>
+            <td>IR3_3F_542</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td>15-19</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>129</td>
+            <td>B</td>
+            <td>B</td>
+            <td>B</td>
+            <td>Project Management: Partners' Capacity Building</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>130</td>
+            <td>B1</td>
+            <td>B1</td>
+            <td>B1</td>
+            <td>Refresher TOT on Life Skills including SRHR</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>131</td>
+            <td>55</td>
+            <td>B_B1_55</td>
+            <td>B_B1_551</td>
+            <td rowspan="2">Number of people completed refresher TOT on LSE and SRHR</td>
+            <td rowspan="2">&nbsp;</td>
+            <td># session</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>132</td>
+            <td>&nbsp;</td>
+            <td>B_B1_55</td>
+            <td>B_B1_552</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># partici</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>133</td>
+            <td>B2</td>
+            <td>B2</td>
+            <td>B2</td>
+            <td>Training on Life Skills including SRHR</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>134</td>
+            <td>56</td>
+            <td>B_B2_56</td>
+            <td>B_B2_561</td>
+            <td rowspan="2">Number of people trained on LSE including SRHR</td>
+            <td rowspan="2">&nbsp;</td>
+            <td># session</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>135</td>
+            <td>&nbsp;</td>
+            <td>B_B2_56</td>
+            <td>B_B2_562</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># partici</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>136</td>
+            <td>B3</td>
+            <td>B3</td>
+            <td>B3</td>
+            <td>Refresher TOT on Community Intervention Package</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>137</td>
+            <td>57</td>
+            <td>B_B3_57</td>
+            <td>B_B3_571</td>
+            <td rowspan="2">Number of people completed refresher TOT on community intervention package</td>
+            <td rowspan="2">&nbsp;</td>
+            <td># session</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>138</td>
+            <td>&nbsp;</td>
+            <td>B_B3_57</td>
+            <td>B_B3_572</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># partici</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>139</td>
+            <td>B4</td>
+            <td>B4</td>
+            <td>B4</td>
+            <td>Training on Community Intervention Package</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>140</td>
+            <td>58</td>
+            <td>B_B4_58</td>
+            <td>B_B4_581</td>
+            <td rowspan="2">Number of people trained on community intervention package</td>
+            <td rowspan="2">&nbsp;</td>
+            <td># session</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>141</td>
+            <td>&nbsp;</td>
+            <td>B_B4_58</td>
+            <td>B_B4_582</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># partici</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>142</td>
+            <td>B5</td>
+            <td>B5</td>
+            <td>B5</td>
+            <td>Training on Gender and Child Protection</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>143</td>
+            <td>59</td>
+            <td>B_B5_59</td>
+            <td>B_B5_591</td>
+            <td rowspan="2">Number of people trained on gender and child protection</td>
+            <td rowspan="2">&nbsp;</td>
+            <td># session</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>144</td>
+            <td>&nbsp;</td>
+            <td>B_B5_59</td>
+            <td>B_B5_592</td>
+            <!--<td>&nbsp;</td>-->
+            <!--<td>&nbsp;</td>-->
+            <td># partici</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>145</td>
+            <td>C</td>
+            <td>C</td>
+            <td>C</td>
+            <td>BCC and Project Communication</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>146</td>
+            <td>C1</td>
+            <td>C1</td>
+            <td>C1</td>
+            <td>Develop/reprint and distribute banners and festoons to platforms</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>147</td>
+            <td>60</td>
+            <td>C_C1_60</td>
+            <td>C_C1_601</td>
+            <td>Number of platforms distributed banners and festoon</td>
+            <td>&nbsp;</td>
+            <td>Platforms</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>148</td>
+            <td>C2</td>
+            <td>C2</td>
+            <td>C2</td>
+            <td>Develop/reprint distribute project brochure, one pager, and monthly monitoring tool</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>149</td>
+            <td>61</td>
+            <td>C_C2_61</td>
+            <td>C_C2_611</td>
+            <td>Number of platforms distributed brochure, one pager and reporting tool</td>
+            <td>&nbsp;</td>
+            <td>Platforms</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>150</td>
+            <td>C3</td>
+            <td>C3</td>
+            <td>C3</td>
+            <td>Develop/reprint and distribute BCC materials (poster, leaflet) for gatekeepers</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>151</td>
+            <td>62</td>
+            <td>C_C3_62</td>
+            <td>C_C3_621</td>
+            <td>Number of platforms with BCC materials (poster, leaflet) for gatekeepers</td>
+            <td>&nbsp;</td>
+            <td>Platforms</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>152</td>
+            <td>C4</td>
+            <td>C4</td>
+            <td>C4</td>
+            <td>Training on BCC</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>153</td>
+            <td>63</td>
+            <td>C_C4_63</td>
+            <td>C_C4_631</td>
+            <td>Number of people trained on BCC</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>154</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>Training for adolescent girls on economic empowerment</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>155</td>
+            <td>64</td>
+            <td>164</td>
+            <td>1641</td>
+            <td>Number of adolescent girls trained</td>
+            <td>&nbsp;</td>
+            <td>Girls</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>156</td>
+            <td>2</td>
+            <td>2</td>
+            <td>2</td>
+            <td>Adolescents supported for employment</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>157</td>
+            <td>65</td>
+            <td>265</td>
+            <td>2651</td>
+            <td>Number of adolescents supported to find employment</td>
+            <td>&nbsp;</td>
+            <td>Girls</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>158</td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>Adolescents supported for job and enterprise development</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>159</td>
+            <td>66</td>
+            <td>366</td>
+            <td>3661</td>
+            <td>Number of adolescents supported for enterprise development</td>
+            <td>&nbsp;</td>
+            <td>Girls</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style="background-color: #da7bca">
+            <td>160</td>
+            <td>4</td>
+            <td>4</td>
+            <td>4</td>
+            <td>Adolescents supported for telemedicine related works</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>161</td>
+            <td>67</td>
+            <td>467</td>
+            <td>4672</td>
+            <td>Number of adolescents supported for IT and telemedicine work</td>
+            <td>&nbsp;</td>
+            <td>Girls</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% block additional-javascript %}
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+    <script type="text/javascript" src="/static/js/calendar.min.js"></script>
+    <script type="text/javascript">
+
+        var monthly_target_data = {{ monthly_target_data|safe }};
+
+        var monthly_achievement_data = {{ monthly_achievement_data|safe }};
+
+        var sc_ma_data = {{ sc_ma_data|safe }};
+
+        var dc_ma_data = {{ dc_ma_data|safe }};
+
+        var grouped_indicators = ['IR1_1A_012', 'IR1_1A_022', 'IR1_1A_032', 'IR1_1A_042', 'IR1_1A_052', 'IR1_1A_062', 'IR1_1A_112', 'IR1_1A_122', 'IR1_1A_132', 'IR1_2A_142', 'IR1_2A_143', 'IR1_2A_144', 'IR1_2A_152', 'IR1_3A_182', 'IR1_3A_183', 'IR1_4A_202', 'IR2_3B_262', 'IR2_3C_282', 'IR2_4B_312', 'IR3_1A_352', 'IR3_1A_362', 'IR3_3D_482', 'IR3_3E_492', 'IR3_3E_493', 'IR3_3F_513', 'IR3_3F_522', 'IR3_3F_532', 'IR3_3F_542', 'B_B1_552', 'B_B2_562', 'B_B3_572', 'B_B4_582', 'B_B5_592'];
+        var i = 0;
+
+        if (Object.keys(monthly_target_data).length > 0) {
+            for (var idx in monthly_target_data) {
+
+                var tableRow = $("td").filter(function () {
+                    return $(this).text() == monthly_target_data[idx].subindicator_target;
+                }).closest("tr");
+                if (grouped_indicators.indexOf(monthly_target_data[idx].subindicator_target) == -1) {
+                    tableRow.find('td:eq(7)').text(monthly_target_data[idx].male_boys_married_target).addClass('targettd');
+                    tableRow.find('td:eq(8)').text(monthly_target_data[idx].male_boys_unmarried_target).addClass('targettd');
+                    tableRow.find('td:eq(9)').text(monthly_target_data[idx].female_girls_married_target).addClass('targettd');
+                    tableRow.find('td:eq(10)').text(monthly_target_data[idx].female_girls_unmarried_target).addClass('targettd');
+                    tableRow.find('td:eq(11)').text(monthly_target_data[idx].total).addClass('targettd');
+
+
+                } else {
+                    tableRow.find('td:eq(5)').text(monthly_target_data[idx].male_boys_married_target).addClass('targettd');
+                    tableRow.find('td:eq(6)').text(monthly_target_data[idx].male_boys_unmarried_target).addClass('targettd');
+                    tableRow.find('td:eq(7)').text(monthly_target_data[idx].female_girls_married_target).addClass('targettd');
+                    tableRow.find('td:eq(8)').text(monthly_target_data[idx].female_girls_unmarried_target).addClass('targettd');
+                    tableRow.find('td:eq(9)').text(monthly_target_data[idx].total).addClass('targettd');
+
+                }
+                i++;
+            }
+        }
+        console.log(i);
+
+        if (Object.keys(monthly_achievement_data).length > 0) {
+            for (var idx in monthly_achievement_data) {
+                var tableRow = $("td").filter(function () {
+                    return $(this).text() == monthly_achievement_data[idx].subindicator_ach;
+                }).closest("tr");
+                if (grouped_indicators.indexOf(monthly_achievement_data[idx].subindicator_ach) == -1) {
+                    tableRow.find('td:eq(12)').text(monthly_achievement_data[idx].male_boys_married_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(13)').text(monthly_achievement_data[idx].male_boys_unmarried_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(14)').text(monthly_achievement_data[idx].female_girls_married_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(15)').text(monthly_achievement_data[idx].female_girls_unmarried_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(16)').text(monthly_achievement_data[idx].total_ach).addClass('achievementtd');
+                } else {
+                    tableRow.find('td:eq(10)').text(monthly_achievement_data[idx].male_boys_married_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(11)').text(monthly_achievement_data[idx].male_boys_unmarried_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(12)').text(monthly_achievement_data[idx].female_girls_married_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(13)').text(monthly_achievement_data[idx].female_girls_unmarried_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(14)').text(monthly_achievement_data[idx].total_ach).addClass('achievementtd');
+                }
+            }
+        }
+
+        if (Object.keys(sc_ma_data).length > 0) {
+            for (var idx in sc_ma_data) {
+                var tableRow = $("td").filter(function () {
+                    return $(this).text() == sc_ma_data[idx].subindicator_ach;
+                }).closest("tr");
+
+                if (grouped_indicators.indexOf(sc_ma_data[idx].subindicator_ach) == -1) {
+                    tableRow.find('td:eq(16)').text(sc_ma_data[idx].total_ach).addClass('achievementtd');
+                } else {
+                    tableRow.find('td:eq(14)').text(sc_ma_data[idx].total_ach).addClass('achievementtd');
+                }
+            }
+        }
+
+
+        if (Object.keys(dc_ma_data).length > 0) {
+            for (var idx in dc_ma_data) {
+                var tableRow = $("td").filter(function () {
+                    return $(this).text() == dc_ma_data[idx].subindicator_ach;
+                }).closest("tr");
+
+                if (grouped_indicators.indexOf(dc_ma_data[idx].subindicator_ach) == -1) {
+                    tableRow.find('td:eq(14)').text(dc_ma_data[idx].female_girls_married_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(15)').text(dc_ma_data[idx].female_girls_unmarried_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(16)').text(dc_ma_data[idx].total_ach).addClass('achievementtd');
+                } else {
+                    tableRow.find('td:eq(12)').text(dc_ma_data[idx].female_girls_married_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(13)').text(dc_ma_data[idx].female_girls_unmarried_ach).addClass('achievementtd');
+                    tableRow.find('td:eq(14)').text(dc_ma_data[idx].total_ach).addClass('achievementtd');
+                }
+            }
+        }
+
+
+        $('#from_date').calendar({
+            type: 'month',
+            endCalendar: $('#to_date'),
+            popupOptions: {
+                position: 'bottom right'
+            },
+            onChange: function (date, text, mode) {
+                $('#to_date').calendar({
+                    type: 'month',
+                    startCalendar: $('#from_date'),
+                    popupOptions: {
+                        position: 'bottom right'
+                    },
+                    maxDate: new Date(date.getFullYear(), date.getMonth() + 3)
+                });
+            }
+
+        });
+
+        $('th:nth-child(3)').css('display', 'none');
+        $('td:nth-child(3)').css('display', 'none');
+        $('th:nth-child(4)').css('display', 'none');
+        $('td:nth-child(4)').css('display', 'none');
+
+
+    </script>
+{% endblock %}

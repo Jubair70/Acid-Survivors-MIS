@@ -1,0 +1,121 @@
+{% extends "base_test.html" %}
+{% block additional-headers %}
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}assets/plugins/select2/select2_metro.css"/>
+<link rel="stylesheet" href="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.css"/>
+<link rel="stylesheet" href="{{STATIC_URL}}assets/plugins/bootstrap-datepicker/css/datepicker.css"/>
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}js/DataTables/datatables.css">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+<div class="col-md-12">
+<a class="btn red pull-right" href="/dashboard_tool/add_filtering_control/"   role="button" >  <i class="fa fa-2x fa-plus-square-o"></i> Add Filtering Controls</a>
+</div></div>
+<br>
+<!-- Load filtering_control Table-->
+ <div id="add_filtering_controlm_table_div">
+     <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption"><i class="fa fa-adn"></i>Filtering Control List</div>
+            <div class="tools">
+                <a href="javascript:;" class="collapse"></a>
+                <a onclick="show_filtering_control();" href="#" class="reload"></a>
+                <a href="javascript:;" class="remove"></a>
+			</div>
+        </div>
+        <div class="portlet-body">
+            <table id = "table_id" class="table table-bordered table-striped table-condensed flip-content"></table>
+        </div>
+    </div>
+ </div>
+
+
+{% endblock %}
+
+
+
+{% block additional-javascript %}
+
+    <script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/DataTables/datatables.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/mpower.dashboard.table.js"></script>
+
+    <script type="text/javascript">
+        /* After Page Loading */
+    $(document).ready(function(){
+        show_filtering_control();
+    }); // end of document ready
+    
+    /**
+     * Load All filtering_controls
+     * @persia
+     * */
+    function show_filtering_control(){
+        $.ajax({
+            url: "/dashboard_tool/show_filtering_control_get_json/",
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                // document.getElementById("show_goal_data_div").innerHTML = result;
+                initDataTable("table_id", response.data, response.col_name);
+                $('#table_id').show();
+            }
+        }); //ajax end
+    } //End of show_filtering_control function
+        
+        
+        
+
+    /**
+     * Load Selected filtering_control in Edit Mode
+     * @param: filtering_control id
+     * @persia
+     * */
+    function edit_entity(control_id){
+        window.location="/dashboard_tool/edit_filtering_control/"+control_id+"/";
+    } //End of edit_filtering_control function
+
+
+
+    /**
+     * This Function will show message in top For Asynchronous Request
+     * @param: Json (messages, type field)
+     * @persia
+     * */
+    function showAjaxConfirmationMessages(data){
+        $("#div_messages").html("");
+        $("#div_messages").append("<div class='alert alert-"+data.type+" fade in'><a class='close' href='#' data-dismiss='alert'>×</a> <p>"+data.messages+"</p></div>");
+    } //end of showAjaxConfirmationMessages
+
+
+
+
+     /**
+     * Delete Selected filtering_control
+     * @param: filtering_control id
+     * @persia
+     * */
+    function delete_entity(control_id) {
+         var result = confirm("Are you sure, you want to delete?");
+         if (result) {
+             $.ajax({
+                 type: 'GET',
+                 url: "/dashboard_tool/delete_filtering_control/" + control_id + "/",
+                 success: function (data) {
+                     showAjaxConfirmationMessages(data);
+                     show_filtering_control();
+                 },
+                 error: function (data) {
+                     showAjaxConfirmationMessages(data);
+                 }
+             }); //ajax end
+         }
+     }
+    </script>
+
+{% endblock %}
+
+

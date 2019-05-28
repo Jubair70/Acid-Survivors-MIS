@@ -1,0 +1,394 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <link href="/static/css/calendar.min.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> District and Central Level Activities Form
+            </div>
+        </div>
+
+        <div class="portlet-body">
+            <form class="horizontal-form" id="" method="post" action="/planmodule/update_dca_form/"
+                  enctype="multipart/form-data">
+                <input type="hidden" id="dca_id" name="dca_id" >
+                {% csrf_token %}
+                <div class="form-body">
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label>Registraion Date: </label>
+                                <div class="ui calendar"  id="registration_date">
+                                    <input type="text" class="form-control" name="registration_date" value="{{ registration_date }}"  readonly>
+                                    <span style="color:red;font-weight:bold" id ="alert_date">No Date Selected</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label>Activity Level:&nbsp;&nbsp;</label>
+                                {% if activity_level == 1 %}
+                                    <label class="radio-inline"><input type="radio" id="activity_level1" name="activity_level" value="1"
+                                                                       required checked>District</label>
+                                {% else %}
+                                    <label class="radio-inline"><input type="radio" id="activity_level1" name="activity_level" value="1"
+                                                                       required>District</label>
+                                {% endif %}
+                                {% if activity_level == 2 %}
+                                    <label class="radio-inline"><input type="radio" id="activity_level2" name="activity_level" value="2"
+                                                                       checked>Central</label>
+                                {% else %}
+                                    <label class="radio-inline"><input type="radio" id="activity_level2" name="activity_level" value="2">Central</label>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="level">
+
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>District: </label>
+                                    <select class="form-control" name="district" id="district"
+                                            onclick="load_upazila(this)" >
+                                        <option value="">Select One</option>
+                                        {% if district_id == 9329 %}
+                                            <option value="{{ district_id }}" selected>{{ district_name }}</option>
+                                        {% else %}
+                                            <option value="9329">Rangpur</option>
+                                        {% endif %}
+                                    </select>
+                                <span style="color:red;font-weight:bold" id ="alert_district">No District Selected</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>Upazila: </label>
+                                    <select class="form-control" name="upazilla" id="upazilla" >
+                                        <option value="">Select One</option>
+                                        {% for upz_id,upz_name in upazilla %}
+                                            {% if upz_id == upazilla_id %}
+                                                <option value="{{ upz_id }}" selected>{{ upz_name }}</option>
+                                            {% else %}
+                                                <option value="{{ upz_id }}">{{ upz_name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                <span style="color:red;font-weight:bold" id ="alert_upazilla">No Upazilla Selected</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label for="">PNGO:</label>
+                                    <textarea class="form-control" readonly>{{ org_name }}</textarea>
+                                    <input type="hidden" class="form-control" name="org_id" id="org_id"
+                                           value="{{ org_id }}">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="test">
+
+                            {% for x,y,z in sss %}
+                                <div id="loop">
+                                <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="Activity Name">Activity Name:</label>
+                                        <select class="form-control"
+                                                name="activity_name" id="activity_name">
+                                            <option value="">Select One</option>
+                                            {% for act_id,act_name in activity %}
+                                                {% if act_id == x %}
+                                                <option value="{{ act_id }}" selected>{{ act_name }}</option>
+                                                    {% else %}
+                                                    <option value="{{ act_id }}">{{ act_name }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="">Boys/Males:</label>
+                                        <input type="number" min="0" class="form-control" name="males"
+                                               id="males" value="{{ y }}" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                                 <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="">Girls/Females:</label>
+                                        <input type="number" min="0" class="form-control" name="females"
+                                               id="females" value="{{ z }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                                </div>
+                        {% endfor %}
+
+                    </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button class="btn btn-lg" type="button" id="plus">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                            <button class="btn btn-lg" type="button" id="minus">
+                                <span class="glyphicon glyphicon-minus"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-danger pull-left" id="submit" name="submit" type="submit"
+                                    data-original-title=""
+                                    title="">Submit
+                            </button>
+                            <button onclick="history.go(-1);" style="margin-left:10px;" type="button"
+                                    class="btn btn-info pull-left" data-original-title="" title="">Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block additional-javascript %}
+{#    <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>#}
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+    <script type="text/javascript" src="/static/js/calendar.min.js"></script>
+    <script type="text/javascript">
+
+        $('#alert_date').hide();
+{#        $('#alert_activity').hide();#}
+        $('#alert_district').hide();
+        $('#alert_upazilla').hide();
+        var activity_level = {{ activity_level|safe }};
+        if(activity_level ==1)
+            $('#level').show();
+        else $('#level').hide();
+
+
+
+        var data = {{ data|safe }};
+        $('#dca_id').val(data['dca_id']);
+{#        $('#males').val(data['males']);#}
+{#        $('#females').val(data['females']);#}
+
+
+        $('#plus').on('click',function () {
+            $("#loop").clone().appendTo("#test").find("input[type='number']").val("");
+        });
+
+        $('#minus').on('click',function () {
+            if($('#test').children().length!=1)
+             $('#test').children().last().remove();
+
+        });
+
+
+
+
+
+
+        // convert to list of string
+{#        var result=[];#}
+{#        for (var i=0;i<set_activity_id.length;i++) result.push(set_activity_id[i].toString());#}
+{#        $('#activity_name').dropdown('set selected',result);#}
+
+        $('#activity_level1').on('click',function () {
+            $('#level').show();
+        });
+
+        $('#activity_level2').on('click',function () {
+            $('#level').hide();
+            $('#district').html("<option value=\"\">Select One</option><option value=\"9329\">Rangpur</option>");
+             $('#upazilla').html("<option value=\"\">Select One</option>");
+        });
+
+
+        $('#submit').on('click',function () {
+           reg = $('#registration_date').calendar('get date');
+           if(!reg)
+           {
+                $('#alert_date').show();return false;
+
+           }
+           else $('#alert_date').hide();
+
+
+{#           activity_name = value_filter($('#activity_name').dropdown('get value'));#}
+{#           if(!activity_name[0])#}
+{#           {#}
+{#               $('#alert_activity').show();return false;#}
+{#           }#}
+{#           else $('#alert_activity').hide();#}
+
+           activity_level1 = $('#activity_level1:checked').val();
+           if(activity_level1)
+           {
+               district = $('#district').val();
+               upazilla = $('#upazilla').val();
+               if(!district)
+               {
+                   $('#alert_district').show();
+                   return false;
+               }
+               else $('#alert_district').hide();
+               if(!upazilla)
+               {
+                   $('#alert_upazilla').show();
+                   return false;
+               }
+               else $('#alert_upazilla').hide();
+
+           }
+
+       });
+
+        function value_filter(some) {
+                return some.slice(0, some.length - 1);
+            }
+
+        $('#registration_date').calendar({
+            type: 'date',
+            popupOptions: {
+                position: 'bottom right'
+            },
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+
+                    if (day < 10) {
+                        day = '0' + day
+                    }
+                    if (month < 10) {
+                        month = '0' + month
+                    }
+                    return year + '-' + month + '-' + day;
+                }
+            }
+        });
+
+
+
+
+
+
+
+        function ajaxcall() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                }
+            });
+        }
+
+        function load_upazila(dist_object) {
+            ajaxcall();
+            dist = parseInt(dist_object.value)
+            console.log(dist);
+            if (isNaN(parseFloat(dist))) {
+                $('#upazila').html("<option value=\"\">Select One</option>");
+            }
+            else {
+
+                $.ajax({
+                    url: '/planmodule/getUpazilas/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'dist': dist},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#upazilla').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+    </script>
+
+{% endblock %}

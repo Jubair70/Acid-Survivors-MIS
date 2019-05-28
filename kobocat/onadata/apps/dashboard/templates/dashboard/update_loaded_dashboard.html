@@ -1,0 +1,65 @@
+{% extends "base_test.html" %}
+
+{% block additional-headers %}
+<link rel="stylesheet" href="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.css"/>
+     <link rel="stylesheet" type="text/css" href="/static/css/datepicker.css" rel="stylesheet">
+     <link rel="stylesheet" type="text/css" href="/static/js/DataTables/datatables.css">
+     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/plugins/bootstrap-multiselect/bootstrap-multiselect.css">
+     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.dataTables.min.css">
+     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/mpower_dashboard.css">
+{% endblock %}
+
+{% block content %}
+
+
+ <form class="horizontal-form" method="post" action="/dashboard/update_loaded_dashboard/{{ LOADED_DASHBOARD_ID }}/" enctype="multipart/form-data">
+    {% csrf_token %}
+     <div class="form-group">
+
+         <div class="col-md-12">
+             <label>Name</label>
+             <input class="form-control" name="name" value="{{loaded_dashboard_form.name.value}}"/>
+         </div>
+
+      </div>
+     <div class="form-group">
+
+         <div class="col-md-6">
+             <label>HTML CODE</label>
+            <textarea rows="20" class="form-control" name="html_code" >{{ loaded_dashboard_form.html_code.value }}</textarea>
+         </div>
+
+         <div class="col-md-6">
+             <label>JS CODE</label>
+            <textarea rows="20" class="form-control" name="js_code" >{{ loaded_dashboard_form.js_code.value }} </textarea>
+         </div>
+
+      </div>
+      <div class="form-group">
+         <button class="btn btn-success" type="submit">Save</button>
+      </div>
+</form>
+
+{% endblock %}
+{% block additional-javascript %}
+    <script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/DataTables/datatables.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/custom_data_view.js"></script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/plugins/bootstrap-multiselect/bootstrap-multiselect.js"></script>
+    <script type="text/javascript"  src="{{ STATIC_URL }}js/mpower.build.highcharts.js"></script>
+
+    <!--MapBOX Scripts-->
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
+
+    <script type="text/javascript">
+
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}{{ head_title }}{% endblock %}
+   
+   {% block additional-headers %}
+      <link rel="stylesheet" href="{{STATIC_URL}}css/style_unicef_dashboard.css">
+      <link href="{{STATIC_URL}}js/datetimepicker/datepicker.css" rel="stylesheet">
+      <link async href="https://fonts.googleapis.com/css?family=Aladin" data-generated="https://enjoycss.com" rel="stylesheet" type="text/css"/>
+  {% endblock %}  
+     {% block additional-javascript %}
+
+    <script type="text/javascript" src="{{STATIC_URL}}js/highcharts/highcharts.js"></script>
+    <!-- 2. You can add print and export feature by adding this line -->
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/highchartcreate.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/unicef_dashboard.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/datetimepicker/datepicker.js" ></script>
+
+    <script type="text/javascript">
+        
+      // When the document is ready
+      $(document).ready(function () {
+        createFormButton('{{ reportdata|safe }}',false);  
+            
+        $('#from-date').click(function () {
+          $('#from-date').datepicker({
+                    format: "dd/mm/yyyy"
+          }); 
+          $('#from-date').datepicker('show');
+        });
+        $('#to-date').click(function () {
+          $('#to-date').datepicker({
+              format: "dd/mm/yyyy"
+          }); 
+        });
+
+        callServer('initial','sel-district');
+
+        $('#sel-district').change(function () {
+          var district=$(this).val();
+          console.log('district::'+district);
+          //do ajax now
+          callServer('UP_'+district,'sel-upazilla');
+      
+        });
+        $('#sel-upazilla').change(function () {
+          var Upazilla=$(this).val();
+          console.log('Upazilla::'+Upazilla);
+          //do ajax now
+          callServer('UN_'+Upazilla,'sel-union');
+      
+        });
+        $('#sel-union').change(function () {
+          var Union=$(this).val();
+          console.log('Union::'+Union);
+          //do ajax now
+          callServer('PSU_'+Union,'sel-psu');
+      
+        });
+        
+
+      });
+
+      jasper_url = "{{jasper_url}}";
+      jasper_rprt_exec_url = "{{ jasper_rprt_exec_url }}";
+      jasper_param_query = "{{jasper_param_query}}";
+    </script>
+
+     {% endblock %}
+
+  
+
+  {% block content %}
+  
+  <div id="container">
+    <div id="tg-xY4Sf" class="form_btn"></div>
+    <br>
+    <br>
+    <div id="dashboard_query" class="dashboard_query">
+      <div class="class-float-left">
+        <label><strong>From</strong></label>
+        <input  type="text" placeholder="click to enter date"  id="from-date">
+      </div>
+      <div class="class-float-right">
+        <label><strong>To</strong></label>
+        <input  type="text" placeholder="click to enter date"  id="to-date">
+      </div> 
+      <div class="class-sub-query">
+        <table style="width:300px;border:0;">
+          <thead>
+            <tr>
+              <th>District</th>
+              <th>Upazilla</th>
+              <th>Union</th>
+              <th>PSU</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <select id="sel-district" name="sel-district"></select>
+              </td>
+              <td>
+                <select id="sel-upazilla" name="sel-upazilla"></select>
+              </td>
+              <td>
+                <select id="sel-union" name="sel-union"></select>
+              </td>
+              <td>
+                <select id="sel-psu" name="sel-psu"></select>
+              </td>
+            </tr>
+            <tfoot>
+              <tr>
+                <td colspan="4" class="class-float-center">
+                  <button class="query-table-foot">Show</button>
+                </td>
+              </tr>
+            </tfoot>
+        </table>
+      </div>
+
+    </div>
+    <div id="dynamic_query" class="dashboard_query"></div>
+    <div id="download_div" class="dashboard_query" hidden>
+      <button id = "btn_pdf" type="button">DownLoad PDF</button>
+      <button id = "btn_xcl" type="button">DownLoad EXCEL</button>
+      <button id = "btn_xml" type="button">DownLoad XML</button>
+    </div>
+    <div id="loadajax">
+      <a id="download_pdf" href="" download="FileName" hidden>PDF</a><br>
+      <a id="download_xls" href="" download="FileName" hidden>Excel</a><br>
+      <a id="download_xml" href="" download="FileName" hidden>XML</a><br>
+      <a id="download_csv" href="" download="FileName" hidden>CSV</a>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div id="empty_view">Nothing to Show. Please Click a report Button to view report.</div>
+    
+  
+  
+  </div>
+
+  
+  {% endblock %}  
+

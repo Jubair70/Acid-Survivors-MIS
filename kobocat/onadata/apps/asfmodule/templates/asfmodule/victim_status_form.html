@@ -1,0 +1,120 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+
+    <style>
+
+    #loop
+    {
+        background-color: #EEE;
+    padding: 10px;
+    margin-bottom: 11px;
+    }
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> Case Initiation
+            </div>
+        </div>
+
+        <div class="portlet-body">
+            <form class="horizontal-form" id="" method="post" action="/asf/victim_status/{{ victim_tbl_id }}/" id="form"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-body">
+                <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                                <label >Status: </label>
+                               <select class="form-control" name="status" id="status" onclick="show_not_adopt(this)" required>
+                                   <option value="">Select One</option>
+                                   <option value="Adopted">Adopted</option>
+                                   <option value="Not Adopted">Not Adopted</option>
+                                   <option value="Not interested anymore">Not interested anymore</option>
+                                   <option value="Migrated">Migrated</option>
+                                   <option value="can not be found">can not be found</option>
+                                   <option value="Dead">Dead</option>
+                                   <option value="Completed">Completed</option>
+                               </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="not_adopt">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                                <label >Reason of not adoption?: </label>
+
+                               <select class="form-control" name="reason_of_not_adoption" id="reason_of_not_adoption">
+                                   <option value="">Select One</option>
+                                   <option value="Not Interested">Not Interested</option>
+                                   <option value="Decide Later">Decide Later</option>
+                                   <option value="Based on Servererity">Based on Severity</option>
+                                   <option value="Allready Under Treatment">Already Under Treatment</option>
+                                   <option value="Don’t Know">Don’t Know</option>
+                                   <option value="Others">Others</option>
+
+                               </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Comment:</label>
+                                <textarea class="form-control" name="victim_status_comment" id="victim_status_comment" rows = "5" cols = "50"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-danger pull-left" id="submit" name="submit" type="submit"
+                                    data-original-title=""
+                                    title="">Submit
+                            </button>
+                            <button onclick="history.go(-1);" style="margin-left:10px;" type="button"
+                                    class="btn btn-info pull-left" data-original-title="" title="">Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block additional-javascript %}
+
+
+    <script>
+
+    $('#not_adopt').hide();
+
+    function show_not_adopt(obj) {
+        if(obj.value == 'Not Adopted')
+        {
+            $('#not_adopt').show();
+            $('#reason_of_not_adoption').attr('required',true);
+        }
+        else
+        {
+            $('#not_adopt').hide();
+            $('#reason_of_not_adoption').attr('required',false);
+        }
+
+
+    }
+
+    </script>
+
+{% endblock %}

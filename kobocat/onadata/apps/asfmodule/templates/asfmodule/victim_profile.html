@@ -1,0 +1,367 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <style>
+    #module {
+            width: auto;
+            padding-left: 0px !important;
+            padding-right: 0px !important;
+        }
+
+        #module a.collapsed:after {
+            content: '+ Show More';
+        }
+
+        #module a:not(.collapsed):after {
+            content: '- Show Less';
+        }
+
+        .hr_in
+        {
+            border-color: red;
+        }
+
+    .btn-outline {
+            width: 50%;
+        border-color: #32c5d2;
+        margin-bottom: 10px;
+    }
+
+    .btn-outline:hover {
+        background-color: #32c5d2;
+    }
+    .modal-body {
+background-color: #eee;
+    text-align: center;
+}
+
+    .modal-title
+    {
+        font-weight: bold !important;
+        color:#543521;
+    background-color: cadetblue;
+    }
+    .modal-header
+    {
+            border-radius: 0px !important;
+    background-color: cadetblue;
+    }
+    .forms_data_panel_heading
+    {
+{#        #F6D55C#}
+        background-color: #b97800 !important;
+    border-radius: 0px !important;
+    }
+    .forms_data_panel_title
+    {
+        font-weight: 600 !important;
+        color: #ffffff;
+        text-align: left;
+    }
+
+    .btn-success
+    {
+        background-color: #00b96c !important;
+    }
+
+
+    </style>
+{% endblock %}
+
+
+
+{% block content %}
+
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption"><i class="fa fa-adn"></i>Victim Profile</div>
+        </div>
+        <div class="portlet-body">
+            <div class="row">
+            <div class="col-md-10 table-responsive">
+                <table class="table  table-striped table-hover">
+                    <tbody>
+                    <tr>
+                        <th>Victim ID</th>
+                        <td>{{ victim_id | safe }}</td>
+                        <th>Educational Level</th>
+                        <td>{{ education | safe }}</td>
+                    </tr>
+                    <tr>
+                        <th>Victim's Name</th>
+                        <td>{{ victim_name | safe }}</td>
+                        <th>Occupation</th>
+                        <td>{{ occupation | safe }}</td>
+                    </tr>
+                    <tr>
+                        <th>Sex</th>
+                        <td>{{ victim_sex | safe }}</td>
+                        <th>Marital Status</th>
+                        <td>{{ maritial_status | safe }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date of Birth</th>
+                        <td>{{ birth_date | safe }}</td>
+                        <th>Father's Name</th>
+                        <td>{{ father_name | safe }}</td>
+                    </tr>
+                    <tr>
+                        <th>Age</th>
+                        <td>{{ victim_age | safe }}</td>
+                        <th>Mother's Name</th>
+                        <td>{{ mother_name | safe }}</td>
+                    </tr>
+                    <tr>
+                        <th>Contact No</th>
+                        <td>{{ mobile | safe }}</td>
+                        <th>Spouse Name</th>
+                        <td>{{ spouse_name | safe }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-2">
+                <img src="{{ picture }}" class="img-responsive" alt="" onerror=this.src="/static/images/profile.jpg"
+                     style="border: 3px solid #f9f9f9;width: 100%;margin: 0 auto;">
+            </div>
+            <div class="col-md-10">
+                <div id="module" class="container">
+                    <div class="collapse row" id="collapseExample" aria-expanded="false">
+                        <div class="col-md-6">
+                            <h4 style="padding-left: 9px; font-weight: 600 !important">Current Address</h4><hr class="hr_in">
+                            <table class="table table-responsive  table-striped table-hover">
+                                <tbody>
+                                <tr>
+                                    <th>Division</th>
+                                    <td>{{ current_division | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>District</th>
+                                    <td>{{ current_district | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Upazila</th>
+                                    <td>{{ current_upazila | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Union</th>
+                                    <td>{{ current_union | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Ward</th>
+                                    <td>{{ current_ward | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Address</th>
+                                    <td>{{ current_address | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Post Office</th>
+                                    <td>{{ current_postoffice | safe }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 style="padding-left: 9px; font-weight: 600 !important">Permanent Address</h4><hr class="hr_in">
+                            <table class="table table-responsive  table-striped table-hover">
+                                <tbody>
+                                <tr>
+                                    <th>Division</th>
+                                    <td>{{ permanent_division | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>District</th>
+                                    <td>{{ permanent_district | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Upazila</th>
+                                    <td>{{ permanent_upazila | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Union</th>
+                                    <td>{{ permanent_union | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Ward</th>
+                                    <td>{{ permanent_ward | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Address</th>
+                                    <td>{{ permanent_address | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Post Office</th>
+                                    <td>{{ permanent_postoffice | safe }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="col-md-12">
+                            <p>&nbsp;</p>
+                            <hr class="hr_in">
+                            <table class="table table-responsive  table-striped table-hover">
+                                <tbody>
+                                <tr>
+                                    <th>Burn Details</th>
+                                    <td>{{ injury_details | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Notified within 24 hours of Attack</th>
+                                    <td>{{ notified_within_24h | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Verification Completed within 24 hours of notification</th>
+                                    <td>{{ verification_within_24h | safe }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Bought to ASF within 48 hours of Notification</th>
+                                    <td>{{ brought_asf_within_48h | safe }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <a role="button" class="collapsed" data-toggle="collapse" href="#collapseExample"
+                       aria-expanded="false"
+                       aria-controls="collapseExample">
+                    </a>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        </div>
+
+    </div>
+
+ <div id="container"></div>
+    <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Form</h4>
+                    </div>
+                    <div class="modal-body" >
+{#                        <div style="display: flex;" class="input_fields_wrap" ><form id="dynamic_form" novalidate="" method="post" name="dynamic_form" ><div id="mainDiv" ><div class="col-lg-6" ><div class="form-group" ><label >পিএনজিও</label><input ng-model="vms.model.pngo" name="pngo" validation-error-to="pngo_error" validation="required" type="text" class="form-control" /><span class="field_error" id="pngo_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >জেলা</label><select ng-model="vms.model.district" name="district" ng-change="getExternalOptions('/planmodule/get_upazilas/',vms.model.district, 'opt_upazila')" validation-error-to="district_error" validation="required" class="form-control" ><option value="" >-- Select --</option><option value="85" >Rangpur</option></select><span class="field_error" id="district_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >উপজেলা</label><select ng-model="vms.model.upazila" name="upazila" ng-options="option.value as option.name for option in opt_upazila" ng-change="getExternalOptions('/planmodule/get_unions/',vms.model.upazila, 'opt_union_name')" validation-error-to="upazila_error" validation="required" class="form-control" ><option value="" >-- Select --</option></select><span class="field_error" id="upazila_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >ইউনিয়ন</label><select ng-model="vms.model.union_name" name="union_name" ng-options="option.value as option.name for option in opt_union_name" ng-change="getExternalOptions('/planmodule/get_villages/',vms.model.union_name, 'opt_village')" validation-error-to="union_name_error" validation="required" class="form-control" ><option value="" >-- Select --</option></select><span class="field_error" id="union_name_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >গ্রাম</label><select ng-model="vms.model.village" name="village" ng-options="option.value as option.name for option in opt_village" ng-change="getExternalOptions('/planmodule/get_paras/',vms.model.village, 'opt_para')" validation-error-to="village_error" validation="required" class="form-control" ><option value="" >-- Select --</option></select><span class="field_error" id="village_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >পাড়া</label><select ng-model="vms.model.para" name="para" ng-options="option.value as option.name for option in opt_para" validation-error-to="para_error" validation="required" class="form-control" ><option value="" >-- Select --</option></select><span class="field_error" id="para_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >বাবার নাম</label><input ng-model="vms.model.father_name" name="father_name" validation-error-to="father_name_error" validation="" type="text" class="form-control" /><span class="field_error" id="father_name_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >মায়ের নাম</label><input ng-model="vms.model.mother_name" name="mother_name" validation-error-to="mother_name_error" validation="" type="text" class="form-control" /><span class="field_error" id="mother_name_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >সার্ভাইভারের (কিশোর-কিশোরী) নাম</label><input ng-model="vms.model.adolescent_name" name="adolescent_name" validation-error-to="adolescent_name_error" validation="required" type="text" class="form-control" /><span class="field_error" id="adolescent_name_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >সার্ভাইভারের (কিশোর-কিশোরী) আইডি</label><input ng-model="vms.model.id_adolescent" name="id_adolescent" validation-error-to="id_adolescent_error" validation="required" type="text" class="form-control" /><span class="field_error" id="id_adolescent_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >লিঙ্গ</label><select validation-error-to="sex_error" class="form-control" validation="required" name="sex" ng-model="vms.model.sex" ><option value="" >-- Select --</option><option value="1" >ছেলে</option><option value="2" >মেয়ে</option><option value="3" >অন্যান্য</option></select><span class="field_error" id="sex_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >জন্ম তারিখ</label><input ng-model="vms.model.date_birth" name="date_birth" validation-error-to="date_birth_error" validation="required" type="text" class="form-control" /><span class="field_error" id="date_birth_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >জন্মস্থান</label><input ng-model="vms.model.birth_place" name="birth_place" validation-error-to="birth_place_error" validation="required" type="text" class="form-control" /><span class="field_error" id="birth_place_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >জন্ম নিবন্ধন আছে কি না?</label><select validation-error-to="birth_reg_error" class="form-control" validation="required" name="birth_reg" ng-model="vms.model.birth_reg" ><option value="" >-- Select --</option><option value="0" >না</option><option value="1" >হ্যা</option></select><span class="field_error" id="birth_reg_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >বাল্যবিবাহ প্রতিরোধের তারিখ</label><div class="input-group" ><input ng-model="vms.model.date_child_marriage_prevented" validation="" name="date_child_marriage_prevented" is-open="vms.isDatePickerOpen_date_child_marriage_prevented" class="datepicker form-control" max-date="vms.maxDate" readonly="" datepicker-popup="yyyy/MM/dd" min-date="vms.minDate" ng-change="parseCustomConstraints(vms.model.date_child_marriage_prevented,'.<=today()', 'root', -1, 'date_child_marriage_prevented','Future date not allowed')" datepicker-options="vms.dateOptions" validation-error-to="date_child_marriage_prevented_error" type="text" datepicker-mode="day" /><span class="input-group-btn" > <button data-ng-click="vms.openDatePicker($event,'isDatePickerOpen_date_child_marriage_prevented')" type="button" class="btn btn-default" > <i class="glyphicon glyphicon-calendar" ></i></button></span></div><span class="field_error" id="date_child_marriage_prevented_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >বিবাহের প্রস্তাবিত তারিখ</label><div class="input-group" ><input ng-model="vms.model.date_proposed_marriage" validation="" name="date_proposed_marriage" is-open="vms.isDatePickerOpen_date_proposed_marriage" class="datepicker form-control" max-date="vms.maxDate" readonly="" datepicker-popup="yyyy/MM/dd" min-date="vms.minDate" ng-change="parseCustomConstraints(vms.model.date_proposed_marriage,'.>=${date_child_marriage_prevented}', 'root', -1, 'date_proposed_marriage','বাল্যবিবাহ প্রতিরোধের তারিখ বা পরের তারিখ হবে')" datepicker-options="vms.dateOptions" validation-error-to="date_proposed_marriage_error" type="text" datepicker-mode="day" /><span class="input-group-btn" > <button data-ng-click="vms.openDatePicker($event,'isDatePickerOpen_date_proposed_marriage')" type="button" class="btn btn-default" > <i class="glyphicon glyphicon-calendar" ></i></button></span></div><span class="field_error" id="date_proposed_marriage_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >বাল্যবিবাহ প্রতিরোধে জড়িত ব্যক্তি বা গ্রুপের নাম</label><input ng-model="vms.model.person_involved_prevent" name="person_involved_prevent" validation-error-to="person_involved_prevent_error" validation="required" type="text" class="form-control" /><span class="field_error" id="person_involved_prevent_error" ></span></div></div><div class="col-lg-6" ><div class="form-group" ><label >মন্তব্য</label><input ng-model="vms.model.remarks" class="form-control" type="text" name="remarks" validation-error-to="remarks_error" /><span class="field_error" id="remarks_error" ></span></div></div><div class="col-md-12" > <input ng-disabled="dynamic_form.$invalid" ng-click="uploadPic(vms.model);" type="submit" class="btn btn-primary" value="Submit" /> </div></div></form></div>#}
+
+
+                    </div>
+
+{#                    <div class="modal-footer"></div>#}
+                </div>
+            </div>
+        </div>
+
+
+{% endblock %}
+{% block additional-javascript %}
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
+
+    <script>
+    var opened = [];
+
+    $('#container').html({{ main_str | safe }});
+
+
+    function load_forms(category_id, div_id) {
+
+        victim_id = {{ victim_id | safe }};
+        if (opened.indexOf(category_id) > -1)
+            return
+        else
+            opened.push(category_id);
+
+        $.ajax({
+            url: '/asf/get_forms_data/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'category_id': category_id, 'victim_id': victim_id},
+            beforeSend: function () {
+
+                $('#' + div_id).html('<div class="alert alert-success">Please Wait...loading....</div>');
+            },
+            success: function (result) {
+                setTimeout(function () {
+                    $('#' + div_id).html(result);
+                }, 1000);
+
+            }
+        });
+    }
+
+
+    function load_forms_list(category_id) {
+        victim_id = {{ victim_id | safe }};
+{#        $('#form' + category_id).popover();#}
+{##}
+{#        if (opened.indexOf('#form' + category_id) > -1)#}
+{#            return#}
+{#        else opened.push('#form' + category_id);#}
+        console.log(category_id,victim_id);
+
+        $.ajax({
+            url: '/asf/get_forms_list/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'category_id': category_id, 'victim_id': victim_id},
+            beforeSend: function () {
+            },
+            success: function (result) {
+                console.log(result);
+                $('.modal-body').html(result);
+{#                $('#form' + category_id).attr('data-content', result);#}
+{#                $('#form' + category_id).popover('show');#}
+
+            }
+        });
+    }
+
+
+    function load_forms_data(logger_id, div_id) {
+        console.log(logger_id);
+
+        if (opened.indexOf(logger_id) > -1)
+            return
+        else
+            opened.push(logger_id);
+
+        victim_id = {{ victim_id | safe }};
+
+        jQuery.ajax({
+            url: '/asf/get_data_view/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'logger_id': logger_id},
+            beforeSend: function () {
+
+                jQuery('#' + div_id).html('<div class="alert alert-success">Please Wait...loading....</div>');
+            },
+            success: function (result) {
+                {#                console.log(result);#}
+                setTimeout(function () {
+                    jQuery('#' + div_id).html(result);
+                }, 500);
+
+            }
+        });
+    }
+    </script>
+{% endblock %}

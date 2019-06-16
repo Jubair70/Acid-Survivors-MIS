@@ -1,0 +1,642 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+
+    <style>
+
+    #loop
+    {
+        background-color: #EEE;
+    padding: 10px;
+    margin-bottom: 11px;
+    }
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> Victim Registration
+            </div>
+        </div>
+
+        <div class="portlet-body">
+            <form class="horizontal-form" id="" method="post" action="/asf/insert_victim/{{ case_id }}/" id="form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Victim ID: </label>
+                                <input type="text" class="form-control" name="victim_id" id="victim_id"
+                                       value="{{ victim_id | safe }}" readonly required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Victim Name: </label>
+                                <input type="text" class="form-control" name="victim_name" id="victim_name" required>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Gender:</label>
+                                <select class="form-control" name="victim_sex" required="">
+                                    <option value="">Select One</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Transgender">Transgender</option>
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    </div>
+            <hr>
+
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label > Birth Date: </label>
+                                 <input type="text" class="datepicker form-control" name="birth_date" id="birth_date" readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label > Approx. Age: </label>
+                                 <input class="form-control" name="victim_age" id="victim_age" type="number" min="0" required="">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label > Contact No: </label>
+                                 <input class="form-control" name="mobile" id="mobile" pattern="^(?:\+88|01)?(?:\d{11}|\d{13})$" type="text" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label > Contact No: </label>
+                                 <input class="form-control" name="mobile2" id="mobile2" pattern="^(?:\+88|01)?(?:\d{11}|\d{13})$" type="text">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Do You have any ID?: </label>
+                                <select class="form-control" name="any_nid_brn_passport" id="any_nid_brn_passport">
+                                        <option value="">Select One</option>
+                                        <option value="BRN">BRN</option>
+                                        <option value="NID">NID</option>
+                                    <option value="Passport information">Passport information</option>
+                                    </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>ID: </label>
+                                <input class="form-control" name="nid_brn_passport" id="nid_brn_passport" pattern="^(?:\d{11,17})$" type="text">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Educaitonal Level: </label>
+                                <select class="form-control" name="education" id="education">
+                                    <option value="">Select One</option>
+                                    <option value="Nil">Nil</option>
+                                    <option value="Primary">Primary</option>
+                                    <option value="Junior Secondary">Junior Secondary</option>
+                                    <option value="SSC/Equivalence">SSC/Equivalence</option>
+                                    <option value="HSC/Equivalence">HSC/Equivalence</option>
+                                    <option value="Graduation">Graduation</option>
+                                    <option value="Post Graduation">Post Graduation</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Occupation: </label>
+                                 <input class="form-control" name="occupation" id="occupation" type="text">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Marital Status: </label>
+                                <select class="form-control" name="maritial_status" id="maritial_status" required>
+                                    <option value="">Select One</option>
+                                    <option value="Married">Married</option>
+                                    <option value="Unmarried">Unmarried</option>
+                                    <option value="Conjugal Separation">Conjugal Separation</option>
+                                    <option value="Divorced">Divorced</option>
+                                    <option value="Widow/widower">Widow/widower</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Father Name: </label>
+                            <input class="form-control" name="father_name" id="father_name" type="text" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Mother Name: </label>
+                            <input class="form-control" name="mother_name" id="mother_name" type="text" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Spouse Name: </label>
+                            <input class="form-control" name="spouse_name" id="spouse_name" type="text" required>
+                        </div>
+                    </div>
+                     <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Victim's Picture:</label>
+                                <input id="picture" name="picture" type="file">
+                            </div>
+                        </div>
+
+
+                </div>
+                <hr>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h4><strong>Present Address</strong></h4>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Division: </label>
+                                <select class="form-control" name="current_division" id="current_division" onclick="load_district(this,'current_')" required>
+                                        <option value="">Select One</option>
+                                        {% for id,field_name in divisions %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label >District: </label>
+                                <select class="form-control" name="current_district" id="current_district" onclick="load_upazila(this,'current_')" required>
+                                        <option value="">Select One</option>
+
+                                    </select>
+                            </div>
+                        </div>
+
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Upazila: </label>
+                                <select class="form-control" name="current_upazila" id="current_upazila" onclick="load_union(this,'current_')" required>
+                                    <option value="">Select One</option>
+                                </select>
+                            </div>
+                        </div>
+                    <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Union: </label>
+                        <select class="form-control" name="current_union" id="current_union" onclick="load_ward(this,'current_')" required>
+                            <option value="">Select One</option>
+                        </select>
+                    </div>
+                </div>
+                    <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Ward: </label>
+                        <select class="form-control" name="current_ward" id="current_ward" >
+                            <option value="">Select One</option>
+                        </select>
+                    </div>
+                </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Address (Village/Moholla/ Road No / House No):</label>
+                                <input class="form-control" name="current_address" id="current_address" type="text" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Post Office:</label>
+                                <input class="form-control" name="current_postoffice" id="current_postoffice" type="text">
+                            </div>
+                        </div>
+
+            <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Is permanent address is same as present address: </label>
+                                <select class="form-control" name="present_permanent_address_same" id="present_permanent_address_same" onclick="load_perm_addr(this)" required>
+                                    <option value="">Select One</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                        </div>
+            </div>
+
+            <div class="row" id = "block">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h4><strong>Permanent Address</strong></h4>
+                    </div>
+                </div>
+                <div class="col-md-3" >
+                            <div class="form-group">
+                                <label >Division: </label>
+                                <select class="form-control" name="permanent_division" id="permanent_division" onclick="load_district(this,'permanent_')" required>
+                                        <option value="">Select One</option>
+                                        {% for id,field_name in divisions %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label >District: </label>
+                                <select class="form-control" name="permanent_district" id="permanent_district" onclick="load_upazila(this,'permanent_')" required>
+                                        <option value="">Select One</option>
+
+                                    </select>
+                            </div>
+                        </div>
+
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Upazila: </label>
+                                <select class="form-control" name="permanent_upazila" id="permanent_upazila" onclick="load_union(this,'permanent_')" required>
+                                    <option value="">Select One</option>
+                                </select>
+                            </div>
+                        </div>
+                    <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Union: </label>
+                        <select class="form-control" name="permanent_union" id="permanent_union" onclick="load_ward(this,'permanent_')" required>
+                            <option value="">Select One</option>
+                        </select>
+                    </div>
+                </div>
+                    <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Ward: </label>
+                        <select class="form-control" name="permanent_ward" id="permanent_ward" >
+                            <option value="">Select One</option>
+                        </select>
+                    </div>
+                </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Address (Village/Moholla/ Road No / House No):</label>
+                                <input class="form-control" name="permanent_address" id="permanent_address" type="text" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Post Office:</label>
+                                <input class="form-control" name="permanent_postoffice" id="permanent_postoffice" type="text">
+                            </div>
+                        </div>
+
+
+            </div>
+
+<hr>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Burn Injury Details:</label>
+                                <textarea class="form-control" name="injury_details" id="injury_details" rows = "5" cols = "50" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Notified within 24 hours of<br>Attack: </label>
+                                <select class="form-control" name="notified_within_24h" id="notified_within_24h" required>
+                                        <option value="">Select One</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                            </div>
+                        </div>
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Verification Completed within 24 hours of notification: </label>
+                                <select class="form-control" name="verification_within_24h" id="verification_within_24h" required>
+                                        <option value="">Select One</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                            </div>
+                        </div>
+
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Brought to ASF within 48 hours of Notification: </label>
+                                <select class="form-control" name="brought_asf_within_48h" id="brought_asf_within_48h" required>
+                                        <option value="">Select One</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-danger pull-left" id="submit" name="submit" type="submit"
+                                    data-original-title=""
+                                    title="">Submit
+                            </button>
+                            <button onclick="history.go(-1);" style="margin-left:10px;" type="button"
+                                    class="btn btn-info pull-left" data-original-title="" title="">Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block additional-javascript %}
+
+
+    <script>
+
+
+
+    $(function () {
+            $('#birth_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+        });
+
+        cnt = 0
+
+
+$('#submit').on('click',function () {
+
+});
+
+
+        function ajaxcall() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                }
+            });
+        }
+
+        function load_district(object,ext) {
+            $('#'+ext+'upazila').html("<option value=\"\">Select One</option>");
+            $('#'+ext+'union').html("<option value=\"\">Select One</option>");
+            $('#'+ext+'ward').html("<option value=\"\">Select One</option>");
+            div = parseInt(object.value)
+            // console.log(dist);
+            if (isNaN(parseFloat(div))) {
+                $('#'+ext+'district').html("<option value=\"\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_districts/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'div': div},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#'+ext+'district').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+        function load_upazila(dist_object,ext) {
+            $('#'+ext+'union').html("<option value=\"\">Select One</option>");
+                $('#'+ext+'ward').html("<option value=\"\">Select One</option>");
+            ajaxcall();
+            dist = parseInt(dist_object.value)
+            // console.log(dist);
+            if (isNaN(parseFloat(dist))) {
+                $('#'+ext+'upazila').html("<option value=\"\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_upazilas/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'dist': dist},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#'+ext+'upazila').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+        function load_union(upz_object,ext) {
+            $('#'+ext+'ward').html("<option value=\"\">Select One</option>");
+
+            upz = parseInt(upz_object.value);
+            if (isNaN(parseFloat(upz))) {
+                $('#union').html("<option value=\"\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_unions/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'upz': upz},
+
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#'+ext+'union').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+        function load_ward(upz_object,ext) {
+            uni = parseInt(upz_object.value);
+            if (isNaN(parseFloat(upz))) {
+                $('#'+ext+'ward').html("<option value=\"\">Select One</option>");
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_wards/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'uni': uni},
+
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#'+ext+'ward').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+    function load_perm_addr(obj) {
+        if(obj.value=='Yes')
+        {
+            $('#permanent_division').val($('#current_division').val());
+
+
+            $('#permanent_district').html('<option value="'+$('#current_district option:selected').val()+'">'+$('#current_district option:selected').text()+'</option>');
+
+            $('#permanent_upazila').html('<option value="'+$('#current_upazila option:selected').val()+'">'+$('#current_upazila option:selected').text()+'</option>');
+
+            $('#permanent_union').html('<option value="'+$('#current_union option:selected').val()+'">'+$('#current_union option:selected').text()+'</option>');
+
+            $('#permanent_ward').html('<option value="'+$('#current_ward option:selected').val()+'">'+$('#current_ward option:selected').text()+'</option>');
+            $('#permanent_address').val($('#current_address').val());
+            $('#permanent_postoffice').val($('#current_postoffice').val());
+
+          $('#block').block({message: null,
+              overlayCSS:  {
+        backgroundColor: '#eee',
+        opacity:         0.4,
+        cursor:          'default'
+    },
+
+          });
+
+
+        }
+        else {
+            $('#block').unblock();
+            $('#permanent_division').val("");
+            $('#permanent_district').html('<option value="">Select One</option>');
+
+            $('#permanent_upazila').html('<option value="">Select One</option>');
+
+            $('#permanent_union').html('<option value="">Select One</option>');
+
+            $('#permanent_ward').html('<option value="">Select One</option>');
+            $('#permanent_address').val("");
+            $('#permanent_postoffice').val("");
+        }
+
+    }
+
+
+
+        function getDesiredDate(n) {
+            var today = new Date();
+            var n_month_before_today = new Date(today);
+            n_month_before_today.setMonth((today.getMonth() + 1) - n);
+            var dd = n_month_before_today.getDate();
+            var mm = n_month_before_today.getMonth() + 1;
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            var yyyy = n_month_before_today.getFullYear();
+            formatted_date = yyyy + '-' + mm + '-' + dd;
+            return formatted_date;
+        }
+{#        $('#registration_date').val(getDesiredDate(2));#}
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,295 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" rel="stylesheet">
+{% endblock %}
+
+
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption"><i class="fa fa-adn"></i>Case Detail</div>
+        </div>
+        <div class="portlet-body">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10 table-responsive">
+                <table class="table  table-striped table-hover">
+                    <tbody>
+                    <tr>
+                        <th>Incident ID</th>
+                        <td>{{ incident_id }}</td>
+
+                    </tr>
+                    <tr>
+                       <th>Incident Date</th>
+                        <td>{{ incident_date }}</td>
+
+                    </tr>
+                    <tr>
+                        <th>Short Description</th>
+                        <td>{{ incident_description }}</td>
+
+                    </tr>
+                    <tr>
+                        <th><h4><strong>Incident Place/Address</strong><h4></th>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>Division</th>
+                        <td>{{ division }}</td>
+                    </tr>
+                    <tr>
+                       <th>District</th>
+                        <td>{{ district }}</td>
+                    </tr>
+                    <tr>
+                        <th>Upazila/Thana/City Corporation</th>
+                        <td>{{ upazila }}</td>
+                    </tr>
+                    <tr>
+                        <th>Union/Municipality</th>
+                        <td>{{ union_name }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                    <div class="col-md-1"></div>
+
+            </div>
+            </div>
+            {% if status == 'New' %}
+            <div class="row">
+
+                <form class="horizontal-form" id="" method="post" action="/asf/update_case_status/{{ case_id }}/" id="form"
+                  enctype="multipart/form-data">
+                    {% csrf_token %}
+                     <div class="form-body col-md-8 pull-right">
+
+                        <label class="radio-inline"><input type="radio" name="status" value="Valid" checked>Valid</label>
+                         <label class="radio-inline"><input type="radio" name="status" value="Invalid">Invalid</label>
+
+                         <button class="btn btn-danger" style="margin-left: 25px" id="submit" name="submit" type="submit" data-original-title="" title="">Submit</button>
+                     </div>
+                </form>
+
+            </div>
+            {% endif %}
+        <hr>
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    <a href="/asf/add_victim/{{ case_id }}/" class="pull-right">
+
+                        <button type="submit" class="btn btn-info pull-left" id="add_new" data-original-title=""
+                                title=""><i class="fa fa-2x fa-plus"></i>New Victim
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <br>
+        <div style="display:none;" id="container"><img style=" width: 86px; margin-left: 434px;" src="/static/images/Spinner.gif"></div>
+            <table id="all_info_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
+                <thead class="flip-content">
+                <tr>
+                    <th>Victim ID</th>
+                    <th>Victim Name</th>
+                    <th>Mobile No</th>
+                    <th>Sex</th>
+                    <th>Status</th>
+                    <th class="td-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>You are about to delete a facility info, this procedure is irreversible.</p>
+                    <p>Do you want to proceed?</p>
+                    <p class="debug-url"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" class="btn btn-danger btn-ok">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block additional-javascript %}
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
+
+
+    <script>
+
+
+
+
+
+            var table = $('#all_info_table').DataTable({
+                "scrollX": true, "ordering": false,
+                deferRender: true,
+                {#            dom: 'Bfrtip'#}
+                {#            ,#}
+                {#            buttons: [#}
+                {#                {#}
+                {#                    filename: "Fo",#}
+                {#                    title: "",#}
+                {#                    text: "<strong>Export</strong>",#}
+                {#                    extend: 'excel'#}
+                {#                }#}
+                {#            ]#}
+
+            });
+
+
+
+
+
+
+{#        var tbody = '';#}
+
+{#        var case_list = {{ case_list|safe }};#}
+{##}
+{#        for (var idx in case_list) {#}
+{#            tbody += '<tr><td>' + case_list[idx].incident_id + '</td><td>' + case_list[idx].incident_date + '</td><td>' + case_list[idx].district + '</td><td>' + case_list[idx].status + '</td><td class="td-center"><a class="btn btn-info" data-container="body"  data-placement="top" data-original-title="Detail" href="/asf/case_detail/' + case_list[idx].id + '"><i class="fa fa-2x fa fa-bars"></i>Details</a></td></tr>';#}
+{#        }#}
+
+{#        $("#all_info_table").find('tbody').html(tbody);#}
+
+        $('.delete-item').on('click', function (e) {
+            var criteria_id = $(this).attr("data-href");
+            $('.btn-ok').attr("href", criteria_id);
+        });
+
+        if ($('.alert-block').is(':visible')) {
+            window.setTimeout(function () {
+                $(".alert-success").fadeTo(1500, 0).slideUp(500, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        }
+
+victim_list()
+       function victim_list() {
+
+                table.destroy();
+
+
+{#                var from_date   = $('#from_date').val();#}
+{#                var to_date     = $('#to_date').val();#}
+{#                var division    = $('#division').val();#}
+{#                var district    = $('#district').val();#}
+
+
+
+                $.ajax({
+                    url: '/asf/get_victim_list/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        'case_id': {{ case_id | safe }}
+                    },
+                    beforeSend: function () {
+                        $('#container').show();
+                    },
+                    success: function (case_list) {
+                        $('#container').hide();
+                            var tbody = '';
+                        for (var idx in case_list) {
+
+
+                            if ( case_list[idx].case_status=='New' ||  case_list[idx].case_status == 'Invalid' )
+                            tbody += '<tr><td>' + case_list[idx].victim_id + '</td><td>' + case_list[idx].victim_name + '</td><td>' + case_list[idx].mobile + '</td><td>' + case_list[idx].sex + '</td><td>' + case_list[idx].status + '</td><td class="td-center"></td></tr>';
+                            else
+                                tbody += '<tr><td>' + case_list[idx].victim_id + '</td><td>' + case_list[idx].victim_name + '</td><td>' + case_list[idx].mobile + '</td><td>' + case_list[idx].sex + '</td><td>' + case_list[idx].status + '</td><td class="td-center"><a class="btn btn-info" data-container="body"  data-placement="top" data-original-title="Detail" href="/asf/edit_victim/' + case_list[idx].id + '/"><i class="fa fa-2x fa fa-bars"></i>Update</a><a class="btn btn-info" style="margin-left:10px" data-container="body"  data-placement="top" data-original-title="Profile" href="/asf/victim_profile/' + case_list[idx].id + '/"><i class="fa fa-2x fa fa-user-circle-o"></i>Profile</a><a class="btn btn-info" style="margin-left:10px" data-container="body"  data-placement="top" data-original-title="Status" href="/asf/victim_status/' + case_list[idx].id + '"><i class="fa fa-2x fa fa-check-circle-o"></i>Victim Status</a><a class="btn btn-info" style="margin-left:10px" data-container="body"  data-placement="top" data-original-title="Detail" href="/asf/refer_victim/' + case_list[idx].id + '/"><i class="fa fa-2x fa fa-external-link"></i>Refer</a></td></tr>';
+                        }
+                        $("#all_info_table").find('tbody').html(tbody);
+                        table = datatable_reinitialize();
+
+
+                    }
+                });
+
+
+            }
+        function datatable_reinitialize() {
+            return $('#all_info_table').DataTable({
+                "scrollX": true, "ordering": false,"iDisplayLength": 50,
+                deferRender: true,
+{#                dom: 'Bfrtip'#}
+{#                ,#}
+{#                buttons: [#}
+{#                    {#}
+{#                        filename: "CSA Report",#}
+{#                        title: "",#}
+{#                        text: "<strong>Export</strong>",#}
+{#                        extend: 'excelHtml5'#}
+{#                    }#}
+{#                ]#}
+
+            });
+        }
+
+        function load_district(object) {
+
+            div = parseInt(object.value)
+
+            if (isNaN(parseFloat(div))) {
+                $('#district').html("<option value=\"%\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_districts/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'div': div},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"%\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#district').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+    </script>
+{% endblock %}

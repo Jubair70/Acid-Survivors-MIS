@@ -1,0 +1,126 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+
+    <style>
+
+    #loop
+    {
+        background-color: #EEE;
+    padding: 10px;
+    margin-bottom: 11px;
+    }
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> Case Initiation
+            </div>
+        </div>
+
+        <div class="portlet-body">
+            <form class="horizontal-form" id="" method="post" action="/asf/refer_victim/{{ victim_tbl_id }}/" id="form"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label > Date: </label>
+                                 <input type="text" class="datepicker form-control" name="referred_date" id="referred_date" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label > Phone No: </label>
+                                 <input type="text" class="form-control" name="referred_phone" id="referred_phone" pattern="^(?:\+88|01)?(?:\d{11}|\d{13})$" required>
+                            </div>
+                        </div>
+                    </div>
+                <div class="row">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                                <label >Refer to: </label>
+                               <select class="form-control" name="referred_service" id="referred_service" required>
+                                   <option value="">Select One</option>
+                                   <option value="Medical Service">Medical Service</option>
+                                   <option value="Physiotherapy Service">Physiotherapy Service</option>
+                                   <option value="Psychosocial Service">Psychosocial Service</option>
+                                   <option value="Legal Support">Legal Support</option>
+                                   <option value="Econimic Support">Economic Support</option>
+                               </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="not_adopt">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                                <label >Organization: </label>
+                               <select class="form-control" name="referred_organization" id="referred_organization" required>
+                                   <option value="">Select One</option>
+                                   {% for x,y in organizations %}
+                                     <option value="{{ x }}">{{ y }}</option>
+                                   {% endfor %}
+
+                               </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Comment:</label>
+                                <textarea class="form-control" name="referred_comment" id="referred_comment" rows = "5" cols = "50"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-danger pull-left" id="submit" name="submit" type="submit"
+                                    data-original-title=""
+                                    title="">Submit
+                            </button>
+                            <button onclick="history.go(-1);" style="margin-left:10px;" type="button"
+                                    class="btn btn-info pull-left" data-original-title="" title="">Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block additional-javascript %}
+
+
+    <script>
+
+     $(function () {
+            $('#referred_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+
+        });
+     $("#referred_date").keydown(false);
+
+    </script>
+
+{% endblock %}

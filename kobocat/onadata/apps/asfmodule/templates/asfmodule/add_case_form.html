@@ -1,0 +1,634 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+
+    <style>
+
+    #loop
+    {
+        background-color: #EEE;
+    padding: 10px;
+    margin-bottom: 11px;
+    }
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-reorder"></i> Case Initiation
+            </div>
+        </div>
+
+        <div class="portlet-body">
+            <form class="horizontal-form" id="" method="post" action="/asf/insert_case_form/" id="form"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-body">
+                <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Incident ID: </label>
+                                <input type="text" class="form-control" name="incident_id" id="incident_id" value="{{ incident_id | safe  }}" readonly required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label >Incident Date: </label>
+                                 <input type="text" class="datepicker form-control" name="incident_date" id="incident_date"  required >
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Short Description of Incident:</label>
+                                <textarea class="form-control" name="incident_description" id="incident_description" rows = "5" cols = "50" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Incident Place: </label>
+                                <select class="form-control" name="incident_rural_or_urban" id="incident_rural_or_urban" required>
+                                        <option value="">Select One</option>
+                                        <option value="Urban">Urban</option>
+                                        <option value="Rural">Rural</option>
+                                    </select>
+                            </div>
+                        </div>
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Division: </label>
+                                <select class="form-control" name="division" id="division" onclick="load_district(this)" required>
+                                        <option value="">Select One</option>
+                                        {% for id,field_name in divisions %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label >District: </label>
+                                <select class="form-control" name="district" id="district" onclick="load_upazila(this)" required>
+                                        <option value="">Select One</option>
+
+                                    </select>
+                            </div>
+                        </div>
+
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Upazila: </label>
+                                <select class="form-control" name="upazila" id="upazila" onclick="load_union(this)" required>
+                                    <option value="">Select One</option>
+                                </select>
+                            </div>
+                        </div>
+                    <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Union: </label>
+                        <select class="form-control" name="union" id="union" onclick="load_ward(this)">
+                            <option value="">Select One</option>
+                        </select>
+                    </div>
+                </div>
+                    <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Ward: </label>
+                        <select class="form-control" name="ward" id="ward" >
+                            <option value="">Select One</option>
+                        </select>
+                    </div>
+                </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Address (Village/Moholla/ Road No / House No):</label>
+                                <input class="form-control" name="incidence_address" id="incidence_address" type="text">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Post Office:</label>
+                                <input class="form-control" name="incidence_post_office" id="incidence_post_office" type="text">
+                            </div>
+                        </div>
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Source of Information: </label>
+                                <select class="form-control" name="information_source" id="information_source" required>
+                                        <option value="">Select One</option>
+                                        <option value="Individual Source">Individual Source</option>
+                                        <option value="Govt Organization/Institution">Govt Organization/Institution</option>
+                                        <option value="Private Organization/Institution">Private Organization/Institution</option>
+                                        <option value="Print Media">Print Media</option>
+                                        <option value="Electronic Media">Electronic Media</option>
+                                    </select>
+                            </div>
+                        </div>
+
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Organization Name: </label>
+                                <select class="form-control" name="source_organization_name" id="source_organization_name" required>
+                                        <option value="">Select One</option>
+                                    {% for id, org_name in organizations %}
+                                        <option value="{{ id }}">{{ org_name }}</option>
+                                    {% endfor %}
+                                    </select>
+                            </div>
+                        </div>
+
+
+                    </div>
+                <hr>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Name:</label>
+                                <input class="form-control" name="source_name" id="source_name" type="text" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Designation:</label>
+                                <input class="form-control" name="source_designation" id="source_designation"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Address:</label>
+                                <input class="form-control" name="source_address" id="source_address" type="text"
+                                       >
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Phone:</label>
+                                <input class="form-control" name="source_phone" id="source_phone" pattern="^(?:\+88|01)?(?:\d{11}|\d{13})$" type="text" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Print Media Name:</label>
+                                <input class="form-control" name="print_media_name" id="print_media_name" type="text" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Page Number:</label>
+                                <input class="form-control" name="print_media_page_number" id="print_media_page_number" type="text" >
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Reporter Name:</label>
+                                <input class="form-control" name="print_media_reporter_name" id="print_media_reporter_name" type="text" >
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Date of Publishing:</label>
+                                <input class="datepicker form-control" name="print_media_publishing_date" id="print_media_publishing_date" type="text" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Name of TV Channel: </label>
+                                    <select class="form-control" name="electronic_media_name" id="electronic_media_name" required>
+                                      <option value="">Select One</option>
+                                       {% for id, org_name in tv_chanels %}
+                                        <option value="{{ id }}">{{ org_name }}</option>
+                                    {% endfor %}
+                                    </select>
+                            </div>
+                        </div>
+                     <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Date of Telecasting:</label>
+                                <input class="datepicker form-control" name="electronic_media_telecast_date" id="electronic_media_telecast_date" type="text" readonly>
+                            </div>
+                        </div>
+
+
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Type of Incident: </label>
+                                <select class="form-control" name="incident_type" id="incident_type" required>
+                                        <option value="">Select One</option>
+                                <option value="Violence">Violence</option>
+                                <option value="Accidental">Accidental</option>
+                                    </select>
+                            </div>
+                        </div>
+
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Type of Burn: </label>
+                                <select class="form-control" name="burn_type" id="burn_type" required>
+                                        <option value="">Select One</option>
+                                <option value="Chemical(Acid/Alkali)">Chemical(Acid/Alkali)</option>
+                                <option value="Flame">Flame</option>
+                                <option value="Others">Others</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Cause of Incident: </label>
+                                <select class="form-control" name="incident_cause" id="incident_cause" required>
+                                    <option value="">Select One</option>
+                                    <option value="Addiction">Addiction</option>
+                                    <option value="Dowry">Dowry</option>
+                                    <option value="Family related dispute">Family related dispute</option>
+                                    <option value="Land/property/money dispute">Land/property/money dispute</option>
+                                    <option value="Marital dsipute">Marital dsipute</option>
+                                    <option value="Unknown">Unknown</option>
+                                    <option value="Refusal of love">Refusal of love</option>
+                                    <option value="Refusal of sex">Refusal of sex</option>
+                                    <option value="Refusal of marriage">Refusal of marriage</option>
+                                    <option value="Others">Others</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                     <div class="col-md-3">
+                            <div class="form-group">
+                                <label>How many people are affected?:</label>
+                                <input class="form-control" name="people_affected" id="people_affected" type="number" min="0" required>
+                            </div>
+                        </div>
+                     <div class="col-md-3">
+                            <div class="form-group">
+                                <label>No of People Died:</label>
+                                <input class="form-control" name="people_died" id="people_died" type="number" min="0" >
+                            </div>
+                        </div>
+
+                    <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Picture (Evidence of the Incidence):</label>
+                                <input id="coverage_picture" name="coverage_picture" type="file">
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+                <hr>
+
+
+                <div id="test">
+                            <div id="loop">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Victim ID: </label>
+                                            <input type="text" class="form-control" name="victim_id"
+                                                   value="{{ incident_id | safe }}01" readonly required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="">Victim Name:</label>
+                                            <input type="text" class="form-control" name="victim_name"
+                                                   required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Gender:</label>
+                                            <select class="form-control" name="victim_sex"  required>
+                                                <option value="">Select One</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Transgender">Transgender</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Contact No:</label>
+                                            <input type="text" class="form-control" name="victim_contact" pattern="^(?:\+88|01)?(?:\d{11}|\d{13})$"
+                                                    >
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Contact Address:</label>
+                                            <input type="text" class="form-control" name="victim_address"
+                                                    >
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button class="btn btn-md" type="button" id="plus">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                            <button class="btn btn-md" type="button" id="minus">
+                                <span class="glyphicon glyphicon-minus"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-danger pull-left" id="submit" name="submit" type="submit"
+                                    data-original-title=""
+                                    title="">Submit
+                            </button>
+                            <button onclick="history.go(-1);" style="margin-left:10px;" type="button"
+                                    class="btn btn-info pull-left" data-original-title="" title="">Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block additional-javascript %}
+
+
+    <script>
+$("#incident_date").keydown(false);
+
+
+ $(function () {
+            $('#incident_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+
+             $('#print_media_publishing_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+
+              $('#electronic_media_telecast_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+
+
+        });
+
+        cnt = 0
+        $('#plus').on('click',function () {
+            $('[name="victim_id"]').each(function (idx) {
+               vs =  $(this).val()
+                console.log(idx,vs)
+            });
+            console.log(parseInt(vs) + 1 )
+            $("#loop").clone().appendTo("#test").find("input").val("");
+            $('[name="victim_id"]').last().val(parseInt(vs) + 1);
+
+        });
+
+        $('#minus').on('click',function () {
+
+            if($('#test').children().length!=1)
+             $('#test').children().last().remove();
+
+        });
+
+$('#submit').on('click',function () {
+
+});
+
+
+        function ajaxcall() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                }
+            });
+        }
+
+        function load_district(object) {
+            $('#upazila').html("<option value=\"\">Select One</option>");
+            $('#union').html("<option value=\"\">Select One</option>");
+            $('#ward').html("<option value=\"\">Select One</option>");
+            div = parseInt(object.value)
+            // console.log(dist);
+            if (isNaN(parseFloat(div))) {
+                $('#district').html("<option value=\"\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_districts/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'div': div},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#district').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+        function load_upazila(dist_object) {
+            $('#union').html("<option value=\"\">Select One</option>");
+                $('#ward').html("<option value=\"\">Select One</option>");
+            ajaxcall();
+            dist = parseInt(dist_object.value)
+            // console.log(dist);
+            if (isNaN(parseFloat(dist))) {
+                $('#upazila').html("<option value=\"\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_upazilas/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'dist': dist},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#upazila').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+        function load_union(upz_object) {
+            $('#ward').html("<option value=\"\">Select One</option>");
+            ajaxcall();
+            upz = parseInt(upz_object.value);
+            if (isNaN(parseFloat(upz))) {
+                $('#union').html("<option value=\"\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_unions/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'upz': upz},
+
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#union').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+        function load_ward(upz_object) {
+            ajaxcall();
+            uni = parseInt(upz_object.value);
+            if (isNaN(parseFloat(upz))) {
+                $('#ward').html("<option value=\"\">Select One</option>");
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_wards/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'uni': uni},
+
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#ward').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+
+
+
+
+        function getDesiredDate(n) {
+            var today = new Date();
+            var n_month_before_today = new Date(today);
+            n_month_before_today.setMonth((today.getMonth() + 1) - n);
+            var dd = n_month_before_today.getDate();
+            var mm = n_month_before_today.getMonth() + 1;
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            var yyyy = n_month_before_today.getFullYear();
+            formatted_date = yyyy + '-' + mm + '-' + dd;
+            return formatted_date;
+        }
+{#        $('#registration_date').val(getDesiredDate(2));#}
+
+    </script>
+
+{% endblock %}

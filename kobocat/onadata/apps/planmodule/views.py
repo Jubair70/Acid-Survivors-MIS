@@ -448,7 +448,7 @@ def getUpazilas(request):
 
 def getUnions(request):
     upazila = request.POST.get('upz')
-    union_query = "select geocode as id,field_name from geo_data where field_type_id = 89 and field_parent_id = (select id from geo_data where geocode = '"+str(upazila)+"')"
+    union_query = "select id,field_name from geo_data where field_type_id = 89 and field_parent_id = (select id from geo_data where geocode = '"+str(upazila)+"')"
     union_data = json.dumps(__db_fetch_values_dict(union_query))
     return HttpResponse(union_data)
 

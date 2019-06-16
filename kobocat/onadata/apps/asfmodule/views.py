@@ -291,9 +291,9 @@ def add_case_form(request):
     df = pandas.read_sql(query, connection)
     organizations = zip(df.id.tolist(),df.org_name.tolist())
 
-    query = "select org_id,(select organization from usermodule_organizations where id = org_id::int limit 1) org_name from org_additional_info where org_type = 'Electronics Media'"
+    query = "select org_tbl_id,(select organization from usermodule_organizations where id = org_tbl_id::int limit 1) org_name from org_additional_info where org_type = 'Electronics Media'"
     df = pandas.read_sql(query, connection)
-    tv_chanels = zip(df.org_id.tolist(), df.org_name.tolist())
+    tv_chanels = zip(df.org_tbl_id.tolist(), df.org_name.tolist())
 
     return render(request, 'asfmodule/add_case_form.html', {
         'incident_id': incident_id, 'divisions': divisions, 'tv_chanels': tv_chanels,'organizations':organizations

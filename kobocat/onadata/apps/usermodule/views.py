@@ -48,6 +48,13 @@ import os
 from django.core.files.storage import FileSystemStorage
 from datetime import date, timedelta, datetime
 
+
+def __db_commit_query(query):
+    cursor = connection.cursor()
+    cursor.execute(query)
+    connection.commit()
+    cursor.close()
+
 def admin_check(user):
     current_user = UserModuleProfile.objects.filter(user=user)
     if current_user:
@@ -229,6 +236,7 @@ def organization_index(request):
             },
             context)
 
+from onadata.apps.usermodule.helpers import COUNTRIES
 
 @login_required
 @user_passes_test(admin_check,login_url='/')
@@ -254,7 +262,20 @@ def add_organization(request):
     if request.method == 'POST':
         organization_form = OrganizationForm(data=request.POST)
         if organization_form.is_valid():
-            organization_form.save()
+            obj = organization_form.save()
+            org_tbl_id = obj.pk
+            org_id = request.POST.get('org_id')
+            org_type = request.POST.get('org_type')
+            contact_person = request.POST.get('contact_person')
+            present_address = request.POST.get('present_address')
+            designation = request.POST.get('designation')
+            district = request.POST.get('district')
+            country = request.POST.get('country')
+            date_of_establish = request.POST.get('date_of_establish')
+            telephone = request.POST.get('telephone')
+            email = request.POST.get('email')
+            insert_qry = "INSERT INTO public.org_additional_info (org_id, org_type, contact_person, designation, date_of_establish, present_address, district, country, telephone, email, org_tbl_id) VALUES('"+str(org_id)+"', '"+str(org_type)+"', '"+str(contact_person)+"', '"+str(designation)+"', '"+str(date_of_establish)+"', '"+str(present_address)+"', '"+str(district)+"', '"+str(country)+"', '"+str(telephone)+"', '"+str(email)+"', '"+str(org_tbl_id)+"')"
+            __db_commit_query(insert_qry)
             is_added_organization = True
             messages.success(request, '<i class="fa fa-check-circle"></i> New Organization has been added successfully!',
                              extra_tags='alert-success crop-both-side')
@@ -267,10 +288,13 @@ def add_organization(request):
             context)
     else:
         organization_form =  OrganizationForm()
+        district_fetch_qry = "select id,field_name from geo_data where field_type_id = 86"
+        df = pandas.read_sql(district_fetch_qry, connection)
+        districts = zip(df.id.tolist(), df.field_name.tolist())
     # Render the template depending on the context.
         return render_to_response(
             'usermodule/add_organization.html',
-            {'all_organizations':all_organizations,'organization_form': organization_form,'is_added_organization': is_added_organization},
+            {'COUNTRIES':COUNTRIES,'districts':districts,'all_organizations':all_organizations,'organization_form': organization_form,'is_added_organization': is_added_organization},
             context)
 
 
@@ -298,6 +322,18 @@ def edit_organization(request,org_id):
         organization_form = OrganizationForm(data=request.POST,instance=organization)
         if organization_form.is_valid():
             organization_form.save()
+            user_given_org_id = request.POST.get('org_id')
+            org_type = request.POST.get('org_type')
+            contact_person = request.POST.get('contact_person')
+            present_address = request.POST.get('present_address')
+            designation = request.POST.get('designation')
+            district = request.POST.get('district')
+            country = request.POST.get('country')
+            date_of_establish = request.POST.get('date_of_establish')
+            telephone = request.POST.get('telephone')
+            email = request.POST.get('email')
+            update_qry = "UPDATE public.org_additional_info SET org_id='"+str(user_given_org_id)+"', org_type='"+str(org_type)+"', contact_person='"+str(contact_person)+"', designation='"+str(designation)+"', date_of_establish='"+str(date_of_establish)+"', present_address='"+str(present_address)+"', district='"+str(district)+"', country='"+str(country)+"', telephone='"+str(telephone)+"', email='"+str(email)+"' WHERE id="+str(org_id)
+            __db_commit_query(update_qry)
             edited = True
             messages.success(request,
                              '<i class="fa fa-check-circle"></i> Organization has been updated successfully!',
@@ -313,9 +349,38 @@ def edit_organization(request,org_id):
         # These forms will be blank, ready for user input.
     else:
         organization_form = OrganizationForm(instance=organization)
+        qry = "select * from org_additional_info where org_tbl_id::bigint ="+str(org_id)
+        df = pandas.read_sql(qry,connection)
+        user_given_org_id = df.org_id.tolist()[0]
+        org_type = df.org_type.tolist()[0]
+        contact_person = df.contact_person.tolist()[0]
+        present_address = df.present_address.tolist()[0]
+        designation = df.designation.tolist()[0]
+        district = df.district.tolist()[0]
+        country = df.country.tolist()[0]
+        date_of_establish = df.date_of_establish.tolist()[0]
+        telephone = df.telephone.tolist()[0]
+        email = df.email.tolist()[0]
+
+        district_fetch_qry = "select id,field_name from geo_data where field_type_id = 86"
+        df = pandas.read_sql(district_fetch_qry, connection)
+        districts = zip(df.id.tolist(), df.field_name.tolist())
+
     return render_to_response(
             'usermodule/edit_organization.html',
-            {'org_id':org_id,'organization_form': organization_form, 'edited': edited},
+            {'COUNTRIES':COUNTRIES,'org_id':org_id,'organization_form': organization_form, 'edited': edited,
+             'user_given_org_id':user_given_org_id,
+             'org_type':org_type,
+             'contact_person':contact_person,
+             'present_address':present_address,
+             'designation':designation,
+             'district':district,
+             'country':country,
+             'date_of_establish':date_of_establish,
+             'telephone':telephone,
+             'email':email,
+             'districts':districts
+             },
             context)
 
 
@@ -326,6 +391,8 @@ def delete_organization(request,org_id):
     org = Organizations.objects.get(pk = org_id)
     try:
         org.delete()
+        del_qry = "delete from org_additional_info where org_tbl_id::bigint = "+str(org_id)
+        __db_commit_query(del_qry)
         messages.success(request,
                          '<i class="fa fa-check-circle"></i> Organization has been deleted successfully!',
                          extra_tags='alert-success crop-both-side')

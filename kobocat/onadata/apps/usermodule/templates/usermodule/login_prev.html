@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- This file has been downloaded from Bootsnipp.com. Enjoy! -->
+<title>Advance Adolescent Health | login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+<link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
+<link href="{{STATIC_URL}}css/plan_style.css" rel="stylesheet" type="text/css">
+
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+<!-- LOGIN MODULE -->
+<div class="login">
+    <div class="wrap"> 
+        <!-- TOGGLE -->
+        <div id="toggle-wrap">
+            <div id="toggle-terms">
+                <div id="cross"> <span></span> <span></span> </div>
+            </div>
+        </div>
+        
+        <!-- RECOVERY -->
+        <div class="recovery">
+            <h2>Password Recovery</h2>
+            <p>Enter either the <strong>email address</strong> or <strong>username</strong> on the account and <strong>click Submit</strong></p>
+            <p>We'll email instructions on how to reset your password.</p>
+            <form class="recovery-form" action="" method="post">
+                <input type="text" class="input" id="user_recover" placeholder="Enter Email or Username Here">
+                <input type="submit" class="button" value="Submit">
+            </form>
+            <p class="mssg">An email has been sent to you with further instructions.</p>
+        </div>
+        
+        <!-- SLIDER -->
+        <div class="content"> 
+            <!-- LOGO -->
+            <!--<div class="logo"> <a href="#"><img src="images/logo.png" alt=""></a> </div>-->
+           
+            
+            <!-- SLIDESHOW -->
+            <div id="slideshow">
+                <div class="one">
+                    <h2><span style="color:#0081dc;"><span style="color:#012a6c;">US</span><span style="color:#c2113b">AID</span> - Advancing Adolescent Health</span> <br>
+                    <span style="color:#0081dc;">(A2H)</span><br>
+                    <span style="color:#000000;">Management Information System</span>
+                    
+                    </span></h2>
+                   <!-- <p>Smart Decision Making & Automated Monitoring System</p>-->
+                </div>
+                <div class="two">
+                     <h2><span style="color:#0081dc;"><span style="color:#012a6c;">US</span><span style="color:#c2113b">AID</span> - Advancing Adolescent Health</span> <br>
+                    <span style="color:#0081dc;">(A2H)</span><br>
+                    <span style="color:#000000;">Management Information System</span>
+                    
+                    </span></h2>
+                    <!--<p>Targeting Ultra Poor</p>-->
+                </div>
+                <div class="three">
+                     <h2><span style="color:#0081dc;"><span style="color:#012a6c;">US</span><span style="color:#c2113b">AID</span> - Advancing Adolescent Health</span> <br>
+                    <span style="color:#0081dc;">(A2H)</span><br>
+                    <span style="color:#000000;">Management Information System</span>
+                    
+                    </span></h2>
+                    <!--<p>Challenging the Frontiers of Poverty Reduction</p>-->
+                </div>
+                <div class="four">
+                     <h2><span style="color:#0081dc;"><span style="color:#012a6c;">US</span><span style="color:#c2113b">AID</span> - Advancing Adolescent Health</span> <br>
+                    <span style="color:#0081dc;">(A2H)</span><br>
+                    <span style="color:#000000;">Management Information System</span>
+                    
+                    </span></h2>
+                    <!--<p>Improve livelihoods of ultra-poor and bring positive changes</p>-->
+                </div>
+                 
+            </div>
+        </div>
+        
+        <!-- LOGIN FORM -->
+        <div class="user"> 
+            <!-- ACTIONS
+                    <div class="actions">
+                        <a class="help" href="#signup-tab-content">Sign Up</a><a class="faq" href="#login-tab-content">Login</a>
+                    </div>
+                    -->
+            <div class="form-wrap"> 
+                <!-- TABS -->
+                <div class="tabs">
+                    <h3 class="login-tab"><span>Login</span></h3>
+                    <!--<h3 class="signup-tab"><a class="sign-up" href="#signup-tab-content"><span>Sign Up</span></a></h3>--> 
+                </div>
+                <!-- TABS CONTENT -->
+                <div class="tabs-content"> 
+                    <!-- TABS CONTENT LOGIN -->
+                    <div id="login-tab-content" class="active">
+                        <form class="login-form" method="post" action="/usermodule/login/" >
+                            {% csrf_token %}
+                            <input type="text" class="input" id="user_login" name="username" autocomplete="off" placeholder="Email or Username">
+                            <input type="password" class="input" id="user_pass" name="password" autocomplete="off" placeholder="Password">
+                            <!--<input type="checkbox" class="checkbox" checked id="remember_me">
+                            <label for="remember_me">Remember me</label>-->
+                            <input type="hidden" id="redirect_url" name="redirect_url" value="{{redirect_url}}"/>
+                            <button type="submit" class="button">Login</button>
+                        </form>
+                        <div class="help-action" hidden>
+                            <p><i class="fa fa-arrow-left" aria-hidden="true"></i><a class="forgot" href="#">Forgot your password?</a></p>
+                        </div>
+                    </div>
+                    <!-- TABS CONTENT SIGNUP --> 
+                    <!--<div id="signup-tab-content">
+                                <form class="signup-form" action="" method="post">
+                                    <input type="email" class="input" id="user_email" autocomplete="off" placeholder="Email">
+                                    <input type="text" class="input" id="user_name" autocomplete="off" placeholder="Username">
+                                    <input type="password" class="input" id="user_pass" autocomplete="off" placeholder="Password">
+                                    <input type="submit" class="button" value="Sign Up">
+                                </form>
+                                <div class="help-action">
+                                    <p>By signing up, you agree to our</p>
+                                    <p><i class="fa fa-arrow-left" aria-hidden="true"></i><a class="agree" href="#">Terms of service</a></p>
+                                </div>
+                            </div>--> 
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+   
+<script>
+/* LOGIN - MAIN.JS - dp 2017 */
+
+// LOGIN TABS
+$(function() {
+    var tab = $('.tabs h3 a');
+    tab.on('click', function(event) {
+        event.preventDefault();
+        tab.removeClass('active');
+        $(this).addClass('active');
+        tab_content = $(this).attr('href');
+        $('div[id$="tab-content"]').removeClass('active');
+        $(tab_content).addClass('active');
+    });
+});
+
+// SLIDESHOW
+$(function() {
+    $('#slideshow > div:gt(0)').hide();
+    setInterval(function() {
+        $('#slideshow > div:first')
+        .fadeOut(1000)
+        .next()
+        .fadeIn(1000)
+        .end()
+        .appendTo('#slideshow');
+    }, 3850);
+});
+
+// CUSTOM JQUERY FUNCTION FOR SWAPPING CLASSES
+(function($) {
+    'use strict';
+    $.fn.swapClass = function(remove, add) {
+        this.removeClass(remove).addClass(add);
+        return this;
+    };
+}(jQuery));
+
+// SHOW/HIDE PANEL ROUTINE (needs better methods)
+// I'll optimize when time permits.
+$(function() {
+    $('.agree,.forgot, #toggle-terms, .log-in, .sign-up').on('click', function(event) {
+        event.preventDefault();
+        var terms = $('.terms'),
+        recovery = $('.recovery'),
+        close = $('#toggle-terms'),
+        arrow = $('.tabs-content .fa');
+        if ($(this).hasClass('agree') || $(this).hasClass('log-in') || ($(this).is('#toggle-terms')) && terms.hasClass('open')) {
+            if (terms.hasClass('open')) {
+                terms.swapClass('open', 'closed');
+                close.swapClass('open', 'closed');
+                arrow.swapClass('active', 'inactive');
+            } else {
+                if ($(this).hasClass('log-in')) {
+                    return;
+                }
+                terms.swapClass('closed', 'open').scrollTop(0);
+                close.swapClass('closed', 'open');
+                arrow.swapClass('inactive', 'active');
+            }
+        }
+        else if ($(this).hasClass('forgot') || $(this).hasClass('sign-up') || $(this).is('#toggle-terms')) {
+            if (recovery.hasClass('open')) {
+                recovery.swapClass('open', 'closed');
+                close.swapClass('open', 'closed');
+                arrow.swapClass('active', 'inactive');
+            } else {
+                if ($(this).hasClass('sign-up')) {
+                    return;
+                }
+                recovery.swapClass('closed', 'open');
+                close.swapClass('closed', 'open');
+                arrow.swapClass('inactive', 'active');
+            }
+        }
+    });
+});
+
+// DISPLAY MSSG
+$(function() {
+    $('.recovery .button').on('click', function(event) {
+        event.preventDefault();
+        $('.recovery .mssg').addClass('animate');
+        setTimeout(function() {
+            $('.recovery').swapClass('open', 'closed');
+            $('#toggle-terms').swapClass('open', 'closed');
+            $('.tabs-content .fa').swapClass('active', 'inactive');
+            $('.recovery .mssg').removeClass('animate');
+        }, 2500);
+    });
+});
+
+
+//# sourceURL=pen.js
+
+</script>
+</body>
+</html>

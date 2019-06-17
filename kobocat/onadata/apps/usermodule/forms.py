@@ -12,7 +12,7 @@ from onadata.apps.usermodule.helpers import COUNTRIES
 class UserForm(forms.ModelForm):
     password = forms.CharField(label='Create a password',widget=forms.PasswordInput(),min_length=4)
     password_repeat = forms.CharField(label='Confirm your password',widget=forms.PasswordInput())
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=False)
     username = forms.CharField(help_text='',max_length=20,widget=forms.TextInput(attrs={'pattern': '[a-z_0-9]+','title':'only lowercase letter, numbers and underscore(_) is allowed. example: user_2009'}))
     # date_joined = forms.CharField(widget=forms.HiddenInput(),initial=datetime.now()) 
     def clean_password_repeat(self):
@@ -45,17 +45,43 @@ class UserEditForm(forms.ModelForm):
 
 class UserProfileForm(forms.ModelForm):
     admin = forms.BooleanField(label="Make this User Admin",widget=forms.CheckboxInput(),required=False)
-    employee_id = forms.CharField(label="Employee Id ")
     organisation_name = forms.ModelChoiceField(label='Organisation Name',queryset=Organizations.objects.all(),empty_label="Select an Organization")
-    country = forms.ChoiceField(choices=COUNTRIES, required=True, label='Country')
-    position = forms.CharField(label="Position")
+    designation = forms.CharField(label="Designation")
     contact_number = forms.CharField(label="Contact Number")
+    father_name = forms.CharField(label="Father Name")
+    mother_name = forms.CharField(label="Mother Name")
+    date_of_birth = forms.CharField(label="Date of Birth")
+    gender = forms.CharField(label="Gender")
+    nid = forms.CharField(label="NID")
+    marital_status = forms.CharField(label="Marital Status")
+    current_division = forms.CharField()
+    current_district = forms.CharField()
+    current_upazila = forms.CharField()
+    current_union = forms.CharField()
+    current_ward = forms.CharField()
+    current_address = forms.CharField()
+    current_postoffice = forms.CharField()
+    present_permanent_address_same = forms.CharField()
+    permanent_division = forms.CharField()
+    permanent_district = forms.CharField()
+    permanent_upazila = forms.CharField()
+    permanent_union = forms.CharField()
+    permanent_ward = forms.CharField()
+    permanent_address = forms.CharField()
+    permanent_postoffice = forms.CharField()
+    joining_date = forms.CharField(required=False)
+    release_date = forms.CharField(required=False)
     # expired = forms.DateTimeField(label="Expiry Date",required=False,initial=datetime.now()+ timedelta(days=90))
 
     class Meta:
         model = UserModuleProfile
         #fields = ('admin','employee_id','organisation_name','country','position','psu')
-        fields = ('admin','employee_id','organisation_name','country','position','contact_number')
+        fields = (
+        'admin', 'organisation_name', 'designation', 'contact_number', 'father_name', 'mother_name', 'date_of_birth',
+        'gender', 'nid', 'marital_status', 'current_division', 'current_district', 'current_upazila'
+        ,'current_union','current_ward','current_address','current_postoffice'
+        ,'present_permanent_address_same','permanent_division','permanent_district','permanent_upazila','permanent_union'
+        ,'permanent_ward','permanent_address','permanent_postoffice','joining_date','release_date')
 
     def __init__(self, *args, **kwargs):
         admin_check = kwargs.pop('admin_check', False)

@@ -12,25 +12,21 @@
             </div>
         </div>
         <div class="portlet-body form">
-            <form class="horizontal-form" id="user_form" method="post" action="/usermodule/edit/{{id}}/"
-                  enctype="multipart/form-data">
-                <input type="hidden" name="userchange" value="userchange">
+            <form class="horizontal-form" id="user_form" method="post" action="/usermodule/edit/{{id}}/" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="{{ user_form.username.id_for_label }}">Username:</label>
-                                <input type="text" name="{{ user_form.username.name }}" class="form-control"
-                                       value="{{ user_form.username.value }}" readonly>
+                                <input type="text" name="{{ user_form.username.name }}" class="form-control" value="{{ user_form.username.value }}" readonly>
                                 <span class="help-block">{{ user_form.username.errors.as_text }}</span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="{{ user_form.first_name.id_for_label }}">Firstname:</label>
-                                <input type="text" name="{{ user_form.first_name.name }}" class="form-control"
-                                       value="{{ user_form.first_name.value }}">
+                                <input type="text" name="{{ user_form.first_name.name }}" class="form-control"  value="{{ user_form.first_name.value }}">
                             </div>
                         </div>
                     </div>
@@ -38,15 +34,14 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="{{ user_form.last_name.id_for_label }}">Lastname:</label>
-                                <input type="text" name="{{ user_form.last_name.name }}" class="form-control"
-                                       value="{{ user_form.last_name.value }}">
+                                <input type="text" name="{{ user_form.last_name.name }}" class="form-control"  value="{{ user_form.last_name.value }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="{{ user_form.email.id_for_label }}">Email:</label>
-                                <input type="email" name="{{ user_form.email.name }}" class="form-control"
-                                       value="{{ user_form.email.value }}">
+
+                                <input type="email" name="{{ user_form.email.name }}" class="form-control"  value="{{ user_form.email.value }}">
                                 <span class="help-block">{{ user_form.email.errors.as_text }}</span>
 
                             </div>
@@ -64,19 +59,11 @@
                                 </div>
                             </div>
                         </div>
+
+
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="{{ profile_form.employee_id.id_for_label }}">Employee Id:</label>
-                                <input type="text" name="{{ profile_form.employee_id.name }}" class="form-control"
-                                       value="{{ profile_form.employee_id.value }}">
-                                <span class="help-block">{{ profile_form.employee_id.errors.as_text }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Organisation name:</label>
+                                <label>Organization name:</label>
                                 <select id="{{ profile_form.organisation_name.id_for_label }}"
                                         name="{{ profile_form.organisation_name.name }}" class="form-control">
                                     {% for m,n in profile_form.fields.organisation_name.choices %}
@@ -87,21 +74,9 @@
                                 <span class="help-block">{{ profile_form.organisation_name.errors.as_text }}</span>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Country:</label>
-                                <select id="{{ profile_form.country.id_for_label }}"
-                                        name="{{ profile_form.country.name }}" class="form-control">
-                                    {% for x,y in profile_form.fields.country.choices %}
-                                    <option value="{{ x }}" {% if profile_form.country.value == x %} selected{% endif %}>{{ y }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                                <span class="help-block">{{ profile_form.country.errors.as_text }}</span>
-                            </div>
-                        </div>
+
                     </div>
-                    <div class="row">
+                    <div class="row" >
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="{{ profile_form.contact_number.id_for_label }}">Contact Number (e.g: 01xxxxxxxxx):</label>
@@ -111,16 +86,291 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="{{ profile_form.position.id_for_label }}" hidden>Position:</label>
-                                <input type="hidden" name="{{ profile_form.position.name }}" class="form-control"
-                                       value="{{ profile_form.position.value }}" >
+                                <label for="{{ profile_form.designation.id_for_label }}">Designation:</label>
+                                <input type="text" name="{{ profile_form.designation.name }}" class="form-control" value="{{ profile_form.designation.value }}" required>
                                 <span class="help-block" hidden>{{ profile_form.position.errors.as_text }}</span>
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ profile_form.joining_date.id_for_label }}">Joining Date:</label>
+                                <input type="text" name="{{ profile_form.joining_date.name }}" id="joining_date"
+                                       class="datepicker form-control" value="{{ profile_form.joining_date.value }}">
+                                <span class="help-block" hidden>{{ profile_form.joining_date.errors.as_text }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ profile_form.release_date.id_for_label }}">Release Date:</label>
+                                <input type="text" name="{{ profile_form.release_date.name }}" id="release_date"
+                                       class="datepicker form-control" value="{{ profile_form.release_date.value }}">
+                                <span class="help-block" hidden>{{ profile_form.release_date.errors.as_text }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="{{ profile_form.father_name.id_for_label }}">Father Name:</label>
+                                <input type="text" name="{{ profile_form.father_name.name }}" class="form-control" value="{{ profile_form.father_name.value }}" required>
+                                 <span class="help-block" hidden>{{ profile_form.father_name.errors.as_text }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="{{ profile_form.mother_name.id_for_label }}">Mother Name:</label>
+                                <input type="text" name="{{ profile_form.mother_name.name }}" class="form-control" value="{{ profile_form.mother_name.value }}" required>
+                                 <span class="help-block" hidden>{{ profile_form.mother_name.errors.as_text }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="{{ profile_form.date_of_birth.id_for_label }}">Date of Birth:</label>
+                                <input type="text" name="{{ profile_form.date_of_birth.name }}" id="date_of_birth" class="datepicker form-control" value="{{ profile_form.date_of_birth.value }}" required>
+                                 <span class="help-block" hidden>{{ profile_form.date_of_birth.errors.as_text }}</span>
+                            </div>
+                        </div>
+                         <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="{{ profile_form.gender.id_for_label }}">Gender:</label>
+                                <select id="{{ profile_form.gender.id_for_label }}"
+                                        name="{{ profile_form.gender.name }}" class="form-control">
+                                    <option value="">Select One</option>
+                                    <option value="Male" {% if profile_form.gender.value == "Male" %} selected{% endif %} >Male</option>
+                                    <option value="Female" {% if profile_form.gender.value == "Female" %} selected{% endif %}>Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="{{ profile_form.nid.id_for_label }}">NID:</label>
+                                <input type="text" name="{{ profile_form.nid.name }}" pattern="^(?:\d{11,17})$" class="form-control" value="{{ profile_form.nid.value }}" required>
+                                <span class="help-block" hidden>{{ profile_form.nid.errors.as_text }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="{{ profile_form.marital_status.id_for_label }}">Marital Status:</label>
+                                <select  class="form-control" id="{{ profile_form.marital_status.id_for_label }}" name="{{ profile_form.marital_status.name }}">
+                                    <option value="">Select One</option>
+                                    <option value="Married" {% if profile_form.marital_status.value == "Married" %} selected{% endif %}>Married</option>
+                                    <option value="Conjugal Separation" {% if profile_form.marital_status.value == "Conjugal Separation" %} selected{% endif %}>Conjugal Separation</option>
+                                    <option value="Divorced" {% if profile_form.marital_status.value == "Divorced" %} selected{% endif %}>Divorced</option>
+                                    <option value="Unmarried" {% if profile_form.marital_status.value == "Unmarried" %} selected{% endif %}>Unmarried</option>
+                                    <option value="Widow/widower" {% if profile_form.marital_status.value == "Widow/widower" %} selected{% endif %}>Widow/widower</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h4><strong>Present Address</strong></h4>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Division: </label>
+                                <select class="form-control" name="{{ profile_form.current_division.name }}" id="current_division" onclick="load_district(this,'current_')" required>
+                                        <option value="">Select One</option>
+                                        {% for id,field_name in divisions %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label >District: </label>
+                                <select class="form-control" name="{{ profile_form.current_district.name }}" id="current_district" onclick="load_upazila(this,'current_')" required>
+                                        <option value="">Select One</option>
+ {% for id,field_name in current_districts %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                            </div>
+                        </div>
+
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Upazila: </label>
+                                <select class="form-control" name="{{ profile_form.current_upazila.name }}" id="current_upazila" onclick="load_union(this,'current_')" required>
+                                    <option value="">Select One</option>
+                                    {% for id,field_name in current_upazilas %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Union: </label>
+                        <select class="form-control" name="{{ profile_form.current_union.name }}" id="current_union" onclick="load_ward(this,'current_')" required>
+                            <option value="">Select One</option>
+                             {% for id,field_name in current_unions %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                    <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Ward: </label>
+                        <select class="form-control" name="{{ profile_form.current_ward.name }}" id="current_ward" >
+                            <option value="">Select One</option>
+                            {% for id,field_name in current_wards %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Address (Village/Moholla/ Road No / House No):</label>
+                                <input class="form-control" name="{{ profile_form.current_address.name }}" id="current_address" type="text" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Post Office:</label>
+                                <input class="form-control" name="{{ profile_form.current_postoffice.name }}" id="current_postoffice" type="text">
+                            </div>
+                        </div>
+
+            <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Is permanent address is same as present address: </label>
+                                <select class="form-control" name="{{ profile_form.present_permanent_address_same.name }}" id="present_permanent_address_same" onclick="load_perm_addr(this)" required>
+                                    <option value="">Select One</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                        </div>
+            </div>
+
+            <div class="row" id = "block">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h4><strong>Permanent Address</strong></h4>
+                    </div>
+                </div>
+                <div class="col-md-3" >
+                            <div class="form-group">
+                                <label >Division: </label>
+                                <select class="form-control" name="{{ profile_form.permanent_division.name }}" id="permanent_division" onclick="load_district(this,'permanent_')" required>
+                                        <option value="">Select One</option>
+                                        {% for id,field_name in divisions %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label >District: </label>
+                                <select class="form-control" name="{{ profile_form.permanent_district.name }}" id="permanent_district" onclick="load_upazila(this,'permanent_')" required>
+                                        <option value="">Select One</option>
+                                    {% for id,field_name in permanent_districts %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+
+                                    </select>
+                            </div>
+                        </div>
+
+                    <div class="col-md-3">
+                            <div class="form-group">
+                                <label >Upazila: </label>
+                                <select class="form-control" name="{{ profile_form.permanent_upazila.name }}" id="permanent_upazila" onclick="load_union(this,'permanent_')" required>
+                                    <option value="">Select One</option>
+                                    {% for id,field_name in permanent_upazilas %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Union: </label>
+                        <select class="form-control" name="{{ profile_form.permanent_union.name }}" id="permanent_union" onclick="load_ward(this,'permanent_')" required>
+                            <option value="">Select One</option>
+                            {% for id,field_name in permanent_unions %}
+                                            <option value="{{ id }}">{{ field_name }}</option>
+                                        {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                    <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Ward: </label>
+                        <select class="form-control" name="{{ profile_form.permanent_ward.name }}" id="permanent_ward" >
+                            <option value="">Select One</option>
+                             {% for id,field_name in permanent_wards %}
+                                <option value="{{ id }}">{{ field_name }}</option>
+                             {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Address (Village/Moholla/ Road No / House No):</label>
+                                <input class="form-control" name="{{ profile_form.permanent_address.name }}" id="permanent_address" type="text" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Post Office:</label>
+                                <input class="form-control" name="{{ profile_form.permanent_postoffice.name }}" id="permanent_postoffice" type="text">
+                            </div>
+                        </div>
+
+
+
+            </div>
+
+            <div class="row">
+                 <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="imageupload imageupload_img panel panel-default">
+                            <div class="panel-heading clearfix">
+                                <h3 class="panel-title pull-left">Upload Image(Optional)</h3>
+                                <div class="btn-group pull-right hidden">
+                                    <button type="button" class="btn btn-default active">File</button>
+                                    <button type="button" class="btn btn-default">URL</button>
+                                </div>
+                            </div>
+                            <div class="file-tab panel-body">
+                                <label class="btn btn-default btn-file">
+                                    <span>Browse</span>
+                                    <!-- The file is stored here. -->
+                                    <input type="file" name="image-file">
+                                </label>
+                                <button type="button" class="btn btn-default">Remove</button>
+                            </div>
+                            <div class="url-tab panel-body">
+                                <div class="input-group">
+                                    <input type="text" class="form-control hasclear" placeholder="Image URL">
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default">Submit</button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-default">Remove</button>
+                                <!-- The URL is stored here. -->
+                                <input type="hidden" name="image-url">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn red pull-right">Submit</button>
+                    <button type="submit" id="submit" class="btn red pull-right">Submit</button>
                     <button onclick="history.go(-1);" style="margin-right:10px;" type="button" class="btn default pull-right">Cancel</button>
                 </div>
             </form>
@@ -132,18 +382,280 @@
 
 {% block additional-javascript %}
 
-<!--<script type="text/javascript" src="/static/js/jquery.searchable-ie-1.1.0.min.js"></script> -->
-<!-- <script type="text/javascript" src="/static/js/usermodule_userprofile.js"></script>    -->
+<script src="{{ STATIC_URL }}js/bootstrap-imageupload.js"></script>
+    <script>
+
+    var current_division=$('#current_division').val('{{current_division | safe}}');
+    var current_district=$('#current_district').val('{{current_district | safe}}');
+    var current_upazila=$('#current_upazila').val('{{current_upazila | safe}}');
+    var current_union=$('#current_union').val('{{current_union | safe}}');
+    var current_ward=$('#current_ward').val('{{current_ward | safe}}');
+    var current_address=$('#current_address').val('{{current_address | safe}}');
+    var current_postoffice=$('#current_postoffice').val('{{current_postoffice | safe}}');
+    var present_permanent_address_same = $('#present_permanent_address_same').val('{{present_permanent_address_same | safe}}');
+    var permanent_division=$('#permanent_division').val('{{permanent_division | safe}}');
+    var permanent_district=$('#permanent_district').val('{{permanent_district | safe}}');
+    var permanent_upazila=$('#permanent_upazila').val('{{permanent_upazila | safe}}');
+    var permanent_union=$('#permanent_union').val('{{permanent_union | safe}}');
+    var permanent_ward=$('#permanent_ward').val('{{permanent_ward | safe}}');
+    var permanent_address=$('#permanent_address').val('{{permanent_address | safe}}');
+    var permanent_postoffice=$('#permanent_postoffice').val('{{permanent_postoffice | safe}}');
+
+
+
+    if(present_permanent_address_same.val()=="Yes")
+      $('#block').block({message: null,
+              overlayCSS:  {
+        backgroundColor: '#eee',
+        opacity:         0.4,
+        cursor:          'default'
+    },
+      });
+    else $('#block').unblock();
+
+
+    $('.imageupload_img').imageupload();
+
+
+    $('#submit').on('click',function () {
+{#        console.log($('#user_img').val());#}
+{#       return false#}
+    });
+
+    $(function () {
+            $('#date_of_birth').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+            $('#joining_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+            $('#release_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+            $("#date_of_establish").keydown(false);
+            $("#joining_date").keydown(false);
+            $("#release_date").keydown(false);
+        });
+
+
+    var user_img = '{{ user_img | safe }}';
+    if(user_img.length)
+        initial_img_set(user_img,'imageupload_img');
+    function initial_img_set(img_path,class_name) {
+            var img_string = "<img src=\""+img_path+"\" alt=\"Image preview\" class=\"thumbnail\" style=\"max-width: 250px; max-height:  250px\">";
+            var $imageupload = $('div.'+class_name+'');
+            var $fileTab = $imageupload.find('.file-tab');
+            $fileTab.prepend(img_string);
+            var $browseFileButton = $fileTab.find('.btn:eq(0)');
+            var $removeFileButton = $fileTab.find('.btn:eq(1)');
+            $browseFileButton.find('span').text('Change');
+            $removeFileButton.css('display', 'inline-block');
+        }
+
+
+    function load_district(object,ext) {
+            $('#'+ext+'upazila').html("<option value=\"\">Select One</option>");
+            $('#'+ext+'union').html("<option value=\"\">Select One</option>");
+            $('#'+ext+'ward').html("<option value=\"\">Select One</option>");
+            div = parseInt(object.value)
+            // console.log(dist);
+            if (isNaN(parseFloat(div))) {
+                $('#'+ext+'district').html("<option value=\"\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_districts/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'div': div},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#'+ext+'district').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+        function load_upazila(dist_object,ext) {
+            $('#'+ext+'union').html("<option value=\"\">Select One</option>");
+                $('#'+ext+'ward').html("<option value=\"\">Select One</option>");
+
+            dist = parseInt(dist_object.value)
+            // console.log(dist);
+            if (isNaN(parseFloat(dist))) {
+                $('#'+ext+'upazila').html("<option value=\"\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_upazilas/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'dist': dist},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#'+ext+'upazila').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+        function load_union(upz_object,ext) {
+            $('#'+ext+'ward').html("<option value=\"\">Select One</option>");
+
+            upz = parseInt(upz_object.value);
+            if (isNaN(parseFloat(upz))) {
+                $('#union').html("<option value=\"\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_unions/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'upz': upz},
+
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#'+ext+'union').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+        function load_ward(upz_object,ext) {
+            uni = parseInt(upz_object.value);
+            if (isNaN(parseFloat(upz))) {
+                $('#'+ext+'ward').html("<option value=\"\">Select One</option>");
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_wards/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'uni': uni},
+
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#'+ext+'ward').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+
+    function load_perm_addr(obj) {
+        if (obj.value == 'Yes') {
+            $('#permanent_division').val($('#current_division').val());
+
+
+            $('#permanent_district').html('<option value="' + $('#current_district option:selected').val() + '">' + $('#current_district option:selected').text() + '</option>');
+
+            $('#permanent_upazila').html('<option value="' + $('#current_upazila option:selected').val() + '">' + $('#current_upazila option:selected').text() + '</option>');
+
+            $('#permanent_union').html('<option value="' + $('#current_union option:selected').val() + '">' + $('#current_union option:selected').text() + '</option>');
+
+            $('#permanent_ward').html('<option value="' + $('#current_ward option:selected').val() + '">' + $('#current_ward option:selected').text() + '</option>');
+            $('#permanent_address').val($('#current_address').val());
+            $('#permanent_postoffice').val($('#current_postoffice').val());
+
+            $('#block').block({
+                message: null,
+                overlayCSS: {
+                    backgroundColor: '#eee',
+                    opacity: 0.4,
+                    cursor: 'default'
+                },
+
+            });
+
+
+        }
+        else {
+            $('#block').unblock();
+            $('#permanent_division').val("");
+            $('#permanent_district').html('<option value="">Select One</option>');
+
+            $('#permanent_upazila').html('<option value="">Select One</option>');
+
+            $('#permanent_union').html('<option value="">Select One</option>');
+
+            $('#permanent_ward').html('<option value="">Select One</option>');
+            $('#permanent_address').val("");
+            $('#permanent_postoffice').val("");
+        }
+
+    }
+
+    </script>
 
 {% endblock %}
 
 {% block additional-headers %}
+    <link href="{{ STATIC_URL }}css/bootstrap-imageupload.css" rel="stylesheet">
 <head>
     <title>
-        {% block title %} Edit User {% endblock %}
+        {% block title %} Register User {% endblock %}
     </title>
 </head>
-<style>
+    <style >
     .data-table-container table {
         clear: both;
         display: table !important;
@@ -157,9 +669,10 @@
         border: 1px solid #dddddd !important;
     }
 
+    tr:hover {
+        background-color: #ffff99;
+    }
 
-
-
-</style>
+    </style>
 
 {% endblock %}

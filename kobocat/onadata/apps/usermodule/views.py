@@ -47,7 +47,7 @@ from collections import OrderedDict
 import os
 from django.core.files.storage import FileSystemStorage
 from datetime import date, timedelta, datetime
-
+from onadata.apps.usermodule.helpers import COUNTRIES
 
 def __db_commit_query(query):
     cursor = connection.cursor()
@@ -135,7 +135,7 @@ def register(request):
             profile = profile_form.save(commit=False)
             # profile.organisation_name = request.POST.get("organisation_name", "-1")
             profile.user = user
-            expiry_months_delta = 3
+            expiry_months_delta = 36
             # Date representing the next expiry date
             next_expiry_date = (datetime.today() + timedelta(expiry_months_delta*365/12))
             profile.expired = next_expiry_date
@@ -159,6 +159,19 @@ def register(request):
             passwordHistory = UserPasswordHistory(user_id = user.id,date = datetime.now())
             passwordHistory.password = encrypted_password
             passwordHistory.save()
+
+            img_file_path = ""
+            if 'image-file' in request.FILES:
+                myfile = request.FILES['image-file']
+                url = "onadata/media/uploaded_files/"
+                userName = request.user
+                fs = FileSystemStorage(location=url)
+                myfile.name = str(datetime.now().date()) + "_" + str(userName) + "_" + str(myfile.name)
+                filename = fs.save(myfile.name, myfile)
+                img_file_path = "onadata/media/uploaded_files/" + myfile.name
+                updt_qry = "update usermodule_usermoduleprofile set user_img = '"+str(img_file_path)+"' where id = " + str(profile.pk)
+                __db_commit_query(updt_qry)
+
             messages.success(request, '<i class="fa fa-check-circle"></i> New User has been registered successfully!',
                              extra_tags='alert-success crop-both-side')
             return HttpResponseRedirect('/usermodule/')
@@ -185,10 +198,14 @@ def register(request):
         profile_form = UserProfileForm(admin_check=admin_check)
         print(profile_form)
 
+    query = "select id,field_name from geo_data where field_type_id = 85"
+    df = pandas.read_sql(query, connection)
+    divisions = zip(df.id.tolist(), df.field_name.tolist())
+
     # Render the template depending on the context.
     return render_to_response(
             'usermodule/register.html',
-            {'user_form': user_form, 'profile_form': profile_form, 'registered': registered},
+            {'divisions':divisions,'user_form': user_form, 'profile_form': profile_form, 'registered': registered},
             context)
 
 
@@ -236,7 +253,7 @@ def organization_index(request):
             },
             context)
 
-from onadata.apps.usermodule.helpers import COUNTRIES
+
 
 @login_required
 @user_passes_test(admin_check,login_url='/')
@@ -525,6 +542,19 @@ def edit_profile(request,user_id):
                 # Now we save the UserProfile model instance.
                 profile.save()
 
+                img_file_path = ""
+                if 'image-file' in request.FILES:
+                    myfile = request.FILES['image-file']
+                    url = "onadata/media/uploaded_files/"
+                    userName = request.user
+                    fs = FileSystemStorage(location=url)
+                    myfile.name = str(datetime.now().date()) + "_" + str(userName) + "_" + str(myfile.name)
+                    filename = fs.save(myfile.name, myfile)
+                    img_file_path = "onadata/media/uploaded_files/" + myfile.name
+                updt_qry = "update usermodule_usermoduleprofile set user_img = '" + str(img_file_path) + "' where id = " + str(profile.pk)
+                __db_commit_query(updt_qry)
+
+
                 # Update our variable to tell the template registration was successful.
                 edited = True
                 messages.success(request, '<i class="fa fa-check-circle"></i> User profile has been updated successfully!', extra_tags='alert-success crop-both-side')
@@ -548,6 +578,101 @@ def edit_profile(request,user_id):
                 UserProfileForm.base_fields['organisation_name'] = forms.ModelChoiceField(queryset=Organizations.objects.filter(pk__in=org_id_list)
     ,empty_label="Select a Organization")
             profile_form = UserProfileForm(instance = profile,admin_check=admin_check)
+
+
+            qry = "select *,substring(user_img from 8) ursr from usermodule_usermoduleprofile where id = " + str(profile.pk)
+            df = pandas.read_sql(qry, connection)
+            user_img = df.ursr.tolist()[0] if len(df.ursr.tolist()) and df.ursr.tolist()[0] is not None  else ''
+            current_division = df.current_division.tolist()[0] if len(df.current_division.tolist()) and df.current_division.tolist()[0] is not None  else '%'
+            current_district = df.current_district.tolist()[0] if len(df.current_district.tolist()) and df.current_district.tolist()[0] is not None  else '%'
+            current_upazila = df.current_upazila.tolist()[0] if len(df.current_upazila.tolist()) and df.current_upazila.tolist()[0] is not None  else '%'
+            current_union = df.current_union.tolist()[0] if len(df.current_union.tolist()) and df.current_union.tolist()[0] is not None  else '%'
+            current_ward = df.current_ward.tolist()[0] if len(df.current_ward.tolist()) and df.current_ward.tolist()[0] is not None  else '%'
+            current_address = df.current_address.tolist()[0] if len(df.current_address.tolist()) and df.current_address.tolist()[0] is not None  else ''
+            current_postoffice = df.current_postoffice.tolist()[0] if len(df.current_postoffice.tolist()) and df.current_postoffice.tolist()[0] is not None  else ''
+            present_permanent_address_same = df.present_permanent_address_same.tolist()[0] if len(df.present_permanent_address_same.tolist()) and df.present_permanent_address_same.tolist()[0] is not None  else ''
+            permanent_division = df.permanent_division.tolist()[0] if len(df.permanent_division.tolist()) and df.permanent_division.tolist()[0] is not None  else '%'
+            permanent_district = df.permanent_district.tolist()[0] if len(df.permanent_district.tolist()) and df.permanent_district.tolist()[0] is not None  else '%'
+            permanent_upazila = df.permanent_upazila.tolist()[0] if len(df.permanent_upazila.tolist()) and df.permanent_upazila.tolist()[0] is not None  else '%'
+            permanent_union = df.permanent_union.tolist()[0] if len(df.permanent_union.tolist()) and df.permanent_union.tolist()[0] is not None  else '%'
+            permanent_ward = df.permanent_ward.tolist()[0] if len(df.permanent_ward.tolist()) and df.permanent_ward.tolist()[0] is not None  else '%'
+            permanent_address = df.permanent_address.tolist()[0] if len(df.permanent_address.tolist()) and df.permanent_address.tolist()[0] is not None  else ''
+            permanent_postoffice = df.permanent_postoffice.tolist()[0] if len(df.permanent_postoffice.tolist()) and df.permanent_postoffice.tolist()[0] is not None  else ''
+
+            query = "select id,field_name from geo_data where field_type_id = 85"
+            df = pandas.read_sql(query, connection)
+            divisions = zip(df.id.tolist(), df.field_name.tolist())
+
+            query = "select id,field_name from geo_data where field_type_id = 86 and field_parent_id::text like '" + str(
+                current_division) + "'"
+            df = pandas.read_sql(query, connection)
+            current_districts = zip(df.id.tolist(), df.field_name.tolist())
+
+            query = "select id,field_name from geo_data where field_type_id = 86 and field_parent_id::text like '" + str(
+                permanent_division) + "'"
+            df = pandas.read_sql(query, connection)
+            permanent_districts = zip(df.id.tolist(), df.field_name.tolist())
+
+            query = "select id,field_name from geo_data where field_type_id = 88 and field_parent_id::text like '" + str(
+                current_district) + "'"
+            df = pandas.read_sql(query, connection)
+            current_upazilas = zip(df.id.tolist(), df.field_name.tolist())
+
+            query = "select id,field_name from geo_data where field_type_id = 88 and field_parent_id::text like '" + str(
+                permanent_district) + "'"
+            df = pandas.read_sql(query, connection)
+            permanent_upazilas = zip(df.id.tolist(), df.field_name.tolist())
+
+            query = "select id,field_name from geo_data where field_type_id = 89 and field_parent_id::text like '" + str(
+                current_upazila) + "'"
+            df = pandas.read_sql(query, connection)
+            current_unions = zip(df.id.tolist(), df.field_name.tolist())
+
+            query = "select id,field_name from geo_data where field_type_id = 89 and field_parent_id::text like '" + str(
+                permanent_upazila) + "'"
+            df = pandas.read_sql(query, connection)
+            permanent_unions = zip(df.id.tolist(), df.field_name.tolist())
+
+            query = "select id,field_name from geo_data where field_type_id = 92 and field_parent_id::text like '" + str(
+                current_union) + "'"
+            df = pandas.read_sql(query, connection)
+            current_wards = zip(df.id.tolist(), df.field_name.tolist())
+
+            query = "select id,field_name from geo_data where field_type_id = 92 and field_parent_id::text like '" + str(
+                permanent_union) + "'"
+            df = pandas.read_sql(query, connection)
+            permanent_wards = zip(df.id.tolist(), df.field_name.tolist())
+
+            return render_to_response(
+                'usermodule/edit_user.html',
+                {'id': user_id, 'user_form': user_form, 'profile_form': profile_form, 'edited': edited
+                    ,'divisions':divisions,
+                    'current_districts':current_districts,
+                    'permanent_districts':permanent_districts,
+                    'permanent_division':permanent_division,
+                    'current_upazilas':current_upazilas,
+                    'permanent_upazilas':permanent_upazilas,
+                    'current_unions':current_unions,
+                    'permanent_unions':permanent_unions,
+                    'current_wards':current_wards,
+                    'permanent_wards':permanent_wards,
+                     'current_division': current_division,
+                     'current_district': current_district,
+                     'current_upazila': current_upazila,
+                     'current_union': current_union,
+                     'current_ward': current_ward,
+                     'current_address': current_address,
+                     'current_postoffice': current_postoffice,
+                     'present_permanent_address_same': present_permanent_address_same,
+                     'permanent_district': permanent_district,
+                     'permanent_upazila': permanent_upazila,
+                     'permanent_union': permanent_union,
+                     'permanent_ward': permanent_ward,
+                     'permanent_address': permanent_address,
+                     'permanent_postoffice': permanent_postoffice,
+                 'user_img':user_img
+                 },
+                context)
 
         return render_to_response(
                 'usermodule/edit_user.html',

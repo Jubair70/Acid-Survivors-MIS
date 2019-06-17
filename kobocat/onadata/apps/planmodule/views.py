@@ -1711,11 +1711,12 @@ def file_share(request):
         des = ''
         if form.is_valid():
             title = request.POST.get('title')
+            document_type = request.POST.get('document_type')
             des = upload_shared_file(request.FILES['shared_file'],title)
             current_user = request.user.id
             created_date = datetime.datetime.today().strftime('%Y-%m-%d')
             #insert_query = "INSERT INTO public.narrative_report_data ( month_year, ngo, id, file_path) VALUES ( '"+month+"', '"+ngo+"', DEFAULT , '"+des+"');	"
-            insert_query = "INSERT INTO public.file_shared ( created_date, shared_file, user_id, id, title) VALUES ( '"+created_date+"', '"+des+"', "+str(current_user)+", DEFAULT, '"+title+"');"
+            insert_query = "INSERT INTO public.file_shared ( created_date, shared_file, user_id, id, title,document_type) VALUES ( '"+created_date+"', '"+des+"', "+str(current_user)+", DEFAULT, '"+title+"','"+document_type+"');"
             # print insert_query
             __db_commit_query(insert_query)
             data = getAjaxMessage("success",
@@ -1744,7 +1745,7 @@ def upload_shared_file(file,title):
 
 @login_required
 def getSharedFileList(request):
-    data_query = "select *,(select first_name from auth_user where id= user_id limit 1)  as username from file_shared order by id desc "
+    data_query = "select *,(select first_name || ' ' || last_name from auth_user where id= user_id limit 1)  as username from file_shared order by id desc "
     data = __db_fetch_values_dict(data_query)
     data_list = []
     data_dict = {}
@@ -1752,6 +1753,7 @@ def getSharedFileList(request):
         data_dict['id'] = tmp['id']
         data_dict['title'] = tmp['title']
         data_dict['created_date'] = tmp['created_date']
+        data_dict['document_type'] = tmp['document_type']
         data_dict['shared_file'] = tmp['shared_file']
         data_dict['username'] = tmp['username']
         data_list.append(data_dict.copy())

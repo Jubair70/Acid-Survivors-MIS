@@ -27,4 +27,7 @@ urlpatterns = patterns('',
     url(r'^victim_status/(?P<victim_tbl_id>\d+)/$', views.victim_status, name='victim_status'),
     url(r'^refer_victim/(?P<victim_tbl_id>\d+)/$', views.refer_victim, name='refer_victim'),
     url(r'^victim_profile/(?P<victim_tbl_id>\d+)/$', views.victim_profile, name='victim_profile'),
+
+    url(r'^victim_list/$', views.victim_list,name='victim_list'),
+    url(r'^get_victim_list/$', views.get_victim_list,name='get_victim_list'),
     )

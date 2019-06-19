@@ -1,0 +1,292 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" rel="stylesheet">
+{% endblock %}
+
+
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption"><i class="fa fa-adn"></i>Victim List</div>
+        </div>
+        <div class="portlet-body">
+            <div class="row">
+
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Division: </label>
+                        <select class="form-control" name="division" id="division" onclick="load_district(this)">
+                            <option value="%">Select One</option>
+                            {% for id,field_name in divisions %}
+                                <option value="{{ id }}">{{ field_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>District: </label>
+                        <select class="form-control" name="district" id="district" onclick="" >
+                            <option value="%">Select One</option>
+
+                        </select>
+                    </div>
+                </div>
+            <div class="col-md-3">
+                    <div class="form-group">
+                        <label >Status: </label>
+                               <select class="form-control" name="status" id="status" onclick="">
+                                   <option value="%">Select One</option>
+                                   <option value="Adopted">Adopted</option>
+                                   <option value="Not Adopted">Not Adopted</option>
+                                   <option value="Not interested anymore">Not interested anymore</option>
+                                   <option value="Migrated">Migrated</option>
+                                   <option value="can not be found">can not be found</option>
+                                   <option value="Dead">Dead</option>
+                                   <option value="Completed">Completed</option>
+                               </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-info pull-left" id="generate_report" style="margin-right: 10px" id="generate_report"
+                            title=""><i class="fa fa-2x fa fa-search-plus"></i>Search
+                    </button>
+
+                </div>
+            </div>
+            <br>
+        <div style="display:none;" id="container"><img style=" width: 86px; margin-left: 434px;" src="/static/images/Spinner.gif"></div>
+            <table id="all_info_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
+                <thead class="flip-content">
+                <tr>
+                    <th>Victim ID</th>
+                    <th>Incident ID</th>
+                    <th>Victim Name</th>
+                    <th>Incident Date</th>
+                    <th>Mobile</th>
+                    <th>Sex</th>
+                    <th>Status</th>
+                    <th>Division</th>
+                    <th>District</th>
+                    <th>Upazila</th>
+                    <th>Union</th>
+                    <th>Address</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>You are about to delete a facility info, this procedure is irreversible.</p>
+                    <p>Do you want to proceed?</p>
+                    <p class="debug-url"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" class="btn btn-danger btn-ok">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block additional-javascript %}
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
+
+
+    <script>
+{#        $(function () {#}
+{#            $('#from_date').datepicker({#}
+{#                endDate: '0d',#}
+{#                format: 'dd/mm/yyyy',#}
+{#                todayHighlight: true#}
+{#            }).on('changeDate', function () {#}
+{#                $(this).datepicker('hide');#}
+{#            });#}
+{##}
+{#            $('#to_date').datepicker({#}
+{#                endDate: '0d',#}
+{#                format: 'dd/mm/yyyy',#}
+{#                todayHighlight: true#}
+{#            }).on('changeDate', function () {#}
+{#                $(this).datepicker('hide');#}
+{#            });#}
+{#        });#}
+{##}
+{#        var dateObj = moment();#}
+{#        var prevDateObj = moment().subtract(30, 'd');#}
+{#        $('#from_date').val(prevDateObj.format('DD/MM/YYYY'));#}
+{#        $('#to_date').val(dateObj.format('DD/MM/YYYY'));#}
+
+
+
+
+            var table = $('#all_info_table').DataTable({
+                "scrollX": true, "ordering": false,
+                deferRender: true,
+                {#            dom: 'Bfrtip'#}
+                {#            ,#}
+                {#            buttons: [#}
+                {#                {#}
+                {#                    filename: "Fo",#}
+                {#                    title: "",#}
+                {#                    text: "<strong>Export</strong>",#}
+                {#                    extend: 'excel'#}
+                {#                }#}
+                {#            ]#}
+
+            });
+
+
+
+
+
+
+{#        var tbody = '';#}
+
+{#        var case_list = {{ case_list|safe }};#}
+{##}
+{#        for (var idx in case_list) {#}
+{#            tbody += '<tr><td>' + case_list[idx].incident_id + '</td><td>' + case_list[idx].incident_date + '</td><td>' + case_list[idx].district + '</td><td>' + case_list[idx].status + '</td><td class="td-center"><a class="btn btn-info" data-container="body"  data-placement="top" data-original-title="Detail" href="/asf/case_detail/' + case_list[idx].id + '"><i class="fa fa-2x fa fa-bars"></i>Details</a></td></tr>';#}
+{#        }#}
+
+{#        $("#all_info_table").find('tbody').html(tbody);#}
+
+        $('.delete-item').on('click', function (e) {
+            var criteria_id = $(this).attr("data-href");
+            $('.btn-ok').attr("href", criteria_id);
+        });
+
+        if ($('.alert-block').is(':visible')) {
+            window.setTimeout(function () {
+                $(".alert-success").fadeTo(1500, 0).slideUp(500, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        }
+
+
+        $('#generate_report').on('click', function (e) {
+
+                table.destroy();
+                var division    = $('#division').val();
+                var district    = $('#district').val();
+                var status    = $('#status').val();
+
+
+
+                $.ajax({
+                    url: '/asf/get_victim_list/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                          'status':status
+                        , 'division'            : division
+                        , 'district'            : district
+
+
+                    },
+                    beforeSend: function () {
+                        $('#container').show();
+
+                    },
+                    success: function (case_list) {
+                        $('#container').hide();
+                            var tbody = '';
+                        for (var idx in case_list) {
+                            tbody += '<tr><td>' + case_list[idx].victim_id + '</td><td>' + case_list[idx].incident_id + '</td><td>' + case_list[idx].victim_name + '</td><td>' + case_list[idx].incident_date + '</td><td>' + case_list[idx].mobile + '</td><td>' + case_list[idx].sex + '</td><td>' + case_list[idx].status + '</td><td>' + case_list[idx].division + '</td><td>' + case_list[idx].district + '</td><td>' + case_list[idx].upazila + '</td><td>' + case_list[idx].union_name + '</td><td>' + case_list[idx].address + '</td></tr>';
+                        }
+                        $("#all_info_table").find('tbody').html(tbody);
+                        table = datatable_reinitialize();
+
+
+                    }
+                });
+
+
+            });
+        $('#generate_report').trigger('click');
+        function datatable_reinitialize() {
+            return $('#all_info_table').DataTable({
+                "scrollX": true, "ordering": false,"iDisplayLength": 50,
+                deferRender: true,
+{#                dom: 'Bfrtip'#}
+{#                ,#}
+{#                buttons: [#}
+{#                    {#}
+{#                        filename: "CSA Report",#}
+{#                        title: "",#}
+{#                        text: "<strong>Export</strong>",#}
+{#                        extend: 'excelHtml5'#}
+{#                    }#}
+{#                ]#}
+
+            });
+        }
+
+        function load_district(object) {
+
+            div = parseInt(object.value)
+
+            if (isNaN(parseFloat(div))) {
+                $('#district').html("<option value=\"%\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_districts/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'div': div},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"%\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#district').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+    </script>
+{% endblock %}

@@ -786,3 +786,21 @@ def victim_profile(request,victim_tbl_id):
         'verification_within_24h':verification_within_24h,
         'brought_asf_within_48h':brought_asf_within_48h
     })
+
+
+@login_required
+def victim_list(request):
+    query = "select id,field_name from geo_data where field_type_id = 85"
+    df = pandas.read_sql(query, connection)
+    divisions = zip(df.id.tolist(), df.field_name.tolist())
+    return render(request, 'asfmodule/victim_list.html', {'divisions':divisions})
+
+@csrf_exempt
+def get_victim_list(request):
+    division = request.POST.get('division')
+    district = request.POST.get('district')
+    status = request.POST.get('status')
+    query = "select id,victim_id,(select incident_id from asf_case where id = case_id::int limit 1),victim_name ,(select incident_date from asf_case where id = case_id::int limit 1) ,mobile,sex,status,(select field_name from geo_data where id = current_division::int limit 1)division,(select field_name from geo_data where id = current_district::int limit 1) district ,(select field_name from geo_data where id = current_upazila::int limit 1) upazila ,(select field_name from geo_data where id = current_union::int limit 1) union_name ,current_address address from asf_victim where current_division like '"+str(division)+"' and current_district like '"+str(district)+"' and status like '"+str(status)+"'"
+    print(query)
+    data = json.dumps(__db_fetch_values_dict(query), default=decimal_date_default)
+    return HttpResponse(data)

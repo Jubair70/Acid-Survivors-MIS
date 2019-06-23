@@ -746,9 +746,15 @@ def victim_profile(request,victim_tbl_id):
     for each in df['form_str']:
         main_str += str(each)
     main_str = json.dumps(main_str)
-
+    username = request.user
+    # if in local environment, you should use your ip instead of localhost
+    # server_address = request.META.get('ip')+':'+request.META.get('HTTP_HOST').split(':', 1)[1]
+    # when in developement/live/client server
+    server_address = request.META.get('HTTP_HOST')
+    print(server_address)
     return render(request, "asfmodule/victim_profile.html",{
         'main_str': main_str,
+        'username':username,
         'victim_tbl_id':victim_tbl_id,
         'victim_id':victim_id,
         'victim_name':victim_name,
@@ -784,7 +790,8 @@ def victim_profile(request,victim_tbl_id):
         'injury_details':injury_details,
         'notified_within_24h':notified_within_24h,
         'verification_within_24h':verification_within_24h,
-        'brought_asf_within_48h':brought_asf_within_48h
+        'brought_asf_within_48h':brought_asf_within_48h,
+        'server_address':server_address
     })
 
 
@@ -796,11 +803,104 @@ def victim_list(request):
     return render(request, 'asfmodule/victim_list.html', {'divisions':divisions})
 
 @csrf_exempt
-def get_victim_list(request):
+def get_victims_list(request):
     division = request.POST.get('division')
     district = request.POST.get('district')
     status = request.POST.get('status')
     query = "select id,victim_id,(select incident_id from asf_case where id = case_id::int limit 1),victim_name ,(select incident_date from asf_case where id = case_id::int limit 1) ,mobile,sex,status,(select field_name from geo_data where id = current_division::int limit 1)division,(select field_name from geo_data where id = current_district::int limit 1) district ,(select field_name from geo_data where id = current_upazila::int limit 1) upazila ,(select field_name from geo_data where id = current_union::int limit 1) union_name ,current_address address from asf_victim where current_division like '"+str(division)+"' and current_district like '"+str(district)+"' and status like '"+str(status)+"'"
-    print(query)
+    # print(query)
     data = json.dumps(__db_fetch_values_dict(query), default=decimal_date_default)
     return HttpResponse(data)
+
+@login_required
+def services_to_other_institutes_list(request):
+    return render(request, 'asfmodule/services_to_other_institutes_list.html')
+
+@csrf_exempt
+def get_services_to_other_institutes_list(request):
+    from_date = request.POST.get('from_date')
+    to_date = request.POST.get('to_date')
+    query = "WITH t AS(SELECT json ->> 'date' s_date, json ->> 'organization' organization, json ->> 'hospital' hospital, json ->> 'service' service, json ->> 'adult_female' adult_female, json ->> 'adult_male' adult_male, json ->> 'child_female' child_female, json ->> 'child_male' child_male, json ->> 'trangender' trangender, json ->> 'seasson_adult_female' seasson_adult_female, json ->> 'seasson_adult_male' seasson_adult_male, json ->> 'seasson_child_female' seasson_child_female, json ->> 'seasson_child_male' seasson_child_male, json ->> 'seasson_trangender' seasson_trangender, json ->> 'procedure' s_procedure FROM logger_instance WHERE xform_id = (SELECT id FROM logger_xform WHERE id_string = 'services_other_institute')) SELECT to_char(s_date::date,'DD/MM/YYYY') s_date, case when organization='1' then 'Govt Hospital' when organization='2' then 'E-Clinic' when organization='3' then 'Outreach' when organization='4' then 'Community Clinic' end organization, case when hospital='1' then 'SHNIBPS' when hospital='2' then 'DMCH' when hospital='3' then 'ShSMCH' when hospital='4' then 'SSMC' when hospital='5' then 'MMCH' when hospital='6' then 'KMCH' when hospital='7' then 'CMCH' when hospital='8' then 'CuMCH' when hospital='9' then 'VSC' else '' end hospital, case when service='1' then 'Physiotherapy' when service='2' then 'Psychotherapy' end service, adult_female, adult_male, child_female, child_male, trangender, seasson_adult_female, seasson_adult_male, seasson_child_female, seasson_child_male, seasson_trangender, coalesce(s_procedure,'') s_procedure FROM t  where s_date:: DATE between to_date('"+str(from_date)+"','DD/MM/YYYY') and to_date('"+str(to_date)+"','DD/MM/YYYY')"
+    data = json.dumps(__db_fetch_values_dict(query), default=decimal_date_default)
+    return HttpResponse(data)
+
+def services_to_other_institutes_form(request):
+    username = request.user
+    # if in local environment, you should use your ip instead of localhost
+    # server_address = request.META.get('ip')+':'+request.META.get('HTTP_HOST').split(':', 1)[1]
+    # when in developement/live/client server
+    server_address = request.META.get('HTTP_HOST')
+    print(server_address)
+    form_id = __db_fetch_single_value("select id from logger_xform where id_string='services_other_institute'")
+    return render(request, 'asfmodule/services_to_other_institutes_form.html',{'username':username,'server_address':server_address,'form_id':form_id})
+
+
+# Capacity Building
+@login_required
+def capacity_building_list(request):
+    return render(request, 'asfmodule/capacity_building_list.html')
+
+@csrf_exempt
+def get_capacity_building_list(request):
+    from_date = request.POST.get('from_date')
+    to_date = request.POST.get('to_date')
+    query = "with t as( select coalesce(json->>'event_name','') event_name, coalesce(json->>'event_type','') event_type, coalesce(json->>'training_type','') training_type, coalesce(json->>'capacity_building_subject','') capacity_building_subject, coalesce(json->>'capacity_building_subject_other','') capacity_building_subject_other, coalesce(json->>'event_start_date','') event_start_date, coalesce(json->>'event_end_date','') event_end_date, coalesce(json->>'division','') division, coalesce(json->>'district','') district, coalesce(json->>'union','') union_name, coalesce(json->>'ward','') ward, coalesce(json->>'participant_male','') participant_male, coalesce(json->>'participant_female','') participant_female, coalesce(json->>'participant_girl','') participant_girl, coalesce(json->>'participant_boy','') participant_boy, coalesce(json->>'participant_trangender','') participant_trangender, coalesce(json->>'particiapnt_total','') particiapnt_total, coalesce(json->>'organized_by','') organized_by, coalesce(json->>'organized_by_other','') organized_by_other, coalesce(json->>'funding_source','') funding_source,date_created s_date from logger_instance where xform_id = (select id from logger_xform where id_string='capacity_building')) select event_name, event_type, training_type, capacity_building_subject, capacity_building_subject_other, event_start_date, event_end_date, (select field_name from geo_data where id = division::int limit 1) division, (select field_name from geo_data where id = district::int limit 1) district, (select field_name from geo_data where id = union_name::int limit 1) union_name, (select field_name from geo_data where id = ward::int limit 1) ward, participant_male, participant_female, participant_girl, participant_boy, participant_trangender, particiapnt_total, organized_by, organized_by_other, funding_source from t where s_date:: DATE between to_date('"+str(from_date)+"','DD/MM/YYYY') and to_date('"+str(to_date)+"','DD/MM/YYYY')"
+    data = json.dumps(__db_fetch_values_dict(query), default=decimal_date_default)
+    return HttpResponse(data)
+
+def capacity_building_form(request):
+    username = request.user
+    # if in local environment, you should use your ip instead of localhost
+    # server_address = request.META.get('ip')+':'+request.META.get('HTTP_HOST').split(':', 1)[1]
+    # when in developement/live/client server
+    server_address = request.META.get('HTTP_HOST')
+    print(server_address)
+    form_id = __db_fetch_single_value("select id from logger_xform where id_string='capacity_building'")
+    return render(request, 'asfmodule/capacity_building_form.html',{'username':username,'server_address':server_address,'form_id':form_id})
+
+# Event
+@login_required
+def event_list(request):
+    return render(request, 'asfmodule/event_list.html')
+
+@csrf_exempt
+def get_event_list(request):
+    from_date = request.POST.get('from_date')
+    to_date = request.POST.get('to_date')
+    query = "with t as( select coalesce(json->>'event_type','') event_type, coalesce(json->>'event_name','') event_name, coalesce(json->>'organized_by','') organized_by, coalesce(json->>'funded_by','') funded_by, coalesce(json->>'venue','') venue, coalesce(json->>'event_start_date','') event_start_date, coalesce(json->>'event_end_date','') event_end_date, coalesce(json->>'event_duration','') event_duration, coalesce(json->>'participant_male','') participant_male, coalesce(json->>'participant_female','') participant_female, coalesce(json->>'participant_boy','') participant_boy, coalesce(json->>'participant_girl','') participant_girl, coalesce(json->>'participant_trangender','') participant_trangender, coalesce(json->>'participant_total','') participant_total, coalesce(json->>'participant_type','') participant_type, coalesce(json->>'achievement','') achievement, coalesce(json->>'remarks','') remarks, date_created s_date from logger_instance where xform_id = (select id from logger_xform where id_string='event')) select case when event_type = '1' then 'Training' when event_type = '2' then 'Workshop' when event_type = '3' then 'Conference' when event_type = '4' then 'Seminar'  end event_type, event_name, organized_by, funded_by, venue, event_start_date, event_end_date, event_duration, participant_male, participant_female, participant_boy, participant_girl, participant_trangender, participant_total, participant_type, achievement, remarks from t where s_date:: DATE between to_date('"+str(from_date)+"','DD/MM/YYYY') and to_date('"+str(to_date)+"','DD/MM/YYYY')"
+    data = json.dumps(__db_fetch_values_dict(query), default=decimal_date_default)
+    return HttpResponse(data)
+
+def event_form(request):
+    username = request.user
+    # if in local environment, you should use your ip instead of localhost
+    # server_address = request.META.get('ip')+':'+request.META.get('HTTP_HOST').split(':', 1)[1]
+    # when in developement/live/client server
+    server_address = request.META.get('HTTP_HOST')
+    print(server_address)
+    form_id = __db_fetch_single_value("select id from logger_xform where id_string='event'")
+    return render(request, 'asfmodule/event_form.html',{'username':username,'server_address':server_address,'form_id':form_id})
+
+
+# Paper clipping
+@login_required
+def paper_clipping_list(request):
+    return render(request, 'asfmodule/paper_clipping_list.html')
+
+@csrf_exempt
+def get_paper_clipping_list(request):
+    from_date = request.POST.get('from_date')
+    to_date = request.POST.get('to_date')
+    query = "with t as( select coalesce(json->>'newspaper_name','') newspaper_name, coalesce(json->>'news_publish_date','') news_publish_date, coalesce(json->>'newspaper_page_no','') newspaper_page_no, coalesce(json->>'category','') category, coalesce(json->>'remarks','') remarks, coalesce(json->>'news_scanned_file','') news_scanned_file, coalesce(json->>'news_publish_date','') s_date from logger_instance where xform_id = (select id from logger_xform where id_string='paper_clipping')) select newspaper_name, news_publish_date, newspaper_page_no, category, remarks, news_scanned_file from t where s_date:: DATE between to_date('"+str(from_date)+"','DD/MM/YYYY') and to_date('"+str(to_date)+"','DD/MM/YYYY')"
+    data = json.dumps(__db_fetch_values_dict(query), default=decimal_date_default)
+    return HttpResponse(data)
+
+def paper_clipping_form(request):
+    username = request.user
+    # if in local environment, you should use your ip instead of localhost
+    # server_address = request.META.get('ip')+':'+request.META.get('HTTP_HOST').split(':', 1)[1]
+    # when in developement/live/client server
+    server_address = request.META.get('HTTP_HOST')
+    print(server_address)
+    form_id = __db_fetch_single_value("select id from logger_xform where id_string='paper_clipping'")
+    return render(request, 'asfmodule/event_form.html',{'username':username,'server_address':server_address,'form_id':form_id})

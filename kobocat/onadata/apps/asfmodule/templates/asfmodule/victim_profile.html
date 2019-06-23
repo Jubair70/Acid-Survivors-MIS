@@ -66,6 +66,10 @@ background-color: #eee;
         background-color: #00b96c !important;
     }
 
+    .modal-dialog {
+    width: 800px;
+  }
+
 
     </style>
 {% endblock %}
@@ -284,10 +288,10 @@ background-color: #eee;
     function load_forms(category_id, div_id) {
 
         victim_id = {{ victim_id | safe }};
-        if (opened.indexOf(category_id) > -1)
-            return
-        else
-            opened.push(category_id);
+        // if (opened.indexOf(category_id) > -1)
+        //     return
+        // else
+        //     opened.push(category_id);
 
         $.ajax({
             url: '/asf/get_forms_data/',
@@ -363,5 +367,22 @@ background-color: #eee;
             }
         });
     }
+
+function load_forms_html(form_id) {
+    server_address = '{{ server_address | safe }}'
+    username = '{{ username | safe }}'
+    url = "http://192.168.22.94:3000/?id="+form_id+"&url="+server_address+"&username="+username
+    $('.modal-body').html('<iframe src="'+url+'" style="width:100%;height:500px;"></iframe>');
+    window.addEventListener('message', this.handleIframeTask);
+    }
+
+
+    handleIframeTask = (e) => {
+
+  if (e.data === 'submitted form') {
+    $('#myModal').modal('hide');
+  }
+};
+
     </script>
 {% endblock %}

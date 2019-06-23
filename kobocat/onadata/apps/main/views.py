@@ -83,6 +83,8 @@ from onadata.apps.usermodule.views_project import get_own_and_partner_orgs_userm
 from onadata.libs.tasks import instance_parse
 from onadata.apps.usermodule.models import UserModuleProfile, UserPasswordHistory, UserFailedLogin, Organizations, \
     OrganizationDataAccess
+from collections import OrderedDict
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -1952,4 +1954,59 @@ def instance_status_update(request):
         #update status log with message
         #end transaction
 
+def dictfetchall(cursor):
+    desc = cursor.description
+    return [
+        OrderedDict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()]
 
+def __db_fetch_values_dict(query):
+    cursor = connection.cursor()
+    cursor.execute(query)
+    fetchVal = dictfetchall(cursor)
+    cursor.close()
+    return fetchVal
+
+
+def send_option(self, request, *args, **kwargs):
+    print("inside options *******************************")
+    # if request.method.upper() == 'HEAD':
+    access_control_headers = request.META['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'];
+    response = HttpResponse(200)
+    response["Access-Control-Allow-Origin"] = "*"
+    response["Access-Control-Allow-Methods"] = "POST"
+    response["Access-Control-Allow-Headers"] = access_control_headers
+    response["Access-Control-Allow-Credentials"] = False
+    return response
+
+
+def get_form_attribute(request):
+    print("hello")
+
+    if request.method == 'OPTIONS':
+        # print(request.META['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])
+        access_control_headers = request.META['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'];
+        response = HttpResponse(200)
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "POST"
+        response["Access-Control-Allow-Headers"] = access_control_headers
+        response["Access-Control-Allow-Credentials"] = False
+
+        # response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        # response.setHeader("Access-Control-Allow-Headers","access-control-allow-headers,access-control-allow-methods,access-control-allow-origin,access-control-expose-headers");
+        # response.setHeader("Access-Control-Allow-Credentials", "false");
+        # response.setHeader("Access-Control-Max-Age", "3600");
+        return response
+    data = json.loads(request.body)
+    form_id = data['id']
+    url = data['url']
+    username = data['username']
+    # form_id = request.GET.get('id')
+    # url = request.GET.get('url')
+    # username = request.GET.get('username')
+    submission_url = "http://"+url+"/"+username+"/submission"
+    qry = "select json::json,uuid,id_string from logger_xform where id ="+str(form_id)
+    data = __db_fetch_values_dict(qry)[0]
+    data['submission_url'] = submission_url
+    data = json.dumps(data)
+    return HttpResponse(data)

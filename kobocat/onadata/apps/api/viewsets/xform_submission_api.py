@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
+from django.http import HttpResponse
+
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework import viewsets
@@ -36,9 +38,10 @@ from onadata.apps.scheduling.schedule_utils import create_user_schedule, update_
 from onadata.apps.scheduling.models.beneficiary_info import insert_beneficiary_info
 
 from onadata.apps.approval.views import update_instance_approval_status
-
+from collections import OrderedDict
+from django.views.decorators.csrf import csrf_exempt
+from django.db import connection
 import sys
-
 
 # 10,000,000 bytes
 DEFAULT_CONTENT_LENGTH = getattr(settings, 'DEFAULT_CONTENT_LENGTH', 10000000)
@@ -77,7 +80,6 @@ def create_instance_from_json(username, request):
     dict_form = request.DATA
     submission = dict_form.get('submission')
 
-
     if submission is None:
         # return an error
         return [_(u"No submission key provided."), None]
@@ -89,6 +91,7 @@ def create_instance_from_json(username, request):
     xml_file = StringIO.StringIO(xml_string)
 
     return safe_create_instance(username, xml_file, [], None, request)
+
 
 
 class XFormSubmissionApi(OpenRosaHeadersMixin,
@@ -154,8 +157,58 @@ Here is some example JSON, it would replace `[the JSON]` above:
                         BrowsableAPIRenderer)
     serializer_class = SubmissionSerializer
     template_name = 'submission.xml'
+    print("before create *******************************")
+
+
+    def send_option(self, request, *args, **kwargs):
+        print("inside options *******************************")
+        # if request.method.upper() == 'HEAD':
+        access_control_headers = request.META['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'];
+        response = HttpResponse(200)
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "POST"
+        response["Access-Control-Allow-Headers"] = access_control_headers
+        response["Access-Control-Allow-Credentials"] = False
+        return response
+
+    def dictfetchall(self,cursor):
+        desc = cursor.description
+        return [
+            OrderedDict(zip([col[0] for col in desc], row))
+            for row in cursor.fetchall()]
+
+    def __db_fetch_values_dict(self,query):
+        cursor = connection.cursor()
+        cursor.execute(query)
+        fetchVal = self.dictfetchall(cursor)
+        cursor.close()
+        return fetchVal
+
+
+    def get_form_attribute(self,request, *args, **kwargs):
+        print("inside get_form_attribute *********")
+        data = json.loads(request.body)
+        form_id = data['id']
+        url = data['url']
+        username = data['username']
+        # form_id = request.GET.get('id')
+        # url = request.GET.get('url')
+        # username = request.GET.get('username')
+        submission_url = "http://" + url + "/" + username + "/submission"
+        try:
+            qry = "select json::json,uuid,id_string from logger_xform where id =" + str(form_id)
+            data = self.__db_fetch_values_dict(qry)[0]
+            data['submission_url'] = submission_url
+            response = HttpResponse(json.dumps(data))
+            response ["Access-Control-Allow-Origin"]= "*"
+            return response
+
+        except Exception as e:
+            print(e)
+            return HttpResponse(status=404)
 
     def create(self, request, *args, **kwargs):
+        print("CREATE@@@@@@@@@@@@@@@@@@@")
         username = self.kwargs.get('username')
         password = self.request.GET.get('password')
         if self.request.user.is_anonymous():
@@ -188,48 +241,49 @@ Here is some example JSON, it would replace `[the JSON]` above:
         if error or not instance:
             return self.error_response(error, is_json_request, request)
 
-        #print('instance.xform.id_string')
-        #print(instance.xform.id_string)
-        #print('\n\n\n\n\n')
+        # print('instance.xform.id_string')
+        # print(instance.xform.id_string)
+        # print('\n\n\n\n\n')
 
         ret_msg = ''
         # creating schedule for current submission
-        #if instance.xform.id_string == "household_information":
+        # if instance.xform.id_string == "household_information":
         #    ret_msg = insert_beneficiary_info(username, instance)
-            # create_user_schedule(username, instance)
-        #else:
-         #   dict_form = request.DATA
-         #   schedule_id = dict_form.get("scheduleId");            
-         #   if schedule_id is not None:
-         #       update_schedule_status(schedule_id)
+        # create_user_schedule(username, instance)
+        # else:
+        #   dict_form = request.DATA
+        #   schedule_id = dict_form.get("scheduleId");
+        #   if schedule_id is not None:
+        #       update_schedule_status(schedule_id)
 
         if ret_msg is not None and len(ret_msg) > 0:
-            return self.mobile_user_response(instance,ret_msg,request)
-
+            return self.mobile_user_response(instance, ret_msg, request)
 
         context = self.get_serializer_context()
         serializer = SubmissionSerializer(instance, context=context)
-        instance_parse() #After new db parse implement stop it
+        instance_parse()  # After new db parse implement stop it
 
-        query_dict = {'_id' :  str(instance.id) }
+        query_dict = {'_id': str(instance.id)}
         options = {
             'group_delimiter': '/',
             'split_select_multiples': True,
             'binary_select_multiples': False,
             # 'meta': meta.replace(",", "") if meta else None,
-            'exp_data_typ':'lbl'
+            'exp_data_typ': 'lbl'
         }
 
         if instance.xform.db_export:
-            #print 'Entered'
+            # print 'Entered'
             create_db_async_export(instance.xform, 'dbtable', json.dumps(query_dict), False, options)
 
         update_instance_approval_status(instance.id, 'Submitted')
 
-        return Response(serializer.data,
-                        headers=self.get_openrosa_headers(request),
-                        status=status.HTTP_201_CREATED,
-                        template_name=self.template_name)
+        response = Response(serializer.data,
+                            headers=self.get_openrosa_headers(request),
+                            status=status.HTTP_201_CREATED,
+                            template_name=self.template_name)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
 
     def mobile_user_response(self, instance, message, request):
         final_msg = {
@@ -246,6 +300,7 @@ Here is some example JSON, it would replace `[the JSON]` above:
                         template_name=self.template_name)
 
     def error_response(self, error, is_json_request, request):
+        print("Error&&&&&&&&&&&&&&&&")
         if not error:
             error_msg = _(u"Unable to create submission.")
             status_code = status.HTTP_400_BAD_REQUEST

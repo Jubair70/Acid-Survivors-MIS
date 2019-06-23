@@ -11,45 +11,22 @@
 
     <div class="portlet box red">
         <div class="portlet-title">
-            <div class="caption"><i class="fa fa-adn"></i>Victim List</div>
+            <div class="caption"><i class="fa fa-adn"></i>Services Other Institute</div>
         </div>
         <div class="portlet-body">
             <div class="row">
-
-
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label>Division: </label>
-                        <select class="form-control" name="division" id="division" onclick="load_district(this)">
-                            <option value="%">Select One</option>
-                            {% for id,field_name in divisions %}
-                                <option value="{{ id }}">{{ field_name }}</option>
-                            {% endfor %}
-                        </select>
+                        <label>From Date: </label>
+                        <input type="text" class="datepicker form-control" name="from_date" id="from_date" readonly>
+
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label>District: </label>
-                        <select class="form-control" name="district" id="district" onclick="" >
-                            <option value="%">Select One</option>
+                        <label>To Date: </label>
+                        <input type="text" class="datepicker form-control" name="to_date" id="to_date" readonly>
 
-                        </select>
-                    </div>
-                </div>
-            <div class="col-md-3">
-                    <div class="form-group">
-                        <label >Status: </label>
-                               <select class="form-control" name="status" id="status" onclick="">
-                                   <option value="%">Select One</option>
-                                   <option value="Adopted">Adopted</option>
-                                   <option value="Not Adopted">Not Adopted</option>
-                                   <option value="Not interested anymore">Not interested anymore</option>
-                                   <option value="Migrated">Migrated</option>
-                                   <option value="can not be found">can not be found</option>
-                                   <option value="Dead">Dead</option>
-                                   <option value="Completed">Completed</option>
-                               </select>
                     </div>
                 </div>
             </div>
@@ -59,7 +36,12 @@
                     <button type="submit" class="btn btn-info pull-left" id="generate_report" style="margin-right: 10px" id="generate_report"
                             title=""><i class="fa fa-2x fa fa-search-plus"></i>Search
                     </button>
+                    <a href="/asf/services_to_other_institutes_form/" class="pull-right">
 
+                        <button type="submit" class="btn btn-info pull-left" id="add_new" data-original-title=""
+                                title=""><i class="fa fa-2x fa-plus"></i>New Form
+                        </button>
+                    </a>
                 </div>
             </div>
             <br>
@@ -67,18 +49,21 @@
             <table id="all_info_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
                 <thead class="flip-content">
                 <tr>
-                    <th>Victim ID</th>
-                    <th>Incident ID</th>
-                    <th>Victim Name</th>
-                    <th>Incident Date</th>
-                    <th>Mobile</th>
-                    <th>Sex</th>
-                    <th>Status</th>
-                    <th>Division</th>
-                    <th>District</th>
-                    <th>Upazila</th>
-                    <th>Union</th>
-                    <th>Address</th>
+                    <th>Date</th>
+                    <th>Type of Organization</th>
+                    <th>Name of Hospital</th>
+                    <th>Service Name</th>
+                    <th>Female Adult</th>
+                    <th>Male Adult</th>
+                    <th>Female Child</th>
+                    <th>Male Child</th>
+                    <th>Transgender</th>
+                    <th>Seassion for Female Adult</th>
+                    <th>Seassion for Male Adult</th>
+                    <th>Seassion for Female Child</th>
+                    <th>Seassion for Male Child</th>
+                    <th>Seassion for Transgender</th>
+                    <th>Procedure</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -126,28 +111,28 @@
 
 
     <script>
-{#        $(function () {#}
-{#            $('#from_date').datepicker({#}
-{#                endDate: '0d',#}
-{#                format: 'dd/mm/yyyy',#}
-{#                todayHighlight: true#}
-{#            }).on('changeDate', function () {#}
-{#                $(this).datepicker('hide');#}
-{#            });#}
-{##}
-{#            $('#to_date').datepicker({#}
-{#                endDate: '0d',#}
-{#                format: 'dd/mm/yyyy',#}
-{#                todayHighlight: true#}
-{#            }).on('changeDate', function () {#}
-{#                $(this).datepicker('hide');#}
-{#            });#}
-{#        });#}
-{##}
-{#        var dateObj = moment();#}
-{#        var prevDateObj = moment().subtract(30, 'd');#}
-{#        $('#from_date').val(prevDateObj.format('DD/MM/YYYY'));#}
-{#        $('#to_date').val(dateObj.format('DD/MM/YYYY'));#}
+        $(function () {
+            $('#from_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+
+            $('#to_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+        });
+
+        var dateObj = moment();
+        var prevDateObj = moment().subtract(30, 'd');
+        $('#from_date').val(prevDateObj.format('DD/MM/YYYY'));
+        $('#to_date').val(dateObj.format('DD/MM/YYYY'));
 
 
 
@@ -173,15 +158,6 @@
 
 
 
-{#        var tbody = '';#}
-
-{#        var case_list = {{ case_list|safe }};#}
-{##}
-{#        for (var idx in case_list) {#}
-{#            tbody += '<tr><td>' + case_list[idx].incident_id + '</td><td>' + case_list[idx].incident_date + '</td><td>' + case_list[idx].district + '</td><td>' + case_list[idx].status + '</td><td class="td-center"><a class="btn btn-info" data-container="body"  data-placement="top" data-original-title="Detail" href="/asf/case_detail/' + case_list[idx].id + '"><i class="fa fa-2x fa fa-bars"></i>Details</a></td></tr>';#}
-{#        }#}
-
-{#        $("#all_info_table").find('tbody').html(tbody);#}
 
         $('.delete-item').on('click', function (e) {
             var criteria_id = $(this).attr("data-href");
@@ -200,32 +176,30 @@
         $('#generate_report').on('click', function (e) {
 
                 table.destroy();
-                var division    = $('#division').val();
-                var district    = $('#district').val();
-                var status    = $('#status').val();
+
+
+                var from_date   = $('#from_date').val();
+                var to_date     = $('#to_date').val();
 
 
 
                 $.ajax({
-                    url: '/asf/get_victims_list/',
+                    url: '/asf/get_services_to_other_institutes_list/',
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                          'status':status
-                        , 'division'            : division
-                        , 'district'            : district
-
-
+                          'from_date'   : from_date
+                        , 'to_date'     : to_date
                     },
                     beforeSend: function () {
                         $('#container').show();
 
                     },
-                    success: function (case_list) {
+                    success: function (list) {
                         $('#container').hide();
                             var tbody = '';
-                        for (var idx in case_list) {
-                            tbody += '<tr><td>' + case_list[idx].victim_id + '</td><td>' + case_list[idx].incident_id + '</td><td>' + case_list[idx].victim_name + '</td><td>' + case_list[idx].incident_date + '</td><td>' + case_list[idx].mobile + '</td><td>' + case_list[idx].sex + '</td><td>' + case_list[idx].status + '</td><td>' + case_list[idx].division + '</td><td>' + case_list[idx].district + '</td><td>' + case_list[idx].upazila + '</td><td>' + case_list[idx].union_name + '</td><td>' + case_list[idx].address + '</td></tr>';
+                        for (var idx in list) {
+                            tbody += '<tr><td>' + list[idx].s_date + '</td> <td>' + list[idx].organization + '</td> <td>' + list[idx].hospital + '</td> <td>' + list[idx].service + '</td> <td>' + list[idx].adult_female + '</td> <td>' + list[idx].adult_male + '</td> <td>' + list[idx].child_female + '</td> <td>' + list[idx].child_male + '</td> <td>' + list[idx].trangender + '</td> <td>' + list[idx].seasson_adult_female + '</td> <td>' + list[idx].seasson_adult_male + '</td> <td>' + list[idx].seasson_child_female + '</td> <td>' + list[idx].seasson_child_male + '</td> <td>' + list[idx].seasson_trangender + '</td> <td>' + list[idx].s_procedure + '</td> </tr>';
                         }
                         $("#all_info_table").find('tbody').html(tbody);
                         table = datatable_reinitialize();

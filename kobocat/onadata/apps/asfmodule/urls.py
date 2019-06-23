@@ -27,7 +27,22 @@ urlpatterns = patterns('',
     url(r'^victim_status/(?P<victim_tbl_id>\d+)/$', views.victim_status, name='victim_status'),
     url(r'^refer_victim/(?P<victim_tbl_id>\d+)/$', views.refer_victim, name='refer_victim'),
     url(r'^victim_profile/(?P<victim_tbl_id>\d+)/$', views.victim_profile, name='victim_profile'),
-
     url(r'^victim_list/$', views.victim_list,name='victim_list'),
-    url(r'^get_victim_list/$', views.get_victim_list,name='get_victim_list'),
+    url(r'^get_victims_list/$', views.get_victims_list,name='get_victims_list'),
+
+    url(r'^services_to_other_institutes_list/$', views.services_to_other_institutes_list,name='services_to_other_institutes_list'),
+    url(r'^get_services_to_other_institutes_list/$', views.get_services_to_other_institutes_list,name='get_services_to_other_institutes_list'),
+    url(r'^services_to_other_institutes_form/$', views.services_to_other_institutes_form,name='services_to_other_institutes_form'),
+
+    url(r'^capacity_building_list/$', views.capacity_building_list,name='capacity_building_list'),
+    url(r'^get_capacity_building_list/$', views.get_capacity_building_list,name='get_capacity_building_list'),
+    url(r'^capacity_building_form/$', views.capacity_building_form,name='capacity_building_form'),
+
+    url(r'^event_list/$', views.event_list,name='event_list'),
+    url(r'^get_event_list/$', views.get_event_list,name='get_event_list'),
+    url(r'^event_form/$', views.event_form,name='event_form'),
+
+    url(r'^paper_clipping_list/$', views.paper_clipping_list,name='paper_clipping_list'),
+    url(r'^get_paper_clipping_list/$', views.get_paper_clipping_list,name='get_paper_clipping_list'),
+    url(r'^paper_clipping_form/$', views.paper_clipping_form,name='paper_clipping_form'),
     )

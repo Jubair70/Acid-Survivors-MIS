@@ -78,7 +78,7 @@
             </div>
             {% endif %}
         <hr>
-
+{% if status == 'Valid' %}
             <div class="row">
                 <div class="col-md-12">
 
@@ -90,6 +90,8 @@
                     </a>
                 </div>
             </div>
+        {% endif %}
+
             <br>
         <div style="display:none;" id="container"><img style=" width: 86px; margin-left: 434px;" src="/static/images/Spinner.gif"></div>
             <table id="all_info_table" class="table table-bordered table-striped table-condensed flip-content nowrap">

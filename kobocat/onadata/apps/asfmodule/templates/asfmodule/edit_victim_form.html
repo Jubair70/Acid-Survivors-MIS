@@ -129,10 +129,10 @@
                                  <input class="form-control" name="occupation" id="occupation" type="text">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="div_maritial_status">
                             <div class="form-group">
                                 <label>Marital Status: </label>
-                                <select class="form-control" name="maritial_status" id="maritial_status" required>
+                                <select class="form-control" name="maritial_status" id="maritial_status">
                                     <option value="">Select One</option>
                                     <option value="Married">Married</option>
                                     <option value="Unmarried">Unmarried</option>
@@ -155,10 +155,10 @@
                             <input class="form-control" name="mother_name" id="mother_name" type="text" required>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" id="div_spouse_name">
                         <div class="form-group">
                             <label>Spouse Name: </label>
-                            <input class="form-control" name="spouse_name" id="spouse_name" type="text" required>
+                            <input class="form-control" name="spouse_name" id="spouse_name" type="text">
                         </div>
                     </div>
                      <div class="col-md-3">
@@ -247,16 +247,23 @@
                             </div>
                         </div>
 
+{#            <div class="col-md-3">#}
+{#                            <div class="form-group">#}
+{#                                <label>Is permanent address is same as present address: </label>#}
+{#                                <select class="form-control" name="present_permanent_address_same" id="present_permanent_address_same" onclick="load_perm_addr(this)" required>#}
+{#                                    <option value="">Select One</option>#}
+{#                                    <option value="Yes">Yes</option>#}
+{#                                    <option value="No">No</option>#}
+{#                                </select>#}
+{#                            </div>#}
+{#                        </div>#}
             <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Is permanent address is same as present address: </label>
-                                <select class="form-control" name="present_permanent_address_same" id="present_permanent_address_same" onclick="load_perm_addr(this)" required>
-                                    <option value="">Select One</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                </select>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label>Is permanent address is same as present address: </label>
+                        <label class="radio-inline"><input type="radio" name="present_permanent_address_same" id="present_permanent_address_same1" onclick="load_perm_addr()" value="Yes">Yes</label>
+                        <label class="radio-inline"><input type="radio" name="present_permanent_address_same" id="present_permanent_address_same2" onclick="load_perm_addr()" value="No">No</label>
+                    </div>
+                </div>
             </div>
 
             <div class="row" id = "block">
@@ -432,7 +439,10 @@ var current_union=$('#current_union').val('{{current_union | safe}}');
 var current_ward=$('#current_ward').val('{{current_ward | safe}}');
 var current_address=$('#current_address').val('{{current_address | safe}}');
 var current_postoffice=$('#current_postoffice').val('{{current_postoffice | safe}}');
-var present_permanent_address_same=$('#present_permanent_address_same').val('{{present_permanent_address_same | safe}}');
+
+var present_permanent_address_same= '{{ present_permanent_address_same | safe }}';
+
+
 var permanent_division=$('#permanent_division').val('{{permanent_division | safe}}');
 var permanent_district=$('#permanent_district').val('{{permanent_district | safe}}');
 var permanent_upazila=$('#permanent_upazila').val('{{permanent_upazila | safe}}');
@@ -445,16 +455,17 @@ var notified_within_24h=$('#notified_within_24h').val('{{notified_within_24h | s
 var verification_within_24h=$('#verification_within_24h').val('{{verification_within_24h | safe}}');
 var brought_asf_within_48h=$('#brought_asf_within_48h').val('{{brought_asf_within_48h | safe}}');
 
+if(present_permanent_address_same =='Yes')
+{
+    $('#present_permanent_address_same1').attr('checked','true');
+    load_perm_addr();
+}
+else
+{
+    $('#present_permanent_address_same2').attr('checked','true');
+}
 
-if(present_permanent_address_same=='Yes')
-      $('#block').block({message: null,
-              overlayCSS:  {
-        backgroundColor: '#eee',
-        opacity:         0.4,
-        cursor:          'default'
-    },
-      });
-else $('#block').unblock();
+
 
  $(function () {
             $('#birth_date').datepicker({
@@ -637,8 +648,11 @@ $('#submit').on('click',function () {
         }
 
 
-    function load_perm_addr(obj) {
-        if(obj.value=='Yes')
+
+    function load_perm_addr() {
+
+        console.log($('#present_permanent_address_same1').is(':checked'))
+        if($('#present_permanent_address_same1').is(':checked'))
         {
             $('#permanent_division').val($('#current_division').val());
 
@@ -699,6 +713,40 @@ $('#submit').on('click',function () {
             formatted_date = yyyy + '-' + mm + '-' + dd;
             return formatted_date;
         }
+
+    $('#div_spouse_name').hide();
+    $('#div_maritial_status').hide();
+
+    $('#victim_age').change(function () {
+        victim_age = parseInt($('#victim_age').val());
+        if(victim_age>15)
+        {
+            $('#div_maritial_status').show();
+            $('#maritial_status').attr('required','true');
+        }
+        else
+        {
+            $('#div_maritial_status').hide();
+            $('#maritial_status').removeAttr('required');
+        }
+
+    });
+
+    $('#maritial_status').on('click',function () {
+        maritial_status = $('#maritial_status option:selected').val()
+        if(maritial_status == 'Married')
+        {
+            $('#div_spouse_name').show();
+            $('#spouse_name').attr('required','true');
+        }
+        else
+        {
+            $('#div_spouse_name').hide();
+            $('#spouse_name').removeAttr('required');
+        }
+
+
+    });
 {#        $('#registration_date').val(getDesiredDate(2));#}
 
     </script>

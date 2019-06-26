@@ -149,11 +149,14 @@
             }
         }
 
+
         function getAnswerLabel(row_data, selected_lang) {
             if (row_data._field_type != 'select one' && row_data._field_type != 'select all that apply') {
                 if (row_data._field_type == 'photo') {
                     //return '<a href="/media/' + _username + '/attachments/' + row_data._field_value + '" download><img src="/media/' + _username + '/attachments/' + row_data._field_value + '" height="42" width="42"></a>';
-                    return '<a href="/media/' + _username + '/attachments/' + row_data._field_value + '" data-lightbox="image-1" data-title="' + row_data._field_value + '"><img width="50%" src="/media/' + _username + '/attachments/' + row_data._field_value + '"></a>';
+{#                    return '<a href="/media/' + _username + '/attachments/' + row_data._field_value + '" data-lightbox="image-1" data-title="' + row_data._field_value + '"><img width="20%" src="/media/' + _username + '/attachments/' + row_data._field_value + '"></a>';#}
+                    return '<img class="img-responsive" width="20%" src="/media/' + _username + '/attachments/' + row_data._field_value + '">';
+
                 }
                 else {
                     return row_data._field_value;
@@ -186,6 +189,7 @@
                     return sa_title_label;
                 }
             }
+
         }
 
         function isObject(obj) {

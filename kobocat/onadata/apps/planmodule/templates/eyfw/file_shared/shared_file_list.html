@@ -62,9 +62,7 @@
         <!--<div class="tab-pane fade" id="tab_1_2">-->
 
             <!--Load report Form-->
-            <div id="add_report_form_div">
-                {% include "eyfw/file_shared/file_share_form.html" %}
-            </div>
+
 		<div id = "load">
 </div>
             <div class ="col-md-12" style = "margin-top: 10px;">
@@ -134,13 +132,14 @@
         });
 
         function getSharedFileTable(){
-        var cntrl_remove_btn = {{ cntrl_remove_btn | safe }}
+        var cntrl_remove_btn = {{ cntrl_remove_btn | safe }};
         console.log("Monthly  list  table trigger");
         $.ajax({
             url: '/planmodule/eyfw/getSharedFileList/',
             type: 'POST',
                     data: {
                           'cntrl_remove_btn':cntrl_remove_btn
+
                     },
             success: function (data) {
                 $('#id_title').val('');

@@ -128,7 +128,7 @@
                                 <select class="form-control" name="information_source" id="information_source" required>
                                         <option value="">Select One</option>
                                         <option value="Individual Source">Individual Source</option>
-                                        <option value="Govt Organization/Institution">Govt Organization/Institution</option>
+
                                         <option value="Private Organization/Institution">Private Organization/Institution</option>
                                         <option value="Print Media">Print Media</option>
                                         <option value="Electronic Media">Electronic Media</option>
@@ -136,10 +136,16 @@
                             </div>
                         </div>
 
-                    <div class="col-md-3">
+
+
+
+                    </div>
+                <hr>
+                    <div class="row">
+                    <div class="col-md-3" id="div_source_organization_name">
                             <div class="form-group">
                                 <label >Organization Name: </label>
-                                <select class="form-control" name="source_organization_name" id="source_organization_name" required>
+                                <select class="form-control" name="source_organization_name" id="source_organization_name" >
                                         <option value="">Select One</option>
                                     {% for id, org_name in organizations %}
                                         <option value="{{ id }}">{{ org_name }}</option>
@@ -147,65 +153,60 @@
                                     </select>
                             </div>
                         </div>
-
-
-                    </div>
-                <hr>
-                    <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="div_source_name">
                             <div class="form-group">
                                 <label>Name:</label>
-                                <input class="form-control" name="source_name" id="source_name" type="text" required>
+                                <input class="form-control" name="source_name" id="source_name" type="text" >
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="div_source_designation">
                             <div class="form-group">
                                 <label>Designation:</label>
                                 <input class="form-control" name="source_designation" id="source_designation"
                                        type="text">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="div_source_address">
                             <div class="form-group">
                                 <label>Address:</label>
                                 <input class="form-control" name="source_address" id="source_address" type="text"
                                        >
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="div_source_phone">
                             <div class="form-group">
                                 <label>Phone:</label>
-                                <input class="form-control" name="source_phone" id="source_phone" pattern="^(?:\+88|01)?(?:\d{11}|\d{13})$" type="text" required>
+                                <input class="form-control" name="source_phone" id="source_phone" pattern="^(?:\+88|01)?(?:\d{11}|\d{13})$" type="text" >
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="div_print_media_name">
                             <div class="form-group">
                                 <label>Print Media Name:</label>
-                                <input class="form-control" name="print_media_name" id="print_media_name" type="text" required>
+                                <input class="form-control" name="print_media_name" id="print_media_name" type="text" >
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="div_print_media_page_number">
                             <div class="form-group">
                                 <label>Page Number:</label>
                                 <input class="form-control" name="print_media_page_number" id="print_media_page_number" type="text" >
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="div_print_media_reporter_name">
                             <div class="form-group">
                                 <label>Reporter Name:</label>
                                 <input class="form-control" name="print_media_reporter_name" id="print_media_reporter_name" type="text" >
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="div_print_media_publishing_date">
                             <div class="form-group">
                                 <label>Date of Publishing:</label>
                                 <input class="datepicker form-control" name="print_media_publishing_date" id="print_media_publishing_date" type="text" readonly>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="div_electronic_media_name">
                             <div class="form-group">
                                 <label >Name of TV Channel: </label>
-                                    <select class="form-control" name="electronic_media_name" id="electronic_media_name" required>
+                                    <select class="form-control" name="electronic_media_name" id="electronic_media_name" >
                                       <option value="">Select One</option>
                                        {% for id, org_name in tv_chanels %}
                                         <option value="{{ id }}">{{ org_name }}</option>
@@ -213,13 +214,15 @@
                                     </select>
                             </div>
                         </div>
-                     <div class="col-md-3">
+                     <div class="col-md-3" id="div_electronic_media_telecast_date">
                             <div class="form-group">
                                 <label>Date of Telecasting:</label>
                                 <input class="datepicker form-control" name="electronic_media_telecast_date" id="electronic_media_telecast_date" type="text" readonly>
                             </div>
                         </div>
-
+                    </div>
+                 <hr>
+                <div class="row">
 
                     <div class="col-md-3">
                             <div class="form-group">
@@ -437,7 +440,99 @@ $("#incident_date").keydown(false);
 
         });
 
-$('#submit').on('click',function () {
+        $('#div_source_organization_name').hide()
+$('#div_source_name').hide()
+$('#div_source_designation').hide()
+$('#div_source_address').hide()
+$('#div_source_phone').hide()
+$('#div_print_media').hide()
+$('#div_print_media_name').hide()
+$('#div_print_media_page_number').hide()
+$('#div_print_media_reporter_name').hide()
+$('#div_print_media_publishing_date').hide()
+$('#div_electronic_media').hide()
+$('#div_electronic_media_name').hide()
+$('#div_electronic_media_telecast_date').hide()
+
+
+$('#information_source').on('click',function () {
+    $('#div_source_organization_name').hide();
+    $('#div_source_name').hide();
+    $('#div_source_designation').hide();
+    $('#div_source_address').hide()
+    $('#div_source_phone').hide();
+    $('#div_print_media_name').hide();
+    $('#div_print_media_page_number').hide();
+    $('#div_print_media_reporter_name').hide();
+    $('#div_print_media_publishing_date').hide();
+    $('#div_electronic_media_name').hide();
+    $('#div_electronic_media_telecast_date').hide();
+
+    $('#source_organization_name').removeAttr('required');
+$('#source_name').removeAttr('required');
+$('#source_designation').removeAttr('required');
+$('#source_address').removeAttr('required');
+$('#source_phone').removeAttr('required');
+
+$('#print_media_name').removeAttr('required');
+$('#print_media_page_number').removeAttr('required');
+$('#print_media_reporter_name').removeAttr('required');
+$('#print_media_publishing_date').removeAttr('required');
+
+$('#electronic_media_name').removeAttr('required');
+$('#electronic_media_telecast_date').removeAttr('required');
+
+
+
+    sel_val = $('#information_source option:selected').val();
+
+    if(sel_val == 'Individual Source')
+    {
+        $('#div_source_name').show();
+        $('#div_source_designation').show();
+        $('#div_source_address').show();
+        $('#div_source_phone').show();
+        $('#source_name').attr('required','true');
+        $('#source_phone').attr('required','true');
+    }
+    else if(sel_val == 'Private Organization/Institution')
+    {
+        $('#div_source_organization_name').show()
+        $('#div_source_name').show();
+        $('#div_source_designation').show();
+        $('#div_source_address').show();
+        $('#div_source_phone').show();
+        $('#source_organization_name').attr('required','true');
+        $('#source_name').attr('required','true');
+        $('#source_phone').attr('required','true');
+    }
+    else if(sel_val == 'Print Media')
+    {
+        $('#div_source_organization_name').show()
+$('#div_source_name').show()
+$('#div_source_designation').show()
+$('#div_source_address').show()
+$('#div_source_phone').show()
+
+$('#div_print_media_name').show()
+$('#div_print_media_page_number').show()
+$('#div_print_media_reporter_name').show()
+$('#div_print_media_publishing_date').show()
+        $('#source_organization_name').attr('required','true');
+        $('#source_name').attr('required','true');
+        $('#source_phone').attr('required','true');
+        $('#print_media_name').attr('required','true')
+
+    }
+    else if (sel_val == 'Electronic Media')
+    {
+        $('#div_electronic_media_name').show()
+$('#div_electronic_media_telecast_date').show()
+        $('#electronic_media_name').attr('required','true');
+
+    }
+
+
 
 });
 

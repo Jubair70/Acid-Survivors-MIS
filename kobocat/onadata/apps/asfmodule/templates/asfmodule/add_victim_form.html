@@ -130,10 +130,10 @@
                                  <input class="form-control" name="occupation" id="occupation" type="text">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="div_maritial_status">
                             <div class="form-group">
                                 <label>Marital Status: </label>
-                                <select class="form-control" name="maritial_status" id="maritial_status" required>
+                                <select class="form-control" name="maritial_status" id="maritial_status">
                                     <option value="">Select One</option>
                                     <option value="Married">Married</option>
                                     <option value="Unmarried">Unmarried</option>
@@ -156,10 +156,10 @@
                             <input class="form-control" name="mother_name" id="mother_name" type="text" required>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" id="div_spouse_name">
                         <div class="form-group">
                             <label>Spouse Name: </label>
-                            <input class="form-control" name="spouse_name" id="spouse_name" type="text" required>
+                            <input class="form-control" name="spouse_name" id="spouse_name" type="text">
                         </div>
                     </div>
                      <div class="col-md-3">
@@ -237,16 +237,25 @@
                             </div>
                         </div>
 
-            <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Is permanent address is same as present address: </label>
-                                <select class="form-control" name="present_permanent_address_same" id="present_permanent_address_same" onclick="load_perm_addr(this)" required>
-                                    <option value="">Select One</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                </select>
-                            </div>
-                        </div>
+{#            <div class="col-md-3">#}
+{#                            <div class="form-group">#}
+{#                                <label>Is permanent address is same as present address: </label>#}
+{#                                <select class="form-control" name="present_permanent_address_same" id="present_permanent_address_same" onclick="load_perm_addr(this)" required>#}
+{#                                    <option value="">Select One</option>#}
+{#                                    <option value="Yes">Yes</option>#}
+{#                                    <option value="No">No</option>#}
+{#                                </select>#}
+{#                            </div>#}
+{#                        </div>#}
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Is permanent address is same as present address: </label>
+                        <label class="radio-inline"><input type="radio" name="present_permanent_address_same" onclick="load_perm_addr(this)" value="Yes">Yes</label>
+                        <label class="radio-inline"><input type="radio" name="present_permanent_address_same" onclick="load_perm_addr(this)" value="No" checked>No</label>
+                    </div>
+                </div>
+
             </div>
 
             <div class="row" id = "block">
@@ -635,6 +644,40 @@ $('#submit').on('click',function () {
             formatted_date = yyyy + '-' + mm + '-' + dd;
             return formatted_date;
         }
+    $('#div_spouse_name').hide();
+    $('#div_maritial_status').hide();
+
+    $('#victim_age').change(function () {
+        victim_age = parseInt($('#victim_age').val());
+        if(victim_age>15)
+        {
+            $('#div_maritial_status').show();
+            $('#maritial_status').attr('required','true');
+        }
+        else
+        {
+            $('#div_maritial_status').hide();
+            $('#maritial_status').removeAttr('required');
+        }
+
+    });
+
+    $('#maritial_status').on('click',function () {
+        maritial_status = $('#maritial_status option:selected').val()
+        if(maritial_status == 'Married')
+        {
+            $('#div_spouse_name').show();
+            $('#spouse_name').attr('required','true');
+        }
+        else
+        {
+            $('#div_spouse_name').hide();
+            $('#spouse_name').removeAttr('required');
+        }
+
+
+    });
+
 {#        $('#registration_date').val(getDesiredDate(2));#}
 
     </script>

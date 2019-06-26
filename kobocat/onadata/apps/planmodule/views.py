@@ -1704,7 +1704,7 @@ def getAjaxMessage(type, message):
 
 @login_required
 def file_share(request):
-
+    cntrl_remove_btn = 1
     form = FileShareForm()
     if request.method == 'POST':
         form = FileShareForm(request.POST, request.FILES)
@@ -1724,10 +1724,10 @@ def file_share(request):
         else:
             #print form.as_p()
             # Form is not valid, Send Error message with Form
-            return render(request, "eyfw/file_shared/file_share_form.html", {'form': form},status=500)
+            return render(request, "eyfw/file_shared/file_share_form.html", {'form': form,'cntrl_remove_btn':cntrl_remove_btn},status=500)
         return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
-    return render(request, "eyfw/file_shared/file_share.html", {'form': form})
+    return render(request, "eyfw/file_shared/file_share.html", {'form': form,'cntrl_remove_btn':cntrl_remove_btn})
 
 
 def upload_shared_file(file,title):
@@ -1745,6 +1745,7 @@ def upload_shared_file(file,title):
 
 @login_required
 def getSharedFileList(request):
+    cntrl_remove_btn = request.POST.get('cntrl_remove_btn')
     data_query = "select *,(select first_name || ' ' || last_name from auth_user where id= user_id limit 1)  as username from file_shared order by id desc "
     data = __db_fetch_values_dict(data_query)
     data_list = []
@@ -1759,7 +1760,7 @@ def getSharedFileList(request):
         data_list.append(data_dict.copy())
         data_dict.clear()
 
-    return render(request, "eyfw/file_shared/file_shared_datalist.html", {'dataset': data_list})
+    return render(request, "eyfw/file_shared/file_shared_datalist.html", {'dataset': data_list,'cntrl_remove_btn':cntrl_remove_btn})
 
 
 @login_required
@@ -1779,6 +1780,12 @@ def delete_sharedFile_data(request,id):
                                 "<i class='fa fa-check-circle'> </i> Data has been deleted successfully.")
 
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
+
+
+@login_required
+def shared_file_list(request):
+    cntrl_remove_btn = 0
+    return render(request, "eyfw/file_shared/shared_file_list.html",{'cntrl_remove_btn':cntrl_remove_btn})
 
 
 @login_required

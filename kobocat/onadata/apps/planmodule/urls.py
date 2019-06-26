@@ -91,7 +91,7 @@ url(r'^getCommunityData/$', views.getCommunityData, name='getCommunityData'),
                         url(r'^eyfw/file_share/$', views.file_share, name='file_share'),
                         url(r'^eyfw/getSharedFileList/$', views.getSharedFileList, name='getSharedFileList'),
                         url(r'^eyfw/delete_sharedFile_data/(?P<id>[^/]+)/$', views.delete_sharedFile_data, name='delete_sharedFile_data'),
-
+                        url(r'^eyfw/shared_file_list/$', views.shared_file_list, name='shared_file_list'),
 
                         url(r'^analysis_report/$', views.analysis_report, name='analysis_report'),
 

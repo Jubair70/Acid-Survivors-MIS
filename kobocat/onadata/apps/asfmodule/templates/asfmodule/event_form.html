@@ -43,7 +43,12 @@
     console.log(url);
     $('.portlet-body').html('<iframe src="'+url+'" style="width:100%;height:500px;"></iframe>');
 
-
+window.addEventListener('message',handleIframeTask);
+    }
+      function handleIframeTask(e) {
+         if (e.data === 'submitted form') {
+               window.parent.location.href = 'http://' + server_address + '/asf/event_list/'
+            }
     }
 
         function ajaxcall() {

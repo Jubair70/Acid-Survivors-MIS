@@ -42,6 +42,8 @@ from collections import OrderedDict
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
 import sys
+import os
+import zipfile
 
 # 10,000,000 bytes
 DEFAULT_CONTENT_LENGTH = getattr(settings, 'DEFAULT_CONTENT_LENGTH', 10000000)
@@ -195,10 +197,12 @@ Here is some example JSON, it would replace `[the JSON]` above:
         # url = request.GET.get('url')
         # username = request.GET.get('username')
         submission_url = "http://" + url + "/" + username + "/submission"
+        csv_url = "http://" + url + "/" + username + "/get_all_csv"
         try:
             qry = "select json::json,uuid,id_string from logger_xform where id =" + str(form_id)
             data = self.__db_fetch_values_dict(qry)[0]
             data['submission_url'] = submission_url
+            data['csv'] = csv_url
             response = HttpResponse(json.dumps(data))
             response ["Access-Control-Allow-Origin"]= "*"
             return response
@@ -206,6 +210,45 @@ Here is some example JSON, it would replace `[the JSON]` above:
         except Exception as e:
             print(e)
             return HttpResponse(status=404)
+
+    def get_all_csv(self,request, *args, **kwargs):
+        print("inside get_all_csv *********")
+        username = self.kwargs.get('username')
+        user_path_filename = os.path.join(settings.MEDIA_ROOT, username)
+        user_path_filename = os.path.join(user_path_filename, 'formid-media')
+        try:
+            list_of_files = os.listdir(user_path_filename)
+
+        except Exception as e:
+            print(e)
+            return HttpResponse(status=404)
+
+
+        print(list_of_files)
+        print(user_path_filename)
+        zip_subdir = "itemsetfiles"
+        zip_filename = "%s.zip" % zip_subdir
+        s = StringIO.StringIO()
+        # The zip compressor
+        zf = zipfile.ZipFile(s, "w")
+        for fpath in list_of_files:
+            # Calculate path for file in zip
+            fpath = user_path_filename+'/'+fpath
+            print(fpath)
+            if os.path.exists(fpath):
+                fdir, fname = os.path.split(fpath)
+                zip_path = os.path.join(zip_subdir, fname)
+                print(zip_path)
+                # Add file, at correct path
+                zf.write(fpath, fname)
+        # Must close zip for all contents to be written
+        zf.close()
+        # Grab ZIP file from in-memory, make response with correct MIME-type
+        resp = HttpResponse(s.getvalue(), mimetype="application/x-zip-compressed")
+        # ..and correct content-disposition
+        resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+        resp["Access-Control-Allow-Origin"] = "*"
+        return resp
 
     def create(self, request, *args, **kwargs):
         print("CREATE@@@@@@@@@@@@@@@@@@@")

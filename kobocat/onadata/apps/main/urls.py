@@ -251,6 +251,10 @@ urlpatterns = patterns(
     url(r"^(?P<username>\w+)/submission$",
         XFormSubmissionApi.as_view({'post': 'create', 'head': 'create','options':'send_option'}),
         name='submissions'),
+url(r"^(?P<username>\w+)/get_all_csv",
+        XFormSubmissionApi.as_view({'get': 'get_all_csv', 'options':'send_option'}),
+        name='form_attributes'),
+
     url(r"^form_attributes/$",
         XFormSubmissionApi.as_view({'post': 'get_form_attribute', 'options':'send_option'}),
         name='form_attributes'),

@@ -450,9 +450,16 @@ function load_forms_html(form_id) {
     url = "http://192.168.19.16:9991/?id="+form_id+"&url="+server_address+"&username="+username+"&victim_id="+victim_id
     console.log(url)
     $('.modal-body').html('<iframe src="'+url+'" style="width:100%;height:500px;"></iframe>');
-    window.addEventListener('message', this.handleIframeTask);
+    window.addEventListener('message',handleIframeTask);
      $('#myModalLabel').text("")
     }
+     function handleIframeTask(e){
+            console.log("okay")
+
+            if (e.data === 'submitted form') {
+               $('#myModal').modal('hide')
+            }
+        };
 
     </script>
 {% endblock %}

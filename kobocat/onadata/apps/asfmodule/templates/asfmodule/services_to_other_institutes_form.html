@@ -42,18 +42,16 @@
             url = "http://192.168.19.16:9991/?id=" + form_id + "&url=" + server_address + "&username=" + username
             console.log(url);
             $('.portlet-body').html('<iframe src="' + url + '" style="width:100%;height:500px;"></iframe>');
-
+window.addEventListener('message',handleIframeTask);
         }
 
-        window.addEventListener('message', handleIframeTask);
 
-        handleIframeTask = function (e) {
-            console.log("okay")
 
-            if (e.data === 'submitted form') {
-                window.location.href = 'http://' + server_address + '/asf/services_to_other_institutes_list/'
+        function handleIframeTask(e) {
+         if (e.data === 'submitted form') {
+               window.parent.location.href = 'http://' + server_address + '/asf/paper_clipping_list/'
             }
-        };
+    }
 
         function ajaxcall() {
             $.ajaxSetup({

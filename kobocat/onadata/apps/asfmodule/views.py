@@ -905,3 +905,5 @@ def paper_clipping_form(request):
     print(server_address)
     form_id = __db_fetch_single_value("select id from logger_xform where id_string='paper_clipping'")
     return render(request, 'asfmodule/event_form.html',{'username':username,'server_address':server_address,'form_id':form_id})
+
+

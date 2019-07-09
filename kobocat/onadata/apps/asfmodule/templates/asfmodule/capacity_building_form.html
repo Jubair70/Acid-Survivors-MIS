@@ -44,7 +44,17 @@
     $('.portlet-body').html('<iframe src="'+url+'" style="width:100%;height:500px;"></iframe>');
 
 
+    window.addEventListener('message',handleIframeTask);
+
     }
+    function handleIframeTask(e) {
+         if (e.data === 'submitted form') {
+               window.parent.location.href = 'http://' + server_address + '/asf/capacity_building_list/'
+            }
+    }
+
+
+
 
         function ajaxcall() {
             $.ajaxSetup({

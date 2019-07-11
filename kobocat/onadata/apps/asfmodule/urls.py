@@ -45,4 +45,8 @@ urlpatterns = patterns('',
     url(r'^paper_clipping_list/$', views.paper_clipping_list,name='paper_clipping_list'),
     url(r'^get_paper_clipping_list/$', views.get_paper_clipping_list,name='get_paper_clipping_list'),
     url(r'^paper_clipping_form/$', views.paper_clipping_form,name='paper_clipping_form'),
+
+    url(r'^dashboard/$', views.dashboard,name='dashboard'),
+    url(r'^get_dashboard_data/$', views.get_dashboard_data,name='get_dashboard_data'),
+
     )

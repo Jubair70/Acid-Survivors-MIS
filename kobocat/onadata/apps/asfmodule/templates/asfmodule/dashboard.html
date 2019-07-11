@@ -1,0 +1,765 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% load app_filters %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/project_dashboard_style.css" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/vendor/animate/animate.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/vendor/select2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/vendor/perfect-scrollbar/perfect-scrollbar.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/util.css">
+{#    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/main.css">#}
+    <link href="{{ STATIC_URL }}css/BootSideMenu.css" rel="stylesheet">
+
+    <head>
+        <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+    </head>
+    <style>
+        .portlet.box.red > .portlet-title {
+    background-color: #0F084B;
+}
+
+        .control-label {
+            display: block;
+        }
+
+        .legend {
+            background-color: #fff;
+            border-radius: 3px;
+            bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
+            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            padding: 10px;
+            position: absolute;
+            right: 25px;
+            z-index: 1;
+        }
+
+        .legend h4 {
+            margin: 0 0 10px;
+        }
+
+        .legend div span {
+            border-radius: 50%;
+            display: inline-block;
+            height: 10px;
+            margin-right: 5px;
+            width: 10px;
+        }
+
+        .highcharts-series-group {
+
+        }
+
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption"><i class="fa fa-tachometer"></i>Dashboard</div>
+        </div>
+        <div class="portlet-body">
+            <div class="row">
+
+                <div class="col-lg-4">
+                    <div class="dashboard-stat tile-red" style="min-height: 120px; ">
+                        <div class="visual">
+                            <i class="fa fa-google-wallet"></i>
+                        </div>
+                        <div class="details">
+                            <div class="number" id="incident_cnt"><span class="count"></span></div>
+                            <div class="desc">No of Incident</div>
+                        </div>
+                        <a class="more" href="javascript:;">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="dashboard-stat tile-turquoise" style="min-height: 120px;">
+                        <div class="visual">
+                            <i class="fa fa-xing"></i>
+                        </div>
+                        <div class="details">
+                            <div class="number count" id="victim_cnt"><span
+                                    class="count"> </span></div>
+                            <div class="desc">No of Victim</div>
+
+                        </div>
+                        <a class="more" href="javascript:;">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="dashboard-stat tile-purple" style="min-height: 120px;">
+                        <div class="visual">
+                            <i class="fa fa-ravelry"></i>
+                        </div>
+                        <div class="details">
+                            <div class="number count" id="notified_cnt"><span
+                                    class="count"> </span></div>
+                            <div class="desc">Notified in 24 hours</div>
+
+                        </div>
+                        <a class="more" href="javascript:;">
+                        </a>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div id="div_incident_victim_trend_chart" style="width:100%; height:400px;"></div>
+                </div>
+                <div class="col-lg-6">
+                    <div id="div_incident_victim_bar_chart" style="width:100%; height:400px;"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <div id="div_incident_cause_pie_chart" ></div>
+                </div>
+                 <div class="col-lg-4">
+                    <div id="div_education_pie_chart"></div>
+                </div>
+                <div class="col-lg-4">
+                    <div id="div_age_range_pie_chart"></div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <table id="district_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
+                <thead class="flip-content">
+                <tr>
+                    <th>District</th>
+                    <th>Incident</th>
+                    <th>Victim</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+                </div>
+                <div class="col-lg-6">
+                    <table id="upazila_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
+                <thead class="flip-content">
+                <tr>
+                   <th>Upazila</th>
+                    <th>Incident</th>
+                    <th>Victim</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+                </div>
+            </div>
+
+
+
+
+        </div>
+    </div>
+
+    <div id="filter_box">
+        <div class="portlet box ">
+            <div class="portlet-title" style="-webkit-border-radius: 0px !important;">
+                <div class="caption pull-right"><i class="fa fa-filter"></i>Filters</div>
+            </div>
+            <div class="portlet-body">
+                <div class="panel-group accordion" id="accordion1" style="-webkit-border-radius: 0px !important;">
+                    <div class="panel panel-default" style="-webkit-border-radius: 0px !important;">
+                        <div class="panel-heading">
+                            <h4 class="panel-title" style="-webkit-border-radius: 0px !important;">
+                                <a class="accordion-toggle" data-toggle="collapse"
+                                   data-parent="#accordion1"
+                                   href="#collapse_1">
+                                    Date
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse_1" class="panel-collapse in">
+                            <div class="panel-body" style="-webkit-border-radius: 0px !important; ">
+                                <label>From</label>
+                                <input type="text" class="datepicker form-control" name="from_date" id="from_date"
+                                       style="border: 1px solid #e5e5e5 !important; cursor: pointer" autocomplete="off" readonly >
+
+                                <label>To</label>
+                                <input type="text" class="datepicker form-control" name="to_date" id="to_date"
+                                       style="border: 1px solid #e5e5e5 !important; cursor: pointer" autocomplete="off" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions" style="-webkit-border-radius: 0px !important;">
+                    <input type="button" id="generate_report"
+                           class="btn pull-right" style="-webkit-border-radius: 0px !important;"
+                           value="Apply"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+
+{% block additional-javascript %}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
+    <script src="{{ STATIC_URL }}css/vendor/bootstrap/js/popper.js"></script>
+    <script src="{{ STATIC_URL }}css/vendor/select2/select2.min.js"></script>
+    <script src="{{ STATIC_URL }}js/main.js"></script>
+    <script src="{{ STATIC_URL }}js/BootSideMenu.js" type="text/javascript"></script>
+    <script>
+
+         $(function () {
+            $('#from_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+
+            $('#to_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+        });
+
+
+        $('#filter_box').BootSideMenu({
+            side: "right",
+            // animation speed
+            duration: 500,
+            // restore last menu status on page refresh
+            remember: false,
+            // auto close
+            autoClose: true,
+            // push the whole page
+            pushBody: true,
+            // close on click
+            closeOnClick: true,
+            // width
+            width: "300px"
+        });
+
+
+
+        function counting() {
+            $('.count').each(function () {
+                console.log($(this).text());
+                $(this).prop('Counter', 0).animate({
+                    Counter: $(this).text()
+                }, {
+                    duration: 2000,
+                    easing: 'swing',
+                    step: function (now) {
+                        $(this).text(Math.ceil(now));
+                    }
+                });
+            });
+            {
+                $('.count').removeClass('count').addClass('counted');
+            }
+            ;
+        }
+
+         function incident_victim_trend(names,data,categories,type,div_name,graph_label) {
+            series = []
+             for (i = 0; i < data.length; i++)
+                 series.push({'name': names[i], 'data': data[i]});
+
+             Highcharts.chart(div_name, {
+chart: {
+        type: type
+    },
+                 title: {
+                     text: graph_label
+                 },
+                 xAxis: {
+                     categories: categories,
+        labels: {
+            rotation: 270
+        }
+                 },
+                 yAxis: {
+                     title: {
+                         text: ''
+                     }
+                 },
+                 legend: {
+                     layout: 'vertical',
+                     align: 'right',
+                     verticalAlign: 'middle'
+                 }, credits: {
+                    enabled: false
+                },
+
+                 plotOptions: {},
+
+                 series: series,
+
+                 responsive: {
+                     rules: [{
+                         condition: {
+                             maxWidth: 500
+                         },
+                         chartOptions: {
+                             legend: {
+                                 layout: 'horizontal',
+                                 align: 'center',
+                                 verticalAlign: 'bottom'
+                             }
+                         }
+                     }]
+                 }
+
+             });
+         }
+
+         function incident_cause_pie(data,label,div_name) {
+            Highcharts.chart(div_name, {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                title: {
+                    text: label
+                },
+                tooltip: {
+                    formatter: function () {
+                        if (this.point.name != 'blank')
+                            return '<b>' + this.point.name + ': ' + this.point.count + '</b>';
+                        else return false;
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        showInLegend: true,
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.percentage:.1f} %</b>',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'white'
+                            },
+                            distance: -30,
+                            filter: {
+                                property: 'percentage',
+                                operator: '>',
+                                value: 0
+                            }
+                        }
+                    }
+                }, credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Brands',
+                    colorByPoint: true,
+                    data: data
+                }]
+            });
+        }
+
+
+
+        function adol_count_fun(adolescent_percentage)
+        {
+            console.log(adolescent_percentage)
+            Highcharts.chart('adol_count', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                height: 250,
+                width: 210
+
+            },
+            title: {
+                text: ''
+            },
+            tooltip: {
+                formatter: function () {
+                    if (this.point.name != 'blank')
+                        return '<b>' + this.point.name + '</b>: ' + this.y + ' %';
+                    else return false;
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            }, credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Brands',
+                colorByPoint: true,
+                data: [{
+                    name: '10-14 years boys',
+                    y: adolescent_percentage[0],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    }
+                    , color: '#0B336C'
+                }, {
+                    name: '10-14 years girls',
+                    y: adolescent_percentage[1],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    }, color: '#0AAECE'
+                }, {
+                    name: '15-19 years boys',
+                    y: adolescent_percentage[2],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    },
+                    color: '#3A89C3'
+                }, {
+                    name: '15-19 years girls',
+                    y: adolescent_percentage[3],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    },
+                    color: '#0069b7'
+                }]
+            }]
+        });
+        }
+
+
+        function adol_service_fun(adolescent_serv_percentage) {
+            Highcharts.chart('adol_service', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                height: 250,
+                width: 210
+
+            },
+            title: {
+                text: ''
+            },
+            tooltip: {
+                formatter: function () {
+                    if (this.point.name != 'blank')
+                        return '<b>' + this.point.name + '</b>: ' + this.y + ' %';
+                    else return false;
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            }, credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Brands',
+                colorByPoint: true,
+                data: [{
+                    name: 'Community Clinic (CC)',
+                    y: adolescent_serv_percentage[0],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    }
+                    , color: '#0B336C'
+                }, {
+                    name: 'Family Welfare Center (FWC)',
+                    y: adolescent_serv_percentage[1],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    }, color: '#0AAECE'
+                }, {
+                    name: 'Maternal and Child Welfare Center (MCWC)',
+                    y: adolescent_serv_percentage[2],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    },
+                    color: '#3A89C3'
+                }, {
+                    name: 'Others',
+                    y: adolescent_serv_percentage[3],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    },
+                    color: '#0069b7'
+                }, {
+                    name: 'Rural Dispensary (RD)',
+                    y: adolescent_serv_percentage[4],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    },
+                    color: '#08C4BB'
+                }, {
+                    name: 'SMC Blue Star Center',
+                    y: adolescent_serv_percentage[5],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    },
+                    color: '#9999ff'
+                }, {
+                    name: 'Surjer Hashi Clinics',
+                    y: adolescent_serv_percentage[6],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    },
+                    color: '#b2b2ff'
+                }, {
+                    name: 'Union Health and Family Welfare Center (UHFWC)',
+                    y: adolescent_serv_percentage[7],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    },
+                    color: '#6666ff'
+                }, {
+                    name: 'Upazila Health Complex (UHC)',
+                    y: adolescent_serv_percentage[8],
+                    showInLegend: false,
+                    dataLabels: {
+                        enabled: false
+                    },
+                    color: '#0000ff'
+                }]
+            }]
+        });
+        }
+
+
+
+        function ajaxcall() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                }
+            });
+        }
+
+        function getDesiredDate(n) {
+            var today = new Date();
+            var n_month_before_today = new Date(today);
+            n_month_before_today.setMonth((today.getMonth() + 1) - n);
+            var dd = n_month_before_today.getDate();
+            var mm = n_month_before_today.getMonth() + 1;
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+            var yyyy = n_month_before_today.getFullYear();
+            formatted_date = yyyy + '-' + mm + '-' + dd;
+            return formatted_date;
+        }
+
+
+            var dateObj = moment();
+            var prevDateObj = moment().subtract(29, 'd');
+
+
+            function cb(obj) {
+                $('#from_date').val(obj.format('DD/MM/YYYY'));
+            }
+
+            function cb2(obj) {
+                $('#to_date').val(obj.format('DD/MM/YYYY'));
+            }
+
+            cb(prevDateObj);
+            cb2(dateObj);
+
+
+        $('#generate_report').on('click', function () {
+            var from_date = $('#from_date').val();
+            var to_date = $('#to_date').val();
+
+
+            if(from_date=='' || to_date == '')
+                return false;
+
+            from_date = from_date.split('/')
+            from_date = from_date[2]+"-"+from_date[1]+"-"+from_date[0]
+            to_date = to_date.split('/')
+            to_date = to_date[2]+"-"+to_date[1]+"-"+to_date[0]
+            console.log(from_date);
+            console.log(to_date);
+
+            district_table.destroy();
+            upazila_table.destroy();
+
+            $.ajax({
+                url: '/asf/get_dashboard_data/',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    'from_date': from_date, 'to_date': to_date
+                },
+                beforeSend: function () {
+
+                },
+                success: function (result) {
+                    console.log(result);
+                    $('#incident_cnt').text(result['incident_cnt']);
+                    $('#victim_cnt').text(result['victim_cnt']);
+                    $('#notified_cnt').text(result['notified_cnt']);
+                    counting();
+
+                    incident_victim_trend(JSON.parse(result['name']),JSON.parse(result['data']),JSON.parse(result['categories']),'line','div_incident_victim_trend_chart','Incident & Victim Trend')
+                    incident_victim_trend(JSON.parse(result['name']),JSON.parse(result['data']),JSON.parse(result['categories']),'column','div_incident_victim_bar_chart','Incident & Victim Chart')
+
+                    incident_cause_pie(result['incident_cause_pie_data'],'Incident Cause','div_incident_cause_pie_chart')
+                    incident_cause_pie(result['education_pie_data'],'Education','div_education_pie_chart')
+                    incident_cause_pie(result['age_range_pie_data'],'Age Range','div_age_range_pie_chart')
+
+                    list = result['district_wise_data'];
+
+                    var tbody = '';
+                    for (var idx in list) {
+                        tbody += '<tr><td>' + list[idx].district + '</td><td>' + list[idx].incident_cnt + '</td><td>' + list[idx].victim_cnt + '</td></tr>';
+                    }
+                    $("#district_table").find('tbody').html(tbody);
+                    district_table = datatable_reinitialize('district_table');
+
+                    list = result['upazila_wise_data'];
+
+                    var tbody = '';
+                    for (var idx in list) {
+                        tbody += '<tr><td>' + list[idx].upazila + '</td><td>' + list[idx].incident_cnt + '</td><td>' + list[idx].victim_cnt + '</td></tr>';
+                    }
+                    $("#upazila_table").find('tbody').html(tbody);
+                    upazila_table = datatable_reinitialize('upazila_table');
+                }
+            });
+
+
+        });
+
+        var district_table = $('#district_table').DataTable({
+                "scrollX": true, "ordering": false,"searching":false,
+                deferRender: true,
+                            dom: 'Bfrtip'
+                            ,
+                            buttons: [
+                                {
+                                    filename: "district_table",
+                                    title: "",
+                                    text: "<strong>Export</strong>",
+                                    extend: 'excel'
+                                }
+                            ]
+
+            });
+        var upazila_table = $('#upazila_table').DataTable({
+                "scrollX": true, "ordering": false,"searching":false,
+                deferRender: true,
+                            dom: 'Bfrtip'
+                            ,
+                            buttons: [
+                                {
+                                    filename: "upazila_table",
+                                    title: "",
+                                    text: "<strong>Export</strong>",
+                                    extend: 'excel'
+                                }
+                            ]
+
+            });
+
+        function datatable_reinitialize(tbl_id) {
+            return $('#'+tbl_id).DataTable({
+                "scrollX": true, "ordering": false,"iDisplayLength": 10,"searching":false,
+                deferRender: true,
+                dom: 'Bfrtip'
+                ,
+                buttons: [
+                    {
+                        filename: tbl_id,
+                        title: "",
+                        text: "<strong>Export</strong>",
+                        extend: 'excel'
+                    }
+                ]
+
+            });
+        }
+
+        $('#generate_report').trigger('click');
+
+    </script>
+{% endblock %}

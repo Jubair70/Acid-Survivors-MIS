@@ -51,8 +51,8 @@ urlpatterns = patterns(
 
 
     ################################# cup urls end ###################################
-    # url(r'^$', 'onadata.apps.planmodule.views.dashboard'),
-    url(r'^$', 'onadata.apps.main.views.survey_summary'),
+    url(r'^$', 'onadata.apps.asfmodule.views.dashboard'),
+    # url(r'^$', 'onadata.apps.main.views.survey_summary'),
     # url(r'^form_attribute/$', 'onadata.apps.main.views.get_form_attribute',{'options':'send_option'}),
     url(r'^survey_summary/$', 'onadata.apps.main.views.survey_summary'),
     url(r'^delete-instance/$', 'onadata.apps.viewer.views.delete_instance'),

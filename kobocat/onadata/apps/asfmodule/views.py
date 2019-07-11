@@ -52,6 +52,7 @@ from collections import OrderedDict
 from django.template.loader import render_to_string
 import os
 from onadata.apps.usermodule.views import error_page
+import decimal
 
 def __db_fetch_values(query):
     cursor = connection.cursor()
@@ -276,7 +277,7 @@ def get_case_list(request):
     district = request.POST.get('district')
     from_date = request.POST.get('from_date')
     to_date = request.POST.get('to_date')
-    query = "select id,incident_id,incident_date,district,status from asf_case where division like '"+str(division)+"' and district like '"+str(district)+"' and to_date(incident_date,'DD/MM/YYYY')::date between to_date('"+str(from_date)+"','DD/MM/YYYY') and to_date('"+str(to_date)+"','DD/MM/YYYY')"
+    query = "select id,incident_id,to_char(incident_date::DATE ,'DD/MM/YYYY') incident_date,district,status from asf_case where division like '"+str(division)+"' and district like '"+str(district)+"' and incident_date::date between '"+str(from_date)+"'and '"+str(to_date)+"'"
     data = json.dumps(__db_fetch_values_dict(query), default=decimal_date_default)
     return HttpResponse(data)
 
@@ -353,14 +354,14 @@ def insert_case_form(request):
     case_id = __db_fetch_single_value(insert_qry)
 
     for victim_id,victim_name,victim_sex,victim_contact,victim_address in zip(victim_id_list,victim_name_list,victim_sex_list,victim_contact_list,victim_address_list):
-        ins_qry = "insert into asf_victim(case_id,victim_id,victim_name,sex,mobile,current_address)values('"+str(case_id)+"','"+str(victim_id)+"','"+str(victim_name)+"','"+str(victim_sex)+"','"+str(victim_contact)+"','"+str(victim_address)+"')"
+        ins_qry = "insert into asf_victim(case_id,victim_id,victim_name,sex,mobile,current_address,current)values('"+str(case_id)+"','"+str(victim_id)+"','"+str(victim_name)+"','"+str(victim_sex)+"','"+str(victim_contact)+"','"+str(victim_address)+"')"
         __db_commit_query(ins_qry)
     return HttpResponseRedirect('/asf/case_list/')
 
 
 @login_required
 def case_detail(request,case_id):
-    qry = "select incident_id,incident_date,incident_description,(select field_name from geo_data where id = division::bigint limit 1)division, (select field_name from geo_data where id = district::bigint limit 1)district, (select field_name from geo_data where id = upazila::bigint limit 1)upazila, case when union_id ='' then '' else (select field_name from geo_data where id = union_id::bigint limit 1) end union_name,status from asf_case where id ="+str(case_id)
+    qry = "select incident_id,to_char(incident_date::DATE ,'DD/MM/YYYY') incident_date,incident_description,(select field_name from geo_data where id = division::bigint limit 1)division, (select field_name from geo_data where id = district::bigint limit 1)district, (select field_name from geo_data where id = upazila::bigint limit 1)upazila, case when union_id ='' then '' else (select field_name from geo_data where id = union_id::bigint limit 1) end union_name,status from asf_case where id ="+str(case_id)
     df = pandas.read_sql(qry,connection)
     if df.empty:
         return error_page(request, "No Data")
@@ -906,4 +907,133 @@ def paper_clipping_form(request):
     form_id = __db_fetch_single_value("select id from logger_xform where id_string='paper_clipping'")
     return render(request, 'asfmodule/event_form.html',{'username':username,'server_address':server_address,'form_id':form_id})
 
+@login_required
+def dashboard(request):
+    return render(request,'asfmodule/dashboard.html')
 
+
+
+
+@csrf_exempt
+def get_dashboard_data(request):
+    from datetime import datetime
+    from_date = request.POST.get('from_date')
+    to_date = request.POST.get('to_date')
+    query = "with t as( select count(*) incident_cnt from asf_case where incident_date::date between '"+str(from_date)+"' AND '"+str(to_date)+"'), t1 as ( select count(*) victim_cnt from asf_victim where created_at::date between '"+str(from_date)+"' AND '"+str(to_date)+"' ),t2 as( select count(*) notified_cnt from asf_victim where notified_within_24h = 'Yes' and created_at::date between '"+str(from_date)+"' AND '"+str(to_date)+"' )select * from t,t1,t2"
+    df = pandas.DataFrame()
+    df = pandas.read_sql(query, connection)
+    incident_tiles_cnt = df.incident_cnt.tolist()[0]
+    victim_tiles_cnt = df.victim_cnt.tolist()[0]
+    notified_tiles_cnt = df.notified_cnt.tolist()[0]
+    ################### INCIDENT AND VICTIM TREND & COLUMN CHART #############
+    ##########################################################################
+    date_format = "%Y-%m-%d"
+    a = datetime.strptime(from_date, date_format)
+    b = datetime.strptime(to_date, date_format)
+    delta = b - a
+    print(delta)
+    if int(delta.days) < 30:
+        # date wise
+        qry = """ WITH victim_tbl AS( SELECT *, ( SELECT incident_date FROM asf_case WHERE case_id::int = id) FROM asf_victim WHERE case_id::int = ANY ( SELECT id FROM asf_case WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' AND status ='Valid') ) ,inc_tbl AS ( SELECT incident_date::date AS categories, 'Incident'::text AS names , count(*) as cnt FROM asf_case WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' AND    status ='Valid' GROUP BY incident_date::date ), vic_tbl AS ( SELECT incident_date::date AS categories, 'Victim'::text AS names, count(*) cnt FROM victim_tbl GROUP by incident_date::date ), unix_all_date AS ( SELECT categories FROM inc_tbl UNION SELECT categories FROM vic_tbl ), date_not_in_incident_tbl AS ( SELECT DISTINCT categories FROM unix_all_date EXCEPT SELECT categories FROM inc_tbl ), date_not_in_victim_tbl AS ( SELECT DISTINCT categories FROM unix_all_date EXCEPT SELECT categories FROM vic_tbl ), ftbl AS ( ( SELECT * FROM inc_tbl UNION SELECT categories, 'Incident'::text AS names, 0 AS cnt FROM date_not_in_incident_tbl ) UNION ALL ( SELECT * FROM vic_tbl UNION SELECT categories, 'Victim'::text AS names, 0 AS cnt FROM date_not_in_victim_tbl ) ) SELECT categories, names, cnt FROM ftbl ORDER BY categories asc """
+
+    elif int(delta.days) < 365:
+        #month wise
+        qry = """ WITH victim_tbl as( select *,(select incident_date from asf_case where case_id::int = id) from asf_victim where case_id::int = any(select id from asf_case WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' and status ='Valid') ) ,inc_tbl AS ( SELECT extract('month' from incident_date::date) ||','|| to_char(incident_date::date,'YY') AS categories, 'Incident'::text AS names ,count(*) cnt FROM asf_case WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' AND    status ='Valid' GROUP BY extract('month' from incident_date::date) ||','|| to_char(incident_date::date,'YY') ), vic_tbl AS ( SELECT extract('month' from incident_date::date) ||','|| to_char(incident_date::date,'YY') AS categories, 'Victim'::text AS names, count(*) cnt FROM victim_tbl GROUP BY extract('month' from incident_date::date) ||','|| to_char(incident_date::date,'YY') ), unix_all_date AS ( SELECT categories FROM inc_tbl UNION SELECT categories FROM vic_tbl ), month_not_in_incident_tbl AS ( SELECT DISTINCT categories FROM unix_all_date EXCEPT SELECT categories FROM inc_tbl ), month_not_in_victim_tbl AS ( SELECT DISTINCT categories FROM unix_all_date EXCEPT SELECT categories FROM vic_tbl ), ftbl AS ( ( SELECT * FROM inc_tbl UNION SELECT categories, 'Incident'::text AS names, 0 AS cnt FROM month_not_in_incident_tbl ) UNION ALL ( SELECT * FROM vic_tbl UNION SELECT categories, 'Victim'::text AS names, 0 AS cnt FROM month_not_in_victim_tbl ) ) SELECT trim(to_char(to_timestamp ( left(categories, strpos(categories, ',') - 1)::text, 'MM'), 'Month')) ||','|| substring(categories from  strpos(categories, ',') + 1)  categories, names, cnt FROM ftbl ORDER BY substring(categories from  strpos(categories, ',') + 1)::int asc,left(categories, strpos(categories, ',') - 1)::int asc"""
+    else:
+        # year wise
+        qry = """WITH victim_tbl AS( SELECT *, ( SELECT incident_date FROM asf_case WHERE case_id::int = id) FROM asf_victim WHERE case_id::int = ANY ( SELECT id FROM asf_case WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' AND status ='Valid')) ,inc_tbl AS ( SELECT extract('year' FROM incident_date::date) AS categories, 'Incident'::text AS names , count(*) cnt FROM asf_case WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' AND status ='Valid' GROUP BY extract('year' FROM incident_date::date) ), vic_tbl AS ( SELECT extract('year' FROM incident_date::date) AS categories, 'Victim'::text AS names, count(*) cnt FROM victim_tbl GROUP BY extract('year' FROM incident_date::date) ) , unix_all_date AS ( SELECT categories FROM inc_tbl UNION SELECT categories FROM vic_tbl ), month_not_in_incident_tbl AS ( SELECT DISTINCT categories FROM unix_all_date EXCEPT SELECT categories FROM inc_tbl ), month_not_in_victim_tbl AS ( SELECT DISTINCT categories FROM unix_all_date EXCEPT SELECT categories FROM vic_tbl ), ftbl AS ( ( SELECT * FROM inc_tbl UNION SELECT categories, 'Incident'::text AS names, 0 AS cnt FROM month_not_in_incident_tbl ) UNION ALL ( SELECT * FROM vic_tbl UNION SELECT categories, 'Victim'::text AS names, 0 AS cnt FROM month_not_in_victim_tbl ) ) SELECT categories, names, cnt FROM ftbl ORDER BY categories asc"""
+    print(qry)
+    df = pandas.DataFrame()
+    df = pandas.read_sql(qry, connection)
+    data = []
+    name = []
+    categories = []
+    if not df.empty:
+        for each in df['names'].unique().tolist():
+            data.append(df['cnt'][df['names'] == each].tolist())
+
+
+        categories = json.dumps(df['categories'].unique().tolist(), default=decimal_date_default)
+        name = json.dumps(df['names'].unique().tolist(), default=decimal_date_default)
+        data = json.dumps(data, default=decimal_date_default)
+
+
+    ##############  INCIDENT CAUSE PIE  ##################
+    ######################################################
+    qry = """WITH t AS( SELECT Count(*)::float total FROM asf_case WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' AND status ='Valid'), t1 AS ( SELECT incident_cause, count(*) cnt, round(count(*)*100/total)::int percentage FROM asf_case, t WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' AND status ='Valid' GROUP BY incident_cause, total), tt AS ( SELECT 'Addiction' AS incident_cause UNION ALL SELECT 'Dowry' AS incident_cause UNION ALL SELECT 'Family related dispute' AS incident_cause UNION ALL SELECT 'Land/property/money dispute' AS incident_cause UNION ALL SELECT 'Marital dsipute' AS incident_cause UNION ALL SELECT 'Unknown' AS incident_cause UNION ALL SELECT 'Refusal of love' AS incident_cause UNION ALL SELECT 'Refusal of sex' AS incident_cause UNION ALL SELECT 'Refusal of marriage' AS incident_cause UNION ALL SELECT 'Others' AS incident_cause ) SELECT tt.incident_cause as categories, COALESCE(cnt,0) cnt, COALESCE(percentage,0) percentage FROM tt LEFT JOIN t1 ON tt.incident_cause = t1.incident_cause ORDER BY percentage desc"""
+    df = pandas.DataFrame()
+    df = pandas.read_sql(qry, connection)
+    incident_cause_pie_data = {}
+    incident_categories = df.categories.tolist()
+    incident_percentage = df.percentage.tolist()
+    incident_cnt = df.cnt.tolist()
+    # color = ['#0B336C','#0AAECE','#3A89C3','#0069b7','#08C4BB','#9999ff']
+    incident_cause_pie_data = []
+    for n,y,count in zip(incident_categories,incident_percentage,incident_cnt):
+        incident_cause_pie_data.append(
+            {
+                'name': str(n),
+                'y': y,
+                'count': count
+            }
+        )
+    ##################### EDUCATION PIE ########################
+    ############################################################
+    qry = """ with vtc_tbl as( select *,(select incident_date from asf_case where id = case_id::int AND status ='Valid' limit 1) from asf_victim) ,t AS ( SELECT Count(*)::float total FROM vtc_tbl WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' ), t1 AS ( SELECT education, count(*) cnt, round(count(*)*100/total)::int percentage FROM vtc_tbl, t WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' GROUP BY education, total), tt AS ( SELECT 'Nil' AS education UNION ALL SELECT 'Primary' AS education UNION ALL SELECT 'Junior Secondary' AS education UNION ALL SELECT 'SSC/Equivalence' AS education UNION ALL SELECT 'HSC/Equivalence' AS education UNION ALL SELECT 'Graduation' AS education UNION ALL SELECT 'Post Graduation' AS education) SELECT tt.education categories, COALESCE(cnt,0) cnt, COALESCE(percentage,0) percentage FROM tt LEFT JOIN t1 ON tt.education = t1.education ORDER BY percentage desc """
+    df = pandas.DataFrame()
+    df = pandas.read_sql(qry, connection)
+    education_pie_data = {}
+    education_categories = df.categories.tolist()
+    education_percentage = df.percentage.tolist()
+    education_cnt = df.cnt.tolist()
+    # color = ['#0B336C','#0AAECE','#3A89C3','#0069b7','#08C4BB','#9999ff']
+    education_pie_data = []
+    for n, y, count in zip(education_categories, education_percentage, education_cnt):
+        education_pie_data.append(
+            {
+                'name': str(n),
+                'y': y,
+                'count': count
+            }
+        )
+
+    ##################### AGE RANGE PIE ########################
+    ############################################################
+    qry = """ with vtc_tbl as( select *,(select incident_date from asf_case where id = case_id::int AND status ='Valid' limit 1) from asf_victim) ,t AS ( SELECT Count(*)::float total FROM vtc_tbl WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' ), t1 AS ( SELECT '0-5' AS age_range, count(*) cnt, round(count(*)*100/total)::int percentage FROM vtc_tbl, t WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' and victim_age::int between 0 and 5 GROUP BY total union all SELECT '6-12' AS age_range, count(*) cnt, round(count(*)*100/total)::int percentage FROM vtc_tbl, t WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' and victim_age::int between 6 and 12 GROUP BY total union all SELECT '13-18' AS age_range, count(*) cnt, round(count(*)*100/total)::int percentage FROM vtc_tbl, t WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' and victim_age::int between 13 and 18 GROUP BY total union all SELECT '19-35' AS age_range, count(*) cnt, round(count(*)*100/total)::int percentage FROM vtc_tbl, t WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' and victim_age::int between 19 and 35 GROUP BY total union all SELECT '36+' AS age_range, count(*) cnt, round(count(*)*100/total)::int percentage FROM vtc_tbl, t WHERE incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' and victim_age::int >= 36 GROUP BY total ), tt AS ( SELECT '0-5' AS age_range UNION ALL SELECT '6-12' AS age_range UNION ALL SELECT '13-18' AS age_range UNION ALL SELECT '19-35' AS age_range UNION ALL SELECT '36+' AS age_range ) SELECT tt.age_range categories, COALESCE(cnt,0) cnt, COALESCE(percentage,0) percentage FROM tt LEFT JOIN t1 ON tt.age_range = t1.age_range """
+    df = pandas.DataFrame()
+    df = pandas.read_sql(qry, connection)
+    age_range_pie_data = {}
+    age_range_categories = df.categories.tolist()
+    age_range_percentage = df.percentage.tolist()
+    age_range_cnt = df.cnt.tolist()
+    # color = ['#0B336C','#0AAECE','#3A89C3','#0069b7','#08C4BB','#9999ff']
+    age_range_pie_data = []
+    for n, y, count in zip(age_range_categories, age_range_percentage, age_range_cnt):
+        age_range_pie_data.append(
+            {
+                'name': str(n),
+                'y': y,
+                'count': count
+            }
+        )
+    ##################### Tables ###############################
+    ############################################################
+    qry = """ with case_tbl as(select district,count(*) incident_cnt from asf_case where incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' AND status ='Valid' group by district) , vtc_tbl as ( select *,(select incident_date from asf_case where id = case_id::int AND status ='Valid' limit 1) from asf_victim),vic_tbl1 as ( select current_district,count(*) victim_cnt from vtc_tbl where current_district is not null and incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' group by current_district )select (select field_name from geo_data where id = district::int limit 1) district,incident_cnt,victim_cnt from case_tbl,vic_tbl1 where current_district = district """
+    district_wise_data = __db_fetch_values_dict(qry)
+
+    qry = """ with case_tbl as(select upazila,count(*) incident_cnt from asf_case where incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' AND status ='Valid' group by upazila) , vtc_tbl as ( select *,(select incident_date from asf_case where id = case_id::int AND status ='Valid' limit 1) from asf_victim),vic_tbl1 as ( select current_upazila,count(*) victim_cnt from vtc_tbl where current_upazila is not null and incident_date::date BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' group by current_upazila )select (select field_name from geo_data where id = upazila::int limit 1) upazila,incident_cnt,victim_cnt from case_tbl,vic_tbl1 where current_upazila = upazila """
+    upazila_wise_data = __db_fetch_values_dict(qry)
+
+    data = json.dumps({'incident_cnt': incident_tiles_cnt,
+                       'victim_cnt': victim_tiles_cnt,
+                       'notified_cnt': notified_tiles_cnt,
+                       'categories':categories,
+                       'name':name,
+                       'data':data,
+                       'incident_cause_pie_data': incident_cause_pie_data,
+                       'education_pie_data':education_pie_data,
+                       'age_range_pie_data':age_range_pie_data,
+                       'district_wise_data':district_wise_data,
+                       'upazila_wise_data':upazila_wise_data
+                       })
+    return HttpResponse(data)

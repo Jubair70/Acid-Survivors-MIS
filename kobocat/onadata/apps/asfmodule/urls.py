@@ -49,4 +49,10 @@ urlpatterns = patterns('',
     url(r'^dashboard/$', views.dashboard,name='dashboard'),
     url(r'^get_dashboard_data/$', views.get_dashboard_data,name='get_dashboard_data'),
 
+    url(r'^medical_patient_report/$', views.medical_patient_report,name='medical_patient_report'),
+    url(r'^get_medical_patient_report/$', views.get_medical_patient_report,name='get_medical_patient_report'),
+
+    url(r'^medical_certificate_report/$', views.medical_certificate_report,name='medical_certificate_report'),
+    url(r'^get_medical_certificate_report/$', views.get_medical_certificate_report,name='get_medical_certificate_report'),
+
     )

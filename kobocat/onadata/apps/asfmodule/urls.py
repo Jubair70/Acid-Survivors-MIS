@@ -55,4 +55,9 @@ urlpatterns = patterns('',
     url(r'^medical_certificate_report/$', views.medical_certificate_report,name='medical_certificate_report'),
     url(r'^get_medical_certificate_report/$', views.get_medical_certificate_report,name='get_medical_certificate_report'),
 
+    url(r'^legal_report/$', views.legal_report,name='legal_report'),
+    url(r'^get_legal_report/$', views.get_legal_report,name='get_legal_report'),
+
+    url(r'^rehab_report/$', views.rehab_report,name='rehab_report'),
+    url(r'^get_rehab_report/$', views.get_rehab_report,name='get_rehab_report'),
     )

@@ -1089,3 +1089,132 @@ def get_medical_certificate_report(request):
         'certificate_data':certificate_data
     }, default=decimal_date_default)
     return HttpResponse(data)
+
+@login_required
+def legal_report(request):
+    query = "select id,field_name from geo_data where field_type_id = 85"
+    df = pandas.read_sql(query, connection)
+    divisions = zip(df.id.tolist(), df.field_name.tolist())
+    return render(request,'asfmodule/legal_report.html',{'divisions':divisions})
+
+@csrf_exempt
+def get_legal_report(request):
+    division = request.POST.get('division')
+    district = request.POST.get('district')
+    from_date = request.POST.get('from_date')
+    to_date = request.POST.get('to_date')
+
+    query = """ with tiles1 as( select count(*) lag_cnt from logger_instance where xform_id = (select id from logger_xform where id_string = 'legal_support_case_status') and (json->>'case_handed_over')::int = 1 and (json->>'victim_id') = any (select victim_id from asf_victim where current_division like '"""+str(division)+"""' and current_district like '"""+str(district)+"""') and date_created::date between '"""+str(from_date)+"""' and '"""+str(to_date)+"""'),tiles2 as ( select count(*) other_lag_cnt from logger_instance where xform_id = (select id from logger_xform where id_string = 'legal_support_case_status') and (json->>'case_handed_over')::int = 2 and (json->>'victim_id') = any (select victim_id from asf_victim where current_division like '"""+str(division)+"""' and current_district like '"""+str(district)+"""') and date_created::date between '"""+str(from_date)+"""' and '"""+str(to_date)+"""' )select * from tiles1,tiles2 """
+    df = pandas.DataFrame()
+    df = pandas.read_sql(query, connection)
+    lag_tiles_cnt = df.lag_cnt.tolist()[0]
+    other_lag_tiles_cnt = df.other_lag_cnt.tolist()[0]
+    print(query)
+
+    qry = """ with legal_form as( select json->>'has_case_filed' has_case_filed from logger_instance where xform_id = (select id from logger_xform where id_string = 'legal_support_case_status') and (json->>'victim_id') = any (select victim_id from asf_victim where current_division like '"""+str(division)+"""' and current_district like '"""+str(district)+"""') and date_created::date between '"""+str(from_date)+"""' and '"""+str(to_date)+"""'), total_tbl as ( select count(*) total from legal_form ),t1 as ( SELECT 'Yes' AS categories, Count(*) cnt, Round(Count(*)*100/total)::int percentage FROM total_tbl, legal_form where has_case_filed::int = 1 GROUP BY total union all SELECT 'No' AS categories, Count(*) cnt, Round(Count(*)*100/total)::int percentage FROM total_tbl, legal_form where has_case_filed::int = 0 GROUP BY total ),tt AS ( SELECT 'Yes' AS categories UNION ALL SELECT 'No' AS categories )SELECT tt.categories categories, COALESCE(cnt,0) cnt, COALESCE(percentage,0) percentage FROM tt LEFT JOIN t1 ON tt.categories = t1.categories """
+    df = pandas.DataFrame()
+    df = pandas.read_sql(qry, connection)
+    case_filed_pie_data = {}
+    case_filed_categories = df.categories.tolist()
+    case_filed_percentage = df.percentage.tolist()
+    case_filed_cnt = df.cnt.tolist()
+    # color = ['#0B336C','#0AAECE','#3A89C3','#0069b7','#08C4BB','#9999ff']
+    case_filed_pie_data = []
+    for n, y, count in zip(case_filed_categories, case_filed_percentage, case_filed_cnt):
+        case_filed_pie_data.append(
+            {
+                'name': str(n),
+                'y': y,
+                'count': count
+            }
+        )
+
+    qry = """ with legal_form as( select json->>'case_filed_in' case_filed_in from logger_instance where xform_id = (select id from logger_xform where id_string = 'legal_support_case_status') and (json->>'victim_id') = any (select victim_id from asf_victim where current_division like '"""+str(division)+"""' and current_district like '"""+str(district)+"""') and date_created::date between '"""+str(from_date)+"""' and '"""+str(to_date)+"""' and (json->>'case_filed_in')::text is not null), total_tbl as ( select count(*) total from legal_form ),t1 as ( SELECT 'Thana' AS categories, Count(*) cnt, Round(Count(*)*100/total)::int percentage FROM total_tbl, legal_form where case_filed_in::int = 1 GROUP BY total union all SELECT 'Court' AS categories, Count(*) cnt, Round(Count(*)*100/total)::int percentage FROM total_tbl, legal_form where case_filed_in::int = 2 GROUP BY total ),tt AS ( SELECT 'Thana' AS categories UNION ALL SELECT 'Court' AS categories )SELECT tt.categories categories, COALESCE(cnt,0) cnt, COALESCE(percentage,0) percentage FROM tt LEFT JOIN t1 ON tt.categories = t1.categories """
+    df = pandas.DataFrame()
+    df = pandas.read_sql(qry, connection)
+    case_filed_in_pie_data = {}
+    case_filed_in_categories = df.categories.tolist()
+    case_filed_in_percentage = df.percentage.tolist()
+    case_filed_in_cnt = df.cnt.tolist()
+    # color = ['#0B336C','#0AAECE','#3A89C3','#0069b7','#08C4BB','#9999ff']
+    case_filed_in_pie_data = []
+    for n, y, count in zip(case_filed_in_categories, case_filed_in_percentage, case_filed_in_cnt):
+        case_filed_in_pie_data.append(
+            {
+                'name': str(n),
+                'y': y,
+                'count': count
+            }
+        )
+    print(case_filed_in_pie_data)
+
+    qry = """with legal_form as( select json->>'case_stage_status' case_stage_status from logger_instance where xform_id = (select id from logger_xform where id_string = 'legal_support_case_status') and (json->>'victim_id') = any (select victim_id from asf_victim where current_division like '"""+str(division)+"""' and current_district like '"""+str(district)+"""') and date_created::date between '"""+str(from_date)+"""' and '"""+str(to_date)+"""' and (json->>'case_stage_status')::text is not null), total_tbl as ( select count(*) total from legal_form ),t1 as ( SELECT 'Investigation' AS categories, Count(*) cnt, Round(Count(*)*100/total)::int percentage FROM total_tbl, legal_form where case_stage_status::int = 1 GROUP BY total union all SELECT 'Trial Stage' AS categories, Count(*) cnt, Round(Count(*)*100/total)::int percentage FROM total_tbl, legal_form where case_stage_status::int = 2 GROUP BY total union all SELECT 'Discharge' AS categories, Count(*) cnt, Round(Count(*)*100/total)::int percentage FROM total_tbl, legal_form where case_stage_status::int = 3 GROUP BY total union all SELECT 'Acquittal' AS categories, Count(*) cnt, Round(Count(*)*100/total)::int percentage FROM total_tbl, legal_form where case_stage_status::int = 4 GROUP BY total union all SELECT 'Conviction' AS categories, Count(*) cnt, Round(Count(*)*100/total)::int percentage FROM total_tbl, legal_form where case_stage_status::int = 5 GROUP BY total union all SELECT 'Compromised' AS categories, Count(*) cnt, Round(Count(*)*100/total)::int percentage FROM total_tbl, legal_form where case_stage_status::int = 6 GROUP BY total ),tt AS ( SELECT 'Investigation' AS categories UNION ALL SELECT 'Trial Stage' AS categories UNION ALL SELECT 'Discharge' AS categories UNION ALL SELECT 'Acquittal' AS categories UNION ALL SELECT 'Conviction' AS categories UNION ALL SELECT 'Compromised' AS categories )SELECT tt.categories categories, COALESCE(cnt,0) cnt, COALESCE(percentage,0) percentage FROM tt LEFT JOIN t1 ON tt.categories = t1.categories"""
+    stage_wise_data = __db_fetch_values_dict(qry)
+
+    data = json.dumps({
+        'lag_tiles_cnt':lag_tiles_cnt,
+        'other_lag_tiles_cnt':other_lag_tiles_cnt,
+        'case_filed_pie_data':case_filed_pie_data,
+        'case_filed_in_pie_data':case_filed_in_pie_data,
+        'stage_wise_data':stage_wise_data
+    }, default=decimal_date_default)
+    return HttpResponse(data)
+
+@login_required
+def rehab_report(request):
+    query = "select id,field_name from geo_data where field_type_id = 85"
+    df = pandas.read_sql(query, connection)
+    divisions = zip(df.id.tolist(), df.field_name.tolist())
+    return render(request,'asfmodule/rehab_report.html',{'divisions':divisions})
+
+@csrf_exempt
+def get_rehab_report(request):
+    division = request.POST.get('division')
+    district = request.POST.get('district')
+    from_date = request.POST.get('from_date')
+    to_date = request.POST.get('to_date')
+
+    query = """ WITH tiles1 AS(SELECT Count(*) rehab_cnt FROM logger_instance WHERE xform_id = any(SELECT id FROM logger_xform WHERE id_string =any(array['case_followup_status','economical_support','case_conference'])) AND ( json ->> 'victim_id' ) = ANY (SELECT victim_id FROM asf_victim WHERE current_division LIKE '"""+str(division)+"""' AND current_district LIKE '"""+str(district)+"""') AND date_created :: DATE BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""'), tiles2 AS (SELECT Count(*) followup_cnt FROM logger_instance WHERE xform_id = (SELECT id FROM logger_xform WHERE id_string = 'case_followup_status') AND ( json ->> 'followup_issue' ) :: INT = 1 AND ( json ->> 'victim_id' ) = ANY (SELECT victim_id FROM asf_victim WHERE current_division LIKE '"""+str(division)+"""' AND current_district LIKE '"""+str(district)+"""') AND date_created :: DATE BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""'), tiles3 as ( SELECT Count(*) economic_cnt FROM logger_instance WHERE xform_id = (SELECT id FROM logger_xform WHERE id_string = 'economical_support') AND ( json ->> 'victim_id' ) = ANY (SELECT victim_id FROM asf_victim WHERE current_division LIKE '"""+str(division)+"""' AND current_district LIKE '"""+str(district)+"""') AND date_created :: DATE BETWEEN '"""+str(from_date)+"""' AND '"""+str(to_date)+"""' ) SELECT * FROM tiles1, tiles2,tiles3 """
+    df = pandas.DataFrame()
+    df = pandas.read_sql(query, connection)
+    rehab_tiles_cnt = df.rehab_cnt.tolist()[0]
+    followup_tiles_cnt = df.followup_cnt.tolist()[0]
+    economic_tiles_cnt = df.economic_cnt.tolist()[0]
+    print(query)
+
+    qry = """ with legal_form as( select sum((json->>'particiapnt_total')::int) total,sum((json->>'participant_girl')::int) total_girl, sum((json->>'participant_male')::int) total_male, sum((json->>'participant_female')::int) totaL_female, sum((json->>'participant_boy')::int) total_boy, sum((json->>'participant_trangender')::int) total_transgender from logger_instance where xform_id =(select id from logger_xform where id_string = 'capacity_building') and (json->>'division') like '"""+str(division)+"""' and (json->>'district') like '"""+str(district)+"""' and date_created::date between '"""+str(from_date)+"""' and '"""+str(to_date)+"""'),t1 as ( SELECT 'Male' AS categories, total_male cnt, Round(total_male*100/total)::int percentage FROM legal_form union all SELECT 'Female' AS categories, total_female cnt, Round(total_female*100/total)::int percentage FROM legal_form union all SELECT 'Girls' AS categories, total_girl cnt, Round(total_girl*100/total)::int percentage FROM legal_form union all SELECT 'Boys' AS categories, total_boy cnt, Round(total_boy*100/total)::int percentage FROM legal_form union all SELECT 'Transgender' AS categories, total_transgender cnt, Round(total_transgender*100/total)::int percentage FROM legal_form ) ,tt AS ( SELECT 'Male' AS categories UNION ALL SELECT 'Female' AS categories UNION ALL SELECT 'Girls' AS categories UNION ALL SELECT 'Boys' AS categories UNION ALL SELECT 'Transgender' AS categories )SELECT tt.categories categories, COALESCE(cnt,0) cnt, COALESCE(percentage,0) percentage FROM tt LEFT JOIN t1 ON tt.categories = t1.categories """
+    df = pandas.DataFrame()
+    df = pandas.read_sql(qry, connection)
+    capacity_building_participant_pie_data = {}
+    capacity_building_participant_categories = df.categories.tolist()
+    capacity_building_participant_percentage = df.percentage.tolist()
+    capacity_building_participant_cnt = df.cnt.tolist()
+    # color = ['#0B336C','#0AAECE','#3A89C3','#0069b7','#08C4BB','#9999ff']
+    capacity_building_participant_pie_data = []
+    for n, y, count in zip(capacity_building_participant_categories, capacity_building_participant_percentage, capacity_building_participant_cnt):
+        capacity_building_participant_pie_data.append(
+            {
+                'name': str(n),
+                'y': y,
+                'count': count
+            }
+        )
+
+    qry = """ with legal_form as( select (json->>'capacity_building_subject') capacity_building_subject from logger_instance where xform_id =(select id from logger_xform where id_string = 'capacity_building') and (json->>'division') like '"""+str(division)+"""' and (json->>'district') like '"""+str(district)+"""' and date_created::date between '"""+str(from_date)+"""' and '"""+str(to_date)+"""' and (json->>'capacity_building_subject') is not null),total_cnt as ( select count(*) total from legal_form ),t1 as ( SELECT 'Life skills / Social Skills' AS categories, count(*) cnt, Round(count(*)*100/total)::int percentage FROM legal_form,total_cnt where capacity_building_subject::int = 1 group by total union all SELECT 'Gender Issues' AS categories, count(*) cnt, Round(count(*)*100/total)::int percentage FROM legal_form, total_cnt where capacity_building_subject::int = 2 group by total union all SELECT 'Legal Issues' AS categories, count(*) cnt, Round(count(*)*100/total)::int percentage FROM legal_form, total_cnt where capacity_building_subject::int = 3 group by total union all SELECT 'Skill based training' AS categories, count(*) cnt, Round(count(*)*100/total)::int percentage FROM legal_form, total_cnt where capacity_building_subject::int = 4 group by total union all SELECT 'Survivor''r rights' AS categories, count(*) cnt, Round(count(*)*100/total)::int percentage FROM legal_form, total_cnt where capacity_building_subject::int = 5 group by total union all SELECT 'Burn Care Training' AS categories, count(*) cnt, Round(count(*)*100/total)::int percentage FROM legal_form, total_cnt where capacity_building_subject::int = 6 group by total union all SELECT 'Mental health' AS categories, count(*) cnt, Round(count(*)*100/total)::int percentage FROM legal_form, total_cnt where capacity_building_subject::int = 7 group by total union all SELECT 'Organization Development' AS categories, count(*) cnt, Round(count(*)*100/total)::int percentage FROM legal_form, total_cnt where capacity_building_subject::int = 8 group by total union all SELECT 'HR management' AS categories, count(*) cnt, Round(count(*)*100/total)::int percentage FROM legal_form, total_cnt where capacity_building_subject::int = 9 group by total union all SELECT 'Others' AS categories, count(*) cnt, Round(count(*)*100/total)::int percentage FROM legal_form, total_cnt where capacity_building_subject::int = 99 group by total ) ,tt AS ( SELECT 'Life skills / Social Skills' AS categories UNION ALL SELECT 'Gender Issues' AS categories UNION ALL SELECT 'Legal Issues' AS categories UNION ALL SELECT 'Skill based training' AS categories UNION ALL SELECT 'Survivor''r rights' AS categories UNION ALL SELECT 'Burn Care Training' AS categories UNION ALL SELECT 'Mental health' AS categories UNION ALL SELECT 'Organization Development' AS categories UNION ALL SELECT 'HR management' AS categories UNION ALL SELECT 'Others' AS categories )SELECT tt.categories categories, COALESCE(cnt,0) cnt, COALESCE(percentage,0) percentage FROM tt LEFT JOIN t1 ON tt.categories = t1.categories order by percentage desc """
+    df = pandas.DataFrame()
+    df = pandas.read_sql(qry, connection)
+    name = df.categories.tolist()
+    data = df.percentage.tolist()
+    cnt = df.cnt.tolist()
+    # capacity_building_participant_cnt
+
+    data = json.dumps({
+        'rehab_tiles_cnt':rehab_tiles_cnt,
+        'followup_tiles_cnt':followup_tiles_cnt,
+        'economic_tiles_cnt': economic_tiles_cnt,
+        'capacity_building_participant_pie_data':capacity_building_participant_pie_data,
+        'name': name,
+        'data': data,
+        'cnt':cnt
+    }, default=decimal_date_default)
+    return HttpResponse(data)

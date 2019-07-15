@@ -55,6 +55,12 @@ urlpatterns = patterns('',
     url(r'^medical_certificate_report/$', views.medical_certificate_report,name='medical_certificate_report'),
     url(r'^get_medical_certificate_report/$', views.get_medical_certificate_report,name='get_medical_certificate_report'),
 
+    url(r'^medical_injuries_report/$', views.medical_injuries_report,name='medical_injuries_report'),
+    url(r'^get_medical_injuries_report/$', views.get_medical_injuries_report,name='get_medical_injuries_report'),
+
+    url(r'^medical_operations_report/$', views.medical_operations_report,name='medical_operations_report'),
+    url(r'^get_medical_operations_report/$', views.get_medical_operations_report,name='get_medical_operations_report'),
+
     url(r'^legal_report/$', views.legal_report,name='legal_report'),
     url(r'^get_legal_report/$', views.get_legal_report,name='get_legal_report'),
 

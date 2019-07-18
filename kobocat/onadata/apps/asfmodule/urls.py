@@ -66,4 +66,38 @@ urlpatterns = patterns('',
 
     url(r'^rehab_report/$', views.rehab_report,name='rehab_report'),
     url(r'^get_rehab_report/$', views.get_rehab_report,name='get_rehab_report'),
+
+    url(r'^physiotherapy_patient_report/$', views.physiotherapy_patient_report,name='physiotherapy_patient_report'),
+    url(r'^get_physiotherapy_patient_report/$', views.get_physiotherapy_patient_report,name='get_physiotherapy_patient_report'),
+
+    url(r'^physiotherapy_govt_hospital_report/$', views.physiotherapy_govt_hospital_report,name='physiotherapy_govt_hospital_report'),
+    url(r'^get_physiotherapy_govt_hospital_report/$', views.get_physiotherapy_govt_hospital_report,name='get_physiotherapy_govt_hospital_report'),
+
+    url(r'^physiotherapy_eclinic_report/$', views.physiotherapy_eclinic_report,name='physiotherapy_eclinic_report'),
+    url(r'^get_physiotherapy_eclinic_report/$', views.get_physiotherapy_eclinic_report,name='get_physiotherapy_eclinic_report'),
+
+    url(r'^physiotherapy_outreach_report/$', views.physiotherapy_outreach_report,name='physiotherapy_outreach_report'),
+    url(r'^get_physiotherapy_outreach_report/$', views.get_physiotherapy_outreach_report,name='get_physiotherapy_outreach_report'),
+
+    url(r'^physiotherapy_community_clinic_report/$', views.physiotherapy_community_clinic_report,name='physiotherapy_community_clinic_report'),
+    url(r'^get_physiotherapy_community_clinic_report/$', views.get_physiotherapy_community_clinic_report,name='get_physiotherapy_community_clinic_report'),
+
+    url(r'^physiotherapy_pressure_garment_report/$', views.physiotherapy_pressure_garment_report,name='physiotherapy_pressure_garment_report'),
+    url(r'^get_medical_pressure_garment_report/$', views.get_medical_pressure_garment_report,name='get_medical_pressure_garment_report'),
+
+
+    url(r'^psychotherapy_govt_hospital_report/$', views.psychotherapy_govt_hospital_report,name='psychotherapy_govt_hospital_report'),
+    url(r'^get_psychotherapy_govt_hospital_report/$', views.get_psychotherapy_govt_hospital_report,name='get_psychotherapy_govt_hospital_report'),
+
+    url(r'^psychotherapy_eclinic_report/$', views.psychotherapy_eclinic_report,name='psychotherapy_eclinic_report'),
+    url(r'^get_psychotherapy_eclinic_report/$', views.get_psychotherapy_eclinic_report,name='get_psychotherapy_eclinic_report'),
+
+    url(r'^psychotherapy_outreach_report/$', views.psychotherapy_outreach_report,name='psychotherapy_outreach_report'),
+    url(r'^get_psychotherapy_outreach_report/$', views.get_psychotherapy_outreach_report,name='get_psychotherapy_outreach_report'),
+
+    url(r'^psychotherapy_community_clinic_report/$', views.psychotherapy_community_clinic_report,name='psychotherapy_community_clinic_report'),
+    url(r'^get_psychotherapy_community_clinic_report/$', views.get_psychotherapy_community_clinic_report,name='get_psychotherapy_community_clinic_report'),
+
+    url(r'^psychotherapy_patient_report/$', views.psychotherapy_patient_report,name='psychotherapy_patient_report'),
+    url(r'^get_psychotherapy_patient_report/$', views.get_psychotherapy_patient_report,name='get_psychotherapy_patient_report'),
     )

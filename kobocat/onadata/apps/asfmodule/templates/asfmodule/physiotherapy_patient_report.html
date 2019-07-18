@@ -1,0 +1,447 @@
+{% extends 'base_test.html' %}
+{% load i18n %}
+{% block additional-headers %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <style>
+    th,td{
+        text-align: center;
+    }
+    </style>
+{% endblock %}
+
+
+
+{% block content %}
+
+    <div class="portlet box red">
+        <div class="portlet-title">
+            <div class="caption"><i class="fa fa-medkit"></i>IPD/OPD Patient</div>
+        </div>
+        <div class="portlet-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>From Date: </label>
+                        <input type="text" class="datepicker form-control" name="from_date" id="from_date" readonly>
+
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>To Date: </label>
+                        <input type="text" class="datepicker form-control" name="to_date" id="to_date" readonly>
+
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Division: </label>
+                        <select class="form-control" name="division" id="division" onclick="load_district(this)"
+                                required>
+                            <option value="%">Select One</option>
+                            {% for id,field_name in divisions %}
+                                <option value="{{ id }}">{{ field_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>District: </label>
+                        <select class="form-control" name="district" id="district" onclick="load_upazila(this)" required>
+                            <option value="%">Select One</option>
+
+                        </select>
+                    </div>
+                </div>
+             <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Upazila: </label>
+                        <select class="form-control" name="upazila" id="upazila" onclick="" required>
+                            <option value="%">Select One</option>
+
+                        </select>
+                    </div>
+                </div>
+            </div>
+<div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-info pull-left" id="generate_report" style="margin-right: 10px" id="generate_report"
+                            title=""><i class="fa fa-2x fa fa-search-plus"></i>Search
+                    </button>
+
+                </div>
+            </div>
+
+            <br>
+        <div style="display:none;" id="container"><img style="width: 86px; margin-left: 434px;" src="/static/images/Spinner.gif"></div>
+            <table id="ipd_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
+                <thead class="flip-content">
+                <tr>
+                    <th colspan="6">IPD</th>
+                </tr>
+                <tr>
+                    <th>Total Patient</th>
+                    <th>Male</th>
+                    <th>Female</th>
+                    <th>Children</th>
+                    <th>Total Session</th>
+                    <th>Total Procedure</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        <br>
+        <table id="opd_patient_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
+                <thead class="flip-content">
+                <tr>
+                    <th colspan="6">OPD</th>
+                </tr>
+                <tr>
+                    <th>Total Patient</th>
+                    <th>Male</th>
+                    <th>Female</th>
+                    <th>Children</th>
+                    <th>Total Session</th>
+                    <th>Total Procedure</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        <br>
+        <table id="total_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
+                <thead class="flip-content">
+               <tr>
+                    <th colspan="6">Total</th>
+                </tr>
+                <tr>
+                    <th>Total Patient</th>
+                    <th>Male</th>
+                    <th>Female</th>
+                    <th>Children</th>
+                    <th>Total Session</th>
+                    <th>Total Procedure</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>You are about to delete a facility info, this procedure is irreversible.</p>
+                    <p>Do you want to proceed?</p>
+                    <p class="debug-url"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" class="btn btn-danger btn-ok">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block additional-javascript %}
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="/static/plugins/DataTables-1.10.15/extensions/Buttons/js/buttons.html5.js"></script>
+
+    <script>
+        $(function () {
+            $('#from_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+
+            $('#to_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+        });
+
+        var dateObj = moment();
+        var prevDateObj = moment().subtract(30, 'd');
+        $('#from_date').val(prevDateObj.format('DD/MM/YYYY'));
+        $('#to_date').val(dateObj.format('DD/MM/YYYY'));
+
+
+
+
+            var ipd_table = $('#ipd_table').DataTable({
+                "scrollX": true, "ordering": false,"searching":false,
+                deferRender: true,
+                            dom: 'Bfrtip'
+                            ,
+                            buttons: [
+                                {
+                                    filename: "Fo",
+                                    title: "",
+                                    text: "<strong>Export</strong>",
+                                    extend: 'excel'
+                                }
+                            ]
+
+            });
+
+             var opd_patient_table = $('#opd_patient_table').DataTable({
+                "scrollX": true, "ordering": false,"searching":false,
+                deferRender: true,
+                            dom: 'Bfrtip'
+                            ,
+                            buttons: [
+                                {
+                                    filename: "Fo",
+                                    title: "",
+                                    text: "<strong>Export</strong>",
+                                    extend: 'excel'
+                                }
+                            ]
+
+            });
+
+             var total_table = $('#total_table').DataTable({
+                "scrollX": true, "ordering": false,"searching":false,
+                deferRender: true,
+                            dom: 'Bfrtip'
+                            ,
+                            buttons: [
+                                {
+                                    filename: "Fo",
+                                    title: "",
+                                    text: "<strong>Export</strong>",
+                                    extend: 'excel'
+                                }
+                            ]
+
+            });
+             var out_patient_table = $('#out_patient_table').DataTable({
+                "scrollX": true, "ordering": false,"searching":false,
+                deferRender: true,
+                            dom: 'Bfrtip'
+                            ,
+                            buttons: [
+                                {
+                                    filename: "Fo",
+                                    title: "",
+                                    text: "<strong>Export</strong>",
+                                    extend: 'excel'
+                                }
+                            ]
+
+            });
+
+
+
+
+        $('.delete-item').on('click', function (e) {
+            var criteria_id = $(this).attr("data-href");
+            $('.btn-ok').attr("href", criteria_id);
+        });
+
+        if ($('.alert-block').is(':visible')) {
+            window.setTimeout(function () {
+                $(".alert-success").fadeTo(1500, 0).slideUp(500, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        }
+
+
+
+
+        $('#generate_report').on('click', function (e) {
+
+                ipd_table.destroy();
+                opd_patient_table.destroy();
+                total_table.destroy();
+
+                var from_date   = $('#from_date').val();
+                var to_date     = $('#to_date').val();
+
+                from_date = from_date.split('/');
+                from_date = from_date[2]+"-"+from_date[1]+"-"+from_date[0];
+                to_date = to_date.split('/');
+                to_date = to_date[2]+"-"+to_date[1]+"-"+to_date[0];
+
+
+                var division    = $('#division').val();
+                var district    = $('#district').val();
+                var upazila     = $('#upazila').val();
+
+
+
+                $.ajax({
+                    url: '/asf/get_physiotherapy_patient_report/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                          'from_date'           : from_date
+                        , 'to_date'             : to_date
+                        , 'division'            : division
+                        , 'district'            : district
+                        , 'upazila'             : upazila
+
+
+                    },
+                    beforeSend: function () {
+                        $('#container').show();
+
+                    },
+                    success: function (result) {
+                        $('#container').hide();
+
+                        ipd_data = result['ipd_data'];
+                        var tbody = '';
+                        for (var idx in ipd_data) {
+                            tbody += '<tr><td>' + ipd_data[idx].total_patient + '</td><td>' + ipd_data[idx].male + '</td><td>' + ipd_data[idx].female + '</td><td>' + ipd_data[idx].child + '</td><td>' + ipd_data[idx].total_procedure + '</td><td>' + ipd_data[idx].total_session + '</td></tr>';
+                        }
+                        $("#ipd_table").find('tbody').html(tbody);
+                        ipd_table = datatable_reinitialize('ipd_table');
+
+
+                        opd_data = result['opd_data'];
+                        var tbody = '';
+                        for (var idx in opd_data) {
+                            tbody += '<tr><td>' + opd_data[idx].total_patient + '</td><td>' + opd_data[idx].male + '</td><td>' + opd_data[idx].female + '</td><td>' + opd_data[idx].child + '</td><td>' + opd_data[idx].total_procedure + '</td><td>' + opd_data[idx].total_session + '</td></tr>';
+                        }
+                        $("#opd_patient_table").find('tbody').html(tbody);
+                        opd_patient_table = datatable_reinitialize('opd_patient_table');
+
+                        total_data = result['total_data'];
+                        var tbody = '';
+                        for (var idx in total_data) {
+                            tbody += '<tr><td>' + total_data[idx].total_patient + '</td><td>' + total_data[idx].male + '</td><td>' + total_data[idx].female + '</td><td>' + total_data[idx].child + '</td><td>' + total_data[idx].total_procedure + '</td><td>' + total_data[idx].total_session + '</td></tr>';
+                        }
+                        $("#total_table").find('tbody').html(tbody);
+                        total_table = datatable_reinitialize('total_table');
+
+
+
+
+
+                    }
+                });
+
+
+            });
+
+
+
+        function datatable_reinitialize(tbl_id) {
+            return $('#'+tbl_id).DataTable({
+                "scrollX": true, "ordering": false,"iDisplayLength": 10,"searching":false,
+                deferRender: true,
+                dom: 'Bfrtip'
+                ,
+                buttons: [
+                    {
+                        filename: tbl_id,
+                        title: "",
+                        text: "<strong>Export</strong>",
+                        extend: 'excel'
+                    }
+                ]
+
+            });
+        }
+
+        function load_district(object) {
+
+            div = parseInt(object.value)
+
+            if (isNaN(parseFloat(div))) {
+                $('#district').html("<option value=\"%\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_districts/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'div': div},
+                    {#                    beforeSend: function () {#}
+                    {#                        $("#all_info_table").html('<div class="alert alert-success">Please Wait...loading....</div>');#}
+                    {#                    },#}
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"%\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#district').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+        function load_upazila(dist_object) {
+            dist = parseInt(dist_object.value)
+
+            if (isNaN(parseFloat(dist))) {
+                $('#upazila').html("<option value=\"%\">Select One</option>");
+
+            }
+            else {
+
+                $.ajax({
+                    url: '/asf/get_upazilas/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'dist': dist},
+                    success: function (result) {
+                        console.log(result);
+                        var html_code = "<option value=\"%\">Select One</option>";
+
+                        for (i = 0; i < result.length; i++) {
+                            html_code += "<option value=\"" + result[i].id + "\"> " + result[i].field_name + "</option>";
+                        }
+                        $('#upazila').html(html_code);
+
+
+                    }
+                });
+            }
+
+        }
+
+$('#generate_report').trigger('click');
+    </script>
+{% endblock %}

@@ -3,6 +3,11 @@
 {% block additional-headers %}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <style>
+    th,td{
+        text-align: center;
+    }
+    </style>
 {% endblock %}
 
 
@@ -11,16 +16,29 @@
 
     <div class="portlet box red">
         <div class="portlet-title">
-            <div class="caption"><i class="fa fa-adn"></i>Victim List</div>
+            <div class="caption"><i class="fa fa-medkit"></i>IPD/OPD</div>
         </div>
         <div class="portlet-body">
             <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>From Date: </label>
+                        <input type="text" class="datepicker form-control" name="from_date" id="from_date" readonly>
 
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>To Date: </label>
+                        <input type="text" class="datepicker form-control" name="to_date" id="to_date" readonly>
 
+                    </div>
+                </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Division: </label>
-                        <select class="form-control" name="division" id="division" onclick="load_district(this)">
+                        <select class="form-control" name="division" id="division" onclick="load_district(this)"
+                                required>
                             <option value="%">Select One</option>
                             {% for id,field_name in divisions %}
                                 <option value="{{ id }}">{{ field_name }}</option>
@@ -31,13 +49,13 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>District: </label>
-                        <select class="form-control" name="district" id="district" onclick="load_upazila(this)" >
+                        <select class="form-control" name="district" id="district" onclick="load_upazila(this)" required>
                             <option value="%">Select One</option>
 
                         </select>
                     </div>
                 </div>
-            <div class="col-md-3">
+             <div class="col-md-3">
                     <div class="form-group">
                         <label>Upazila: </label>
                         <select class="form-control" name="upazila" id="upazila" onclick="" required>
@@ -46,48 +64,28 @@
                         </select>
                     </div>
                 </div>
-            <div class="col-md-3">
-                    <div class="form-group">
-                        <label >Status: </label>
-                               <select class="form-control" name="status" id="status" onclick="">
-                                   <option value="%">Select One</option>
-                                   <option value="Adopted">Adopted</option>
-                                   <option value="Not Adopted">Not Adopted</option>
-                                   <option value="Not interested anymore">Not interested anymore</option>
-                                   <option value="Migrated">Migrated</option>
-                                   <option value="can not be found">can not be found</option>
-                                   <option value="Dead">Dead</option>
-                                   <option value="Completed">Completed</option>
-                               </select>
-                    </div>
-                </div>
             </div>
-
-            <div class="row">
+<div class="row">
                 <div class="col-md-12">
                     <button type="submit" class="btn btn-info pull-left" id="generate_report" style="margin-right: 10px" id="generate_report"
-                            title=""><i class="fa fa-2x fa fa-search"></i>Search
+                            title=""><i class="fa fa-2x fa fa-search-plus"></i>Search
                     </button>
 
                 </div>
             </div>
+
             <br>
-        <div style="display:none;" id="container"><img style=" width: 86px; margin-left: 434px;" src="/static/images/Spinner.gif"></div>
-            <table id="all_info_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
+        <div style="display:none;" id="container"><img style="width: 86px; margin-left: 434px;" src="/static/images/Spinner.gif"></div>
+            <table id="ipd_table" class="table table-bordered table-striped table-condensed flip-content nowrap">
                 <thead class="flip-content">
                 <tr>
-                    <th>Victim ID</th>
-                    <th>Incident ID</th>
-                    <th>Victim Name</th>
-                    <th>Incident Date</th>
-                    <th>Mobile</th>
-                    <th>Sex</th>
-                    <th>Status</th>
-                    <th>Division</th>
-                    <th>District</th>
-                    <th>Upazila</th>
-                    <th>Union</th>
-                    <th>Address</th>
+                    <th>Service Name</th>
+                    <th>Male</th>
+                    <th>Female</th>
+                    <th>Male Children</th>
+                    <th>Female Children</th>
+                    <th>Total Patient</th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -132,65 +130,54 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
-
+    <script type="text/javascript" src="/static/plugins/DataTables-1.10.15/extensions/Buttons/js/buttons.html5.js"></script>
 
     <script>
-{#        $(function () {#}
-{#            $('#from_date').datepicker({#}
-{#                endDate: '0d',#}
-{#                format: 'dd/mm/yyyy',#}
-{#                todayHighlight: true#}
-{#            }).on('changeDate', function () {#}
-{#                $(this).datepicker('hide');#}
-{#            });#}
-{##}
-{#            $('#to_date').datepicker({#}
-{#                endDate: '0d',#}
-{#                format: 'dd/mm/yyyy',#}
-{#                todayHighlight: true#}
-{#            }).on('changeDate', function () {#}
-{#                $(this).datepicker('hide');#}
-{#            });#}
-{#        });#}
-{##}
-{#        var dateObj = moment();#}
-{#        var prevDateObj = moment().subtract(30, 'd');#}
-{#        $('#from_date').val(prevDateObj.format('DD/MM/YYYY'));#}
-{#        $('#to_date').val(dateObj.format('DD/MM/YYYY'));#}
+        $(function () {
+            $('#from_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+
+            $('#to_date').datepicker({
+                endDate: '0d',
+                format: 'dd/mm/yyyy',
+                todayHighlight: true
+            }).on('changeDate', function () {
+                $(this).datepicker('hide');
+            });
+        });
+
+        var dateObj = moment();
+        var prevDateObj = moment().subtract(30, 'd');
+        $('#from_date').val(prevDateObj.format('DD/MM/YYYY'));
+        $('#to_date').val(dateObj.format('DD/MM/YYYY'));
 
 
 
 
-            var table = $('#all_info_table').DataTable({
-                "scrollX": true, "ordering": false,
+            var ipd_table = $('#ipd_table').DataTable({
+                "scrollX": true, "ordering": false,"searching":false,
                 deferRender: true,
-                {#            dom: 'Bfrtip'#}
-                {#            ,#}
-                {#            buttons: [#}
-                {#                {#}
-                {#                    filename: "Fo",#}
-                {#                    title: "",#}
-                {#                    text: "<strong>Export</strong>",#}
-                {#                    extend: 'excel'#}
-                {#                }#}
-                {#            ]#}
+                            dom: 'Bfrtip'
+                            ,
+                            buttons: [
+                                {
+                                    filename: "Fo",
+                                    title: "",
+                                    text: "<strong>Export</strong>",
+                                    extend: 'excel'
+                                }
+                            ]
 
             });
 
+            
 
 
-
-
-
-{#        var tbody = '';#}
-
-{#        var case_list = {{ case_list|safe }};#}
-{##}
-{#        for (var idx in case_list) {#}
-{#            tbody += '<tr><td>' + case_list[idx].incident_id + '</td><td>' + case_list[idx].incident_date + '</td><td>' + case_list[idx].district + '</td><td>' + case_list[idx].status + '</td><td class="td-center"><a class="btn btn-info" data-container="body"  data-placement="top" data-original-title="Detail" href="/asf/case_detail/' + case_list[idx].id + '"><i class="fa fa-2x fa fa-bars"></i>Details</a></td></tr>';#}
-{#        }#}
-
-{#        $("#all_info_table").find('tbody').html(tbody);#}
 
         $('.delete-item').on('click', function (e) {
             var criteria_id = $(this).attr("data-href");
@@ -206,22 +193,32 @@
         }
 
 
+
+
         $('#generate_report').on('click', function (e) {
 
-                table.destroy();
+                ipd_table.destroy();
+
+                var from_date   = $('#from_date').val();
+                var to_date     = $('#to_date').val();
+
+                from_date = from_date.split('/');
+                from_date = from_date[2]+"-"+from_date[1]+"-"+from_date[0];
+                to_date = to_date.split('/');
+                to_date = to_date[2]+"-"+to_date[1]+"-"+to_date[0];
+
                 var division    = $('#division').val();
                 var district    = $('#district').val();
                 var upazila     = $('#upazila').val();
-                var status    = $('#status').val();
-
 
 
                 $.ajax({
-                    url: '/asf/get_victims_list/',
+                    url: '/asf/get_psychotherapy_patient_report/',
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                          'status':status
+                          'from_date'           : from_date
+                        , 'to_date'             : to_date
                         , 'division'            : division
                         , 'district'            : district
                         , 'upazila'             : upazila
@@ -231,14 +228,22 @@
                         $('#container').show();
 
                     },
-                    success: function (case_list) {
+                    success: function (result) {
                         $('#container').hide();
-                            var tbody = '';
-                        for (var idx in case_list) {
-                            tbody += '<tr><td>' + case_list[idx].victim_id + '</td><td>' + case_list[idx].incident_id + '</td><td>' + case_list[idx].victim_name + '</td><td>' + case_list[idx].incident_date + '</td><td>' + case_list[idx].mobile + '</td><td>' + case_list[idx].sex + '</td><td>' + case_list[idx].status + '</td><td>' + case_list[idx].division + '</td><td>' + case_list[idx].district + '</td><td>' + case_list[idx].upazila + '</td><td>' + case_list[idx].union_name + '</td><td>' + case_list[idx].address + '</td></tr>';
+
+                        govt_data = result['govt_data'];
+                        var tbody = '';
+                        for (var idx in govt_data) {
+                            tbody += '<tr><td>' + govt_data[idx].services + '</td><td>' + govt_data[idx].male + '</td><td>' + govt_data[idx].female + '</td><td>' + govt_data[idx].male_child + '</td><td>' + govt_data[idx].female_child + '</td><td>' + govt_data[idx].total_patient + '</td></tr>';
                         }
-                        $("#all_info_table").find('tbody').html(tbody);
-                        table = datatable_reinitialize();
+                        $("#ipd_table").find('tbody').html(tbody);
+                        ipd_table = datatable_reinitialize('ipd_table');
+
+
+                        
+
+
+
 
 
                     }
@@ -246,21 +251,23 @@
 
 
             });
-        $('#generate_report').trigger('click');
-        function datatable_reinitialize() {
-            return $('#all_info_table').DataTable({
-                "scrollX": true, "ordering": false,"iDisplayLength": 50,
+
+
+
+        function datatable_reinitialize(tbl_id) {
+            return $('#'+tbl_id).DataTable({
+                "scrollX": true, "ordering": false,"iDisplayLength": 10,"searching":false,
                 deferRender: true,
-{#                dom: 'Bfrtip'#}
-{#                ,#}
-{#                buttons: [#}
-{#                    {#}
-{#                        filename: "CSA Report",#}
-{#                        title: "",#}
-{#                        text: "<strong>Export</strong>",#}
-{#                        extend: 'excelHtml5'#}
-{#                    }#}
-{#                ]#}
+                dom: 'Bfrtip'
+                ,
+                buttons: [
+                    {
+                        filename: tbl_id,
+                        title: "",
+                        text: "<strong>Export</strong>",
+                        extend: 'excel'
+                    }
+                ]
 
             });
         }
@@ -328,5 +335,7 @@
             }
 
         }
+
+$('#generate_report').trigger('click');
     </script>
 {% endblock %}

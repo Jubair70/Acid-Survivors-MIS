@@ -378,7 +378,7 @@
                             tbody += '<tr><td>' + out_patient_data[idx].type + '</td><td>' + out_patient_data[idx].female_adult + '</td><td>' + out_patient_data[idx].male_adult + '</td><td>' + out_patient_data[idx].female_children + '</td><td>' + out_patient_data[idx].male_children + '</td><td>' + out_patient_data[idx].transgender + '</td><td>' + out_patient_data[idx].total + '</td></tr>';
                         }
                         $("#out_patient_table").find('tbody').html(tbody);
-                        old_patient_table = datatable_reinitialize('out_patient_table');
+                        out_patient_table = datatable_reinitialize('out_patient_table');
 
 
                     }

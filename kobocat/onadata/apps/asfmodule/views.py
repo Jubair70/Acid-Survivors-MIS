@@ -702,7 +702,7 @@ def refer_victim(request,victim_tbl_id):
 
 @login_required
 def victim_profile(request,victim_tbl_id):
-    qry = "SELECT *,(select field_name from geo_data where id = current_division::bigint limit 1) current_division ,(select field_name from geo_data where id = current_district::bigint limit 1) current_district ,(select field_name from geo_data where id = current_upazila::bigint limit 1) current_upazila ,(select field_name from geo_data where id = current_union::bigint limit 1) current_union ,(select field_name from geo_data where id = current_ward::bigint limit 1) current_ward ,(select field_name from geo_data where id = permanent_division::bigint limit 1) permanent_division ,(select field_name from geo_data where id = permanent_district::bigint limit 1) permanent_district ,(select field_name from geo_data where id = permanent_upazila::bigint limit 1) permanent_upazila ,(select field_name from geo_data where id = permanent_union::bigint limit 1) permanent_union ,(select field_name from geo_data where id = permanent_ward::bigint limit 1) permanent_ward,substring(picture from 8) picture  FROM asf_victim where id = "+str(victim_tbl_id)
+    qry = "select *,( select field_name from geo_data where id = current_division::bigint limit 1) current_division , ( select field_name from geo_data where id = current_district::bigint limit 1) current_district , ( select field_name from geo_data where id = current_upazila::bigint limit 1) current_upazila , case when current_union != '' then ( select field_name from geo_data where id = current_union::bigint limit 1) else '' end current_union , case when current_ward != '' then ( select field_name from geo_data where id = current_ward::bigint limit 1) else '' end current_ward , ( select field_name from geo_data where id = permanent_division::bigint limit 1) permanent_division , ( select field_name from geo_data where id = permanent_district::bigint limit 1) permanent_district , ( select field_name from geo_data where id = permanent_upazila::bigint limit 1) permanent_upazila , case when permanent_union !='' then ( select field_name from geo_data where id = permanent_union::bigint limit 1) else '' end permanent_union , case when permanent_ward != '' then ( select field_name from geo_data where id = permanent_ward::bigint limit 1) else '' end permanent_ward, substring(picture from 8) picture from asf_victim where id ="+str(victim_tbl_id)
     df = pandas.read_sql(qry,connection)
     victim_id = df.victim_id.tolist()[0] if len(df.victim_id.tolist()) and df.victim_id.tolist()[0] is not None  else ''
     victim_name = df.victim_name.tolist()[0] if len(df.victim_name.tolist()) and df.victim_name.tolist()[0] is not None  else ''
@@ -754,6 +754,7 @@ def victim_profile(request,victim_tbl_id):
     # when in developement/live/client server
     server_address = request.META.get('HTTP_HOST')
     print(server_address)
+    form_builder_server = __db_fetch_single_value("select form_builder_server from form_builder_configuration")
     return render(request, "asfmodule/victim_profile.html",{
         'main_str': main_str,
         'username':username,
@@ -793,7 +794,7 @@ def victim_profile(request,victim_tbl_id):
         'notified_within_24h':notified_within_24h,
         'verification_within_24h':verification_within_24h,
         'brought_asf_within_48h':brought_asf_within_48h,
-        'server_address':server_address
+        'server_address':server_address,'form_builder_server':form_builder_server
     })
 
 
@@ -826,6 +827,7 @@ def get_services_to_other_institutes_list(request):
     data = json.dumps(__db_fetch_values_dict(query), default=decimal_date_default)
     return HttpResponse(data)
 
+@login_required
 def services_to_other_institutes_form(request):
     username = request.user
     # if in local environment, you should use your ip instead of localhost
@@ -834,7 +836,8 @@ def services_to_other_institutes_form(request):
     server_address = request.META.get('HTTP_HOST')
     print(server_address)
     form_id = __db_fetch_single_value("select id from logger_xform where id_string='services_other_institute'")
-    return render(request, 'asfmodule/services_to_other_institutes_form.html',{'username':username,'server_address':server_address,'form_id':form_id})
+    form_builder_server = __db_fetch_single_value("select form_builder_server from form_builder_configuration")
+    return render(request, 'asfmodule/services_to_other_institutes_form.html',{'username':username,'server_address':server_address,'form_id':form_id,'form_builder_server':form_builder_server})
 
 
 # Capacity Building
@@ -850,6 +853,7 @@ def get_capacity_building_list(request):
     data = json.dumps(__db_fetch_values_dict(query), default=decimal_date_default)
     return HttpResponse(data)
 
+@login_required
 def capacity_building_form(request):
     username = request.user
     # if in local environment, you should use your ip instead of localhost
@@ -858,7 +862,8 @@ def capacity_building_form(request):
     server_address = request.META.get('HTTP_HOST')
     print(server_address)
     form_id = __db_fetch_single_value("select id from logger_xform where id_string='capacity_building'")
-    return render(request, 'asfmodule/capacity_building_form.html',{'username':username,'server_address':server_address,'form_id':form_id})
+    form_builder_server = __db_fetch_single_value("select form_builder_server from form_builder_configuration")
+    return render(request, 'asfmodule/capacity_building_form.html',{'username':username,'server_address':server_address,'form_id':form_id,'form_builder_server':form_builder_server})
 
 # Event
 @login_required
@@ -873,6 +878,7 @@ def get_event_list(request):
     data = json.dumps(__db_fetch_values_dict(query), default=decimal_date_default)
     return HttpResponse(data)
 
+@login_required
 def event_form(request):
     username = request.user
     # if in local environment, you should use your ip instead of localhost
@@ -881,7 +887,8 @@ def event_form(request):
     server_address = request.META.get('HTTP_HOST')
     print(server_address)
     form_id = __db_fetch_single_value("select id from logger_xform where id_string='event'")
-    return render(request, 'asfmodule/event_form.html',{'username':username,'server_address':server_address,'form_id':form_id})
+    form_builder_server = __db_fetch_single_value("select form_builder_server from form_builder_configuration")
+    return render(request, 'asfmodule/event_form.html',{'username':username,'server_address':server_address,'form_id':form_id,'form_builder_server':form_builder_server})
 
 
 # Paper clipping
@@ -897,6 +904,7 @@ def get_paper_clipping_list(request):
     data = json.dumps(__db_fetch_values_dict(query), default=decimal_date_default)
     return HttpResponse(data)
 
+@login_required
 def paper_clipping_form(request):
     username = request.user
     # if in local environment, you should use your ip instead of localhost
@@ -905,7 +913,8 @@ def paper_clipping_form(request):
     server_address = request.META.get('HTTP_HOST')
     print(server_address)
     form_id = __db_fetch_single_value("select id from logger_xform where id_string='paper_clipping'")
-    return render(request, 'asfmodule/event_form.html',{'username':username,'server_address':server_address,'form_id':form_id})
+    form_builder_server = __db_fetch_single_value("select form_builder_server from form_builder_configuration")
+    return render(request, 'asfmodule/event_form.html',{'username':username,'server_address':server_address,'form_id':form_id,'form_builder_server':form_builder_server})
 
 @login_required
 def dashboard(request):

@@ -39,7 +39,8 @@
         function load_forms_html(form_id) {
 
             username = '{{ username | safe }}'
-            url = "http://192.168.19.16:9991/?id=" + form_id + "&url=" + server_address + "&username=" + username
+            form_builder_server = '{{ form_builder_server | safe}}'
+            url = form_builder_server+"/?id=" + form_id + "&url=" + server_address + "&username=" + username
             console.log(url);
             $('.portlet-body').html('<iframe src="' + url + '" style="width:100%;height:500px;"></iframe>');
 window.addEventListener('message',handleIframeTask);

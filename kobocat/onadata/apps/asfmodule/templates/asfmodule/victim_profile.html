@@ -350,14 +350,14 @@ iframe
             success: function (result) {
 {#                console.log(result);#}
                 $('.modal-body').html(result);
-                if(category_id == 1)
-                    $('#myModalLabel').text("Medical Service")
-                else if(category_id == 2)
-                    $('#myModalLabel').text("Physiotherapy Service")
-                else if(category_id == 3)
-                    $('#myModalLabel').text("Psychological Service")
-                else if(category_id == 4)
-                    $('#myModalLabel').text("Social Rehabilitation Support")
+{#                if(category_id == 1)#}
+{#                    $('#myModalLabel').text("Medical Service")#}
+{#                else if(category_id == 2)#}
+{#                    $('#myModalLabel').text("Physiotherapy Service")#}
+{#                else if(category_id == 3)#}
+{#                    $('#myModalLabel').text("Psychological Service")#}
+{#                else if(category_id == 4)#}
+{#                    $('#myModalLabel').text("Social Rehabilitation Support")#}
 {#                $('#form' + category_id).attr('data-content', result);#}
 {#                $('#form' + category_id).popover('show');#}
 
@@ -446,8 +446,8 @@ function load_forms_html(form_id) {
     server_address = '{{ server_address | safe }}'
     username = '{{ username | safe }}'
     victim_id = '{{victim_id | safe}}'
-
-    url = "http://192.168.19.16:9991/?id="+form_id+"&url="+server_address+"&username="+username+"&victim_id="+victim_id
+    form_builder_server = '{{ form_builder_server | safe}}'
+    url = form_builder_server+"/?id="+form_id+"&url="+server_address+"&username="+username+"&victim_id="+victim_id
     console.log(url)
     $('.modal-body').html('<iframe src="'+url+'" style="width:100%;height:500px;"></iframe>');
     window.addEventListener('message',handleIframeTask);
